@@ -71,6 +71,9 @@
   .copyBtn:active{transform:scale(.95)}
   .copyBtn i{font-size:14px;vertical-align:-2px;margin-right:2px}
   .hint{font-size:11.5px;color:var(--tx3);text-align:center;padding:18px 8px 6px;line-height:1.7}
+  .visitCount{text-align:center;font-size:12px;color:var(--tx3);padding:24px 8px 4px}
+  .visitCount i{font-size:13px;vertical-align:-2px;margin-right:3px}
+  .visitCount b{color:var(--tx2);font-weight:700}
   .contactInfo{text-align:center;margin:2px 0 16px}
   .contactInfo a{font-size:14px;color:var(--primary);font-weight:600;text-decoration:none}
   .cform label{display:block;font-size:13px;font-weight:700;color:var(--tx);margin:14px 0 6px}
@@ -156,6 +159,7 @@
           <div class="nm">문의하기</div><div class="ds">궁금한 점을 남겨주세요</div>
         </div>
       </div>
+      <div class="visitCount" id="visitCount"><i class="ti ti-users"></i> 방문자 · Today <b id="vToday">-</b> · Total <b id="vTotal">-</b></div>
       <div class="hint">송탄영광교회 중고등부 · 교사 전용 앱</div>
     </section>
 
@@ -268,6 +272,22 @@ function go(s){
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
   document.getElementById('main').scrollTop = 0;
 }
+
+// ── 방문자 카운터 (교사용 전용 집계, 학생 앱과 동일 서비스) ──
+(function(){
+  const NS = "sgy-teacher-visionspeaker";
+  const d = new Date();
+  const pad = function(n){ return (n<10?"0":"")+n; };
+  const dk = "d" + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+  const hit = function(key){ return fetch("https://abacus.jasoncameron.dev/hit/"+NS+"/"+key).then(function(r){ return r.json(); }).then(function(j){ return j.value; }); };
+  const fmt = function(n){ return (n||0).toLocaleString('ko-KR'); };
+  Promise.all([hit('total'), hit(dk)]).then(function(v){
+    const a = document.getElementById('vTotal'); const b = document.getElementById('vToday');
+    if(a) a.textContent = fmt(v[0]); if(b) b.textContent = fmt(v[1]);
+  }).catch(function(){
+    const el = document.getElementById('visitCount'); if(el) el.style.display = 'none';
+  });
+})();
 
 // ── 문의하기: 중고등부(학생) 앱과 동일한 접수처로 전송 ──
 const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICmjhCMPo4kOaiW4Gt2zWSQeajz8sf9m9SGcFG-2oua-y12ph9o/exec";
