@@ -274,19 +274,25 @@ function go(s){
 }
 
 // ── 방문자 카운터 (교사용 전용 집계, 학생 앱과 동일 서비스) ──
+// keepalive: 페이지를 바로 닫아도 카운트 요청이 끝까지 전송되도록 보장 (Today/Total 어긋남 방지)
 (function(){
   const NS = "sgy-teacher-visionspeaker";
   const d = new Date();
   const pad = function(n){ return (n<10?"0":"")+n; };
   const dk = "d" + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
-  const hit = function(key){ return fetch("https://abacus.jasoncameron.dev/hit/"+NS+"/"+key).then(function(r){ return r.json(); }).then(function(j){ return j.value; }); };
   const fmt = function(n){ return (n||0).toLocaleString('ko-KR'); };
-  Promise.all([hit('total'), hit(dk)]).then(function(v){
-    const a = document.getElementById('vTotal'); const b = document.getElementById('vToday');
-    if(a) a.textContent = fmt(v[0]); if(b) b.textContent = fmt(v[1]);
-  }).catch(function(){
-    const el = document.getElementById('visitCount'); if(el) el.style.display = 'none';
-  });
+  let fails = 0;
+  const hit = function(key, id){
+    return fetch("https://abacus.jasoncameron.dev/hit/"+NS+"/"+key, { keepalive:true, cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ const el = document.getElementById(id); if(el) el.textContent = fmt(j.value); })
+      .catch(function(){
+        fails++;
+        if(fails >= 2){ const el = document.getElementById('visitCount'); if(el) el.style.display = 'none'; }
+      });
+  };
+  hit('total','vTotal');
+  hit(dk,'vToday');
 })();
 
 // ── 문의하기: 중고등부(학생) 앱과 동일한 접수처로 전송 ──
