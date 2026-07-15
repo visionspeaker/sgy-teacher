@@ -49,6 +49,15 @@
   .hero .big{font-size:21px;font-weight:800;margin-top:5px}
   .hero .sub{font-size:13px;opacity:.92;margin-top:3px}
   .hero i{position:absolute;right:-12px;bottom:-12px;font-size:90px;opacity:.2}
+  .campBtn{display:flex;align-items:center;gap:12px;margin-top:11px;background:#efeaff;border:1px solid #d9cdff;
+    border-radius:15px;padding:13px 15px;box-shadow:0 4px 12px rgba(139,119,255,.16);cursor:pointer}
+  .campBtn:active{transform:scale(.98)}
+  .campBtn .ci{width:40px;height:40px;border-radius:11px;background:#ddd2ff;color:#5b3ec9;
+    display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+  .campBtn .ct{flex:1;min-width:0}
+  .campBtn .t1{font-size:14.5px;font-weight:600;color:#4c33b8}
+  .campBtn .t2{font-size:11.5px;color:#7a63d6;margin-top:2px}
+  .campBtn .ar{font-size:20px;color:#7a63d6;flex:none}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
   .tile{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:15px 14px;cursor:pointer;
     display:flex;flex-direction:column;gap:10px;box-shadow:0 2px 10px rgba(58,42,29,.04)}
@@ -132,6 +141,11 @@
         <div class="sub">교사 업무 바로가기와 학생 공유 링크를 한 곳에서</div>
         <i class="ti ti-heart-handshake"></i>
       </div>
+      <a class="campBtn" href="https://docs.google.com/spreadsheets/d/1UNkBDRKk9MUJiGuaNoXLcAocCk7-hrP9oBlqDtuQ7Us/edit?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci"><i class="ti ti-tent"></i></div>
+        <div class="ct"><div class="t1">수련회 신청 결과 바로가기</div><div class="t2">여름 수련회 참가 신청자_2026</div></div>
+        <i class="ti ti-chevron-right ar"></i>
+      </a>
       <div class="sec-t">바로가기</div>
       <div class="grid">
         <a class="tile" href="https://vision153.notion.site/2026eda158ae8095999ac133933fd32a" target="_blank" rel="noopener">
