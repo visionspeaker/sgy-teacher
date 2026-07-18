@@ -123,6 +123,43 @@
     margin-bottom:10px;box-shadow:0 2px 10px rgba(58,42,29,.05)}
   .planImg{width:100%;display:block;border-radius:8px;background:#f7f1e8;min-height:120px}
   .planPg{text-align:center;font-size:10.5px;color:var(--tx3);padding:6px 0 2px}
+  .ofHero{background:linear-gradient(120deg,#f5b301,#e8590c);border-radius:16px;padding:15px 16px;color:#fff;
+    position:relative;overflow:hidden;margin:2px 0 12px}
+  .ofHero .l1{font-size:10.5px;font-weight:700;opacity:.9;letter-spacing:.8px}
+  .ofHero .l2{font-size:18px;font-weight:800;margin-top:3px}
+  .ofHero .l3{font-size:12px;opacity:.93;margin-top:3px}
+  .ofHero i{position:absolute;right:-8px;bottom:-14px;font-size:70px;opacity:.2}
+  .ofDate{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;margin-bottom:11px}
+  .ofDate .di{font-size:18px;color:var(--primary);flex:none}
+  .ofDate .dl{font-size:10.5px;color:var(--tx3)}
+  .ofDate input{border:0;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--tx);
+    padding:1px 0 0;width:100%}
+  .ofItem{background:var(--surface);border:1px solid var(--line);border-radius:13px;margin-bottom:8px;overflow:hidden;
+    box-shadow:0 2px 8px rgba(58,42,29,.04)}
+  .ofHead{display:flex;align-items:center;gap:9px;padding:12px;cursor:pointer}
+  .ofHead .oi{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;flex:none;letter-spacing:-.5px}
+  .ofHead .on2{font-size:13.5px;font-weight:600;color:var(--tx)}
+  .ofHead .cnt{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;flex:none}
+  .ofHead .ch{margin-left:auto;font-size:16px;color:var(--tx3);flex:none;transition:transform .2s}
+  .ofItem.open .ch{transform:rotate(180deg)}
+  .ofBody{display:none;padding:0 12px 12px}
+  .ofItem.open .ofBody{display:block}
+  .ofBody input,.ofBody textarea{width:100%;box-sizing:border-box;background:#fdfaf6;border:1px solid var(--line);
+    border-radius:10px;padding:10px;font-size:13px;font-family:inherit;color:var(--tx)}
+  .ofBody input{text-align:right;font-weight:600;margin-bottom:7px}
+  .ofBody textarea{min-height:56px;line-height:1.6;resize:vertical}
+  .ofBody .oh{font-size:10.5px;color:var(--tx3);margin-top:5px}
+  .ofSum{background:var(--primary-soft);border:1px solid #ffd9b8;border-radius:13px;padding:13px;
+    display:flex;justify-content:space-between;align-items:center;margin:12px 0 10px}
+  .ofSum .sl{font-size:12.5px;color:#b4470b}
+  .ofSum .sv{font-size:19px;font-weight:800;color:#b4470b;font-variant-numeric:tabular-nums}
+  .ofSave{display:block;width:100%;background:var(--primary);color:#fff;border:0;border-radius:12px;padding:14px;
+    font-size:14.5px;font-weight:700;font-family:inherit;cursor:pointer}
+  .ofSave:active{transform:scale(.99)}
+  .ofSave[disabled]{opacity:.55;cursor:default}
+  .ofStatus{text-align:center;font-size:13px;color:var(--primary);margin-top:11px;min-height:18px}
   nav{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;bottom:0;
     height:calc(64px + env(safe-area-inset-bottom));display:flex;background:var(--surface);
     border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:20;
@@ -190,6 +227,10 @@
           <div class="ic bd"><i class="ti ti-users-group"></i></div>
           <div class="nm">교사 밴드</div><div class="ds">공지·소통 커뮤니티</div>
         </a>
+        <div class="tile" onclick="go('offering')">
+          <div class="ic am"><i class="ti ti-wallet"></i></div>
+          <div class="nm">헌금 현황</div><div class="ds">주일 헌금 입력·기록</div>
+        </div>
         <div class="tile" onclick="go('plan')">
           <div class="ic tl"><i class="ti ti-calendar-event"></i></div>
           <div class="nm">연간계획</div><div class="ds">한 해 일정과 행사</div>
@@ -198,9 +239,9 @@
           <div class="ic pk"><i class="ti ti-clipboard-text"></i></div>
           <div class="nm">입회원서</div><div class="ds">새친구 등록 결과</div>
         </a>
-        <div class="tile" onclick="go('contact')">
+        <div class="tile tileRow" onclick="go('contact')">
           <div class="ic bl"><i class="ti ti-mail"></i></div>
-          <div class="nm">문의하기</div><div class="ds">피드백, 문의사항을 남겨주세요</div>
+          <div><div class="nm">문의하기</div><div class="ds">피드백, 문의사항을 남겨주세요</div></div>
         </div>
       </div>
       <div class="hint">송탄영광교회 중고등부 · 교사 전용 앱</div>
@@ -243,6 +284,31 @@
         <button class="ctSend" id="ctSend">보내기</button>
         <div class="ctStatus" id="ctStatus"></div>
       </div>
+    </section>
+
+    <!-- 페이지 5 · 헌금 현황 -->
+    <section class="screen" id="s-offering">
+      <div class="sec-t">헌금 현황 · 입력</div>
+      <div class="ofHero">
+        <div class="l1">OFFERING</div>
+        <div class="l2">헌금 현황 입력</div>
+        <div class="l3">항목별 금액과 명단을 적어 저장하세요</div>
+        <i class="ti ti-wallet"></i>
+      </div>
+      <div class="ofDate">
+        <i class="ti ti-calendar di"></i>
+        <div style="flex:1">
+          <div class="dl">헌금일 (주일)</div>
+          <input id="ofDate" type="date">
+        </div>
+      </div>
+      <div id="ofList"></div>
+      <div class="ofSum">
+        <span class="sl">총 헌금 금액</span>
+        <span class="sv" id="ofTotal">0원</span>
+      </div>
+      <button class="ofSave" id="ofSave">저장하기</button>
+      <div class="ofStatus" id="ofStatus"></div>
     </section>
 
     <!-- 페이지 4 · 연간계획 (앱 내 이미지 뷰어) -->
@@ -343,7 +409,7 @@ let cur = 0; // 0 = 바로가기, 1 = 공유 링크
 function go(s, keepScroll){
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
   document.querySelectorAll('.screen').forEach(e => e.classList.remove('on'));
-  if(s === 'contact' || s === 'plan'){
+  if(s === 'contact' || s === 'plan' || s === 'offering'){
     const sc = document.getElementById('s-' + s);
     sc.classList.add('on'); sc.scrollTop = 0; return;
   }
@@ -387,6 +453,95 @@ function go(s, keepScroll){
   };
   mainEl.addEventListener('touchend', end);
   mainEl.addEventListener('touchcancel', end);
+})();
+
+// ── 헌금 현황: 항목별 금액·명단을 시트(헌금명단 탭)에 저장 ──
+const OFFERING_API = "https://script.google.com/macros/s/AKfycbwi_c-LZqhUOlWSu8ZcqOKp8aDSxvgFejCtNBDo7OAfTy_Jey34GfLHiO60akNRTkZl/exec";
+(function(){
+  const ITEMS = [
+    { key:'십일조',    ic:'10',                 cls:'am', txt:'#e8590c', bg:'#fff0e2' },
+    { key:'주일헌금',  ic:'<i class="ti ti-cross"></i>',        cls:'bl', txt:'#2f80ed', bg:'#e4f0ff' },
+    { key:'감사헌금',  ic:'<i class="ti ti-heart"></i>',        cls:'bd', txt:'#16a34a', bg:'#e3f9ec' },
+    { key:'구제/선교', ic:'<i class="ti ti-ship"></i>',         cls:'pk', txt:'#e1306c', bg:'#ffe9f1' },
+    { key:'기타',      ic:'<i class="ti ti-dots"></i>',         cls:'ai', txt:'#6a4fd8', bg:'#efecff' }
+  ];
+  const list = document.getElementById('ofList');
+  if(!list) return;
+
+  ITEMS.forEach(function(it, idx){
+    const box = document.createElement('div');
+    box.className = 'ofItem';
+    box.innerHTML =
+      '<div class="ofHead">' +
+        '<div class="oi" style="background:' + it.bg + ';color:' + it.txt + '">' + it.ic + '</div>' +
+        '<div class="on2"></div>' +
+        '<span class="cnt" style="display:none;background:' + it.bg + ';color:' + it.txt + '"></span>' +
+        '<i class="ti ti-chevron-down ch"></i>' +
+      '</div>' +
+      '<div class="ofBody">' +
+        '<input type="text" inputmode="numeric" placeholder="금액">' +
+        '<textarea placeholder="이름을 쉼표(,)로 구분해 입력하세요"></textarea>' +
+        '<div class="oh">예) 김수영, 박시우, 이예승</div>' +
+      '</div>';
+    box.querySelector('.on2').textContent = it.key;
+    box.dataset.key = it.key;
+    box.querySelector('.ofHead').addEventListener('click', function(){ box.classList.toggle('open'); });
+
+    const amt = box.querySelector('input');
+    const nms = box.querySelector('textarea');
+    amt.addEventListener('input', function(){
+      const n = amt.value.replace(/[^0-9]/g, '');
+      amt.value = n ? Number(n).toLocaleString('ko-KR') : '';
+      updateTotal();
+    });
+    nms.addEventListener('input', function(){
+      const c = nms.value.split(',').map(s => s.trim()).filter(Boolean).length;
+      const badge = box.querySelector('.cnt');
+      badge.textContent = c + '명';
+      badge.style.display = c ? '' : 'none';
+    });
+    list.appendChild(box);
+  });
+
+  function num(v){ return Number(String(v).replace(/[^0-9]/g, '')) || 0; }
+  function updateTotal(){
+    let sum = 0;
+    list.querySelectorAll('.ofItem').forEach(function(b){ sum += num(b.querySelector('input').value); });
+    document.getElementById('ofTotal').textContent = sum.toLocaleString('ko-KR') + '원';
+  }
+
+  // 기본 날짜: 이번 주 일요일
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay());
+  const pad = n => (n < 10 ? '0' : '') + n;
+  document.getElementById('ofDate').value = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+
+  document.getElementById('ofSave').onclick = function(){
+    const date = document.getElementById('ofDate').value;
+    const st = document.getElementById('ofStatus');
+    if(!date){ alert('헌금일을 선택해 주세요.'); return; }
+    const rows = [];
+    list.querySelectorAll('.ofItem').forEach(function(b){
+      const amount = num(b.querySelector('input').value);
+      const names = b.querySelector('textarea').value.trim();
+      if(amount || names) rows.push({ type: b.dataset.key, amount: amount, names: names });
+    });
+    if(!rows.length){ alert('입력된 헌금 내역이 없습니다.'); return; }
+    if(OFFERING_API.indexOf('__') === 0){ st.style.color = 'var(--danger)'; st.textContent = '저장 기능이 아직 연결되지 않았어요. (관리자 설정 필요)'; return; }
+    const btn = this; btn.disabled = true; btn.textContent = '저장 중…'; st.textContent = '';
+    fetch(OFFERING_API, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify({ date: date, rows: rows }) })
+      .then(function(r){ return r.json(); }).then(function(res){
+        btn.disabled = false; btn.textContent = '저장하기';
+        if(!res || res.ok === false){ st.style.color = 'var(--danger)'; st.textContent = '저장에 실패했어요. 다시 시도해 주세요.'; return; }
+        list.querySelectorAll('.ofItem').forEach(function(b){
+          b.querySelector('input').value = ''; b.querySelector('textarea').value = '';
+          b.querySelector('.cnt').style.display = 'none'; b.classList.remove('open');
+        });
+        updateTotal();
+        st.style.color = 'var(--primary)'; st.textContent = res.count + '건이 저장되었습니다. 감사합니다! 🙏';
+      }).catch(function(){ btn.disabled = false; btn.textContent = '저장하기'; st.style.color = 'var(--danger)'; st.textContent = '전송에 실패했어요. 잠시 후 다시 시도해 주세요.'; });
+  };
 })();
 
 // ── 방문자 카운터 (교사용 전용 집계, 학생 앱과 동일 서비스) ──
