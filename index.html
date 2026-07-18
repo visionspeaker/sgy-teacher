@@ -160,6 +160,11 @@
   .ofSave:active{transform:scale(.99)}
   .ofSave[disabled]{opacity:.55;cursor:default}
   .ofStatus{text-align:center;font-size:13px;color:var(--primary);margin-top:11px;min-height:18px}
+  .ofView{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:9px;
+    background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);border-radius:12px;padding:13px;
+    font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:none}
+  .ofView:active{transform:scale(.99)}
+  .ofView i{font-size:17px}
   nav{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;bottom:0;
     height:calc(64px + env(safe-area-inset-bottom));display:flex;background:var(--surface);
     border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:20;
@@ -308,6 +313,9 @@
         <span class="sv" id="ofTotal">0원</span>
       </div>
       <button class="ofSave" id="ofSave">저장하기</button>
+      <a class="ofView" href="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/edit?gid=1761833045#gid=1761833045" target="_blank" rel="noopener">
+        <i class="ti ti-table"></i>결과 보기
+      </a>
       <div class="ofStatus" id="ofStatus"></div>
     </section>
 
