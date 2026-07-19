@@ -76,6 +76,8 @@
   .share{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);
     border-radius:14px;padding:12px 13px;margin-bottom:9px;box-shadow:0 2px 10px rgba(58,42,29,.04)}
   .share .si{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+  .share .go{display:flex;align-items:center;gap:11px;flex:1;min-width:0;cursor:pointer;color:inherit;text-decoration:none}
+  .share .go:active{opacity:.6}
   .share .sm{flex:1;min-width:0}
   .share .st{font-size:13.5px;font-weight:600;color:var(--tx)}
   .share .su{font-size:11px;color:var(--tx3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -358,15 +360,25 @@ const SHARES = [
 // ── 공유 링크 목록 렌더링 ─────────────────────────────
 const list = document.getElementById('shareList');
 SHARES.forEach((s, i) => {
+  const isLink = /^https?:\/\//.test(s.v);
   const row = document.createElement('div');
   row.className = 'share';
-  row.innerHTML =
+  // 왼쪽(아이콘·제목·주소)은 링크면 새 탭 이동, 계좌안내는 예외로 복사만
+  const left = isLink ? document.createElement('a') : document.createElement('div');
+  left.className = 'go';
+  if(isLink){ left.href = s.v; left.target = '_blank'; left.rel = 'noopener'; }
+  else { left.style.cursor = 'default'; }
+  left.innerHTML =
     '<div class="si ic ' + s.cl + '"><i class="ti ' + s.ic + '"></i></div>' +
-    '<div class="sm"><div class="st"></div><div class="su"></div></div>' +
-    '<button class="copyBtn"><i class="ti ti-copy"></i>복사하기</button>';
-  row.querySelector('.st').textContent = s.t;
-  row.querySelector('.su').textContent = s.v;
-  row.querySelector('.copyBtn').addEventListener('click', () => copyText(s.v, '복사됨!'));
+    '<div class="sm"><div class="st"></div><div class="su"></div></div>';
+  left.querySelector('.st').textContent = s.t;
+  left.querySelector('.su').textContent = s.v;
+  const btn = document.createElement('button');
+  btn.className = 'copyBtn';
+  btn.innerHTML = '<i class="ti ti-copy"></i>복사하기';
+  btn.addEventListener('click', () => copyText(s.v, '복사됨!'));
+  row.appendChild(left);
+  row.appendChild(btn);
   list.appendChild(row);
 });
 
