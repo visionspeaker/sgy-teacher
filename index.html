@@ -431,7 +431,13 @@ function showToast(msg){
 const mainEl = document.getElementById('main');
 const slider = document.getElementById('slider');
 let cur = 0; // 0 = 바로가기, 1 = 공유 링크
-function go(s, keepScroll){
+const DEEP_LINKS = ['home', 'share', 'offering', 'plan', 'contact'];
+function go(s, keepScroll, skipHash){
+  // 딥링크: 현재 화면을 주소(#해시)에 반영 — 링크로 바로 진입 가능
+  if(!skipHash && DEEP_LINKS.indexOf(s) !== -1){
+    const h = (s === 'home') ? ' ' : '#' + s;
+    try{ history.replaceState(null, '', s === 'home' ? location.pathname + location.search : h); }catch(e){}
+  }
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
   document.querySelectorAll('.screen').forEach(e => e.classList.remove('on'));
   if(s === 'contact' || s === 'plan' || s === 'offering'){
@@ -443,6 +449,16 @@ function go(s, keepScroll){
   slider.style.transform = 'translateX(' + (cur * -50) + '%)';
   if(!keepScroll){ const p = document.getElementById(cur === 1 ? 's-share' : 's-home'); if(p) p.scrollTop = 0; }
 }
+
+// 딥링크 진입: 주소의 #해시를 읽어 해당 화면으로 바로 열기
+(function(){
+  function openFromHash(){
+    const h = (location.hash || '').replace('#', '').trim();
+    if(DEEP_LINKS.indexOf(h) !== -1) go(h, false, true);
+  }
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+})();
 
 // 좌우 스와이프: 손가락을 따라 화면이 밀리고, 놓으면 스냅되어 넘어감
 (function(){
