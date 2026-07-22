@@ -617,11 +617,12 @@ const OFFERING_API = "https://script.google.com/macros/s/AKfycbwi_c-LZqhUOlWSu8Z
   }
 
   // 강제 새로고침(_r 파라미터)으로 들어온 경우엔 카운트를 올리지 않고 조회(get)만 함
+  // keepalive는 hit(증가)이 페이지 종료 후에도 전송되게 하는 옵션 — 조회(get)엔 불필요하므로 끔
   const isForced = /[?&]_r=/.test(location.search);
   const base = "https://abacus.jasoncameron.dev/" + (isForced ? "get" : "hit") + "/" + NS + "/";
   let fails = 0;
   const hit = function(key, id){
-    return fetch(base + key, { keepalive:true, cache:'no-store' })
+    return fetch(base + key, { keepalive: !isForced, cache:'no-store' })
       .then(function(r){ return r.json(); })
       .then(function(j){ animateCount(document.getElementById(id), j.value); })
       .catch(function(){
