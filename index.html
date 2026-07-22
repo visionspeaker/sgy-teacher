@@ -606,6 +606,8 @@ const OFFERING_API = "https://script.google.com/macros/s/AKfycbwi_c-LZqhUOlWSu8Z
   function animateCount(el, target){
     if(!el) return;
     target = Number(target) || 0;
+    // 안전장치: 탭이 백그라운드라 requestAnimationFrame이 멈춰도 최종값은 반드시 표시
+    setTimeout(function(){ el.textContent = fmt(target); }, 1200);
     const dur = 1100, start = performance.now();
     function frame(now){
       let p = (now - start) / dur; if(p > 1) p = 1;
