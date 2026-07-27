@@ -1,10 +1,26 @@
 <!DOCTYPE html>
+<!--
+  송탄영광교회 중고등부 교사용 앱
+  교사 업무 바로가기와 학생 공유 링크를 한 곳에서
+
+  Copyright (c) 2026 visionspeaker (실명: 강유석). All rights reserved.
+
+  본 저작물(소스코드·디자인·화면구성 일체)의 모든 권리는 visionspeaker (실명: 강유석)에게 귀속됩니다.
+  저작권자의 사전 서면 동의 없이 다음 행위를 금지합니다.
+    - 복제·배포·전송·전시 및 2차적저작물 작성
+    - 소스의 일부 또는 전부를 이용한 유사 시스템 제작
+    - 상업적 이용 및 재판매
+  무단 이용 시 저작권법에 따라 민사상 손해배상 및 형사상 책임을 질 수 있습니다.
+  문의: visionspeaker[at]kakao.com
+-->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover, user-scalable=yes">
 <title>송탄영광교회 중고등부 · 교사용</title>
 <meta name="description" content="송탄영광교회 중고등부 교사 전용 앱 — 교사 업무 바로가기와 학생 공유 링크를 한 곳에서.">
+<meta name="author" content="visionspeaker"/>
+<meta name="copyright" content="Copyright (c) 2026 visionspeaker. All rights reserved."/>
 <meta name="theme-color" content="#e8590c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -60,6 +76,7 @@
   .campBtn .ar{font-size:20px;color:#7a63d6;flex:none}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
   .grid-top{margin-top:16px}
+  .copyr{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;margin:18px 4px 2px}
   .tile{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:15px 14px;cursor:pointer;
     display:flex;flex-direction:column;gap:10px;box-shadow:0 2px 10px rgba(58,42,29,.04)}
   .tile:active{transform:scale(.97)}
@@ -262,6 +279,7 @@
         </div>
       </div>
       <div class="hint">송탄영광교회 중고등부 · 교사 전용 앱</div>
+      <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
 
     <!-- 페이지 2 · 학생 공유 링크 -->
@@ -273,6 +291,7 @@
         복사한 링크를 학생에게 그대로 전달해 주세요.<br>
         &lsquo;계좌안내&rsquo;는 계좌 정보 텍스트가 복사됩니다.
       </div>
+      <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
    </div>
 
@@ -301,6 +320,7 @@
         <button class="ctSend" id="ctSend">보내기</button>
         <div class="ctStatus" id="ctStatus"></div>
       </div>
+      <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
 
     <!-- 페이지 5 · 헌금 현황 -->
@@ -329,6 +349,7 @@
         <i class="ti ti-table"></i>결과 보기
       </a>
       <div class="ofStatus" id="ofStatus"></div>
+      <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
 
     <!-- 페이지 4 · 연간계획 (앱 내 이미지 뷰어) -->
@@ -343,6 +364,7 @@
         <img class="planImg" src="plan-2.jpg" alt="연간계획 2페이지" loading="lazy">
         <div class="planPg">2 / 2 페이지</div>
       </div>
+      <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
   </main>
 
@@ -357,6 +379,13 @@
 </div>
 
 <script>
+// ── 저작권 콘솔 경고 ─────────────────────────────
+try{
+  console.log('%c송탄영광교회 중고등부 교사용 앱', 'font-size:20px;font-weight:800;color:#e8590c');
+  console.log('%cCopyright (c) 2026 visionspeaker. All rights reserved.', 'font-size:12px;color:#888');
+  console.log('%c⚠ 무단 복제·배포·전송·전시 및 2차적저작물 작성 금지\n본 저작물의 모든 권리는 visionspeaker에게 귀속됩니다.\n무단 이용 시 저작권법에 따라 민·형사상 책임을 질 수 있습니다.', 'font-size:12px;font-weight:700;color:#d92d20');
+}catch(e){}
+
 // ── 학생 공유 링크 데이터 ─────────────────────────────
 const SHARES = [
   { t:"중고등부 앱",        v:"https://visionspeaker.github.io/sgy/",  ic:"ti-device-mobile",     cl:"or" },
