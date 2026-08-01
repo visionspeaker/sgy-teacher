@@ -150,6 +150,7 @@
   var SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?usp=drivesdk";
   var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv";
   var TEACHERS = ["이윤아","서예진","조현태","나선인","홍윤기","이은규","최영미","이다은","황윤정","김수진","장요한","최영세","최시혁","강유석","박션"];
+  var EXCLUDE = ["김도규"]; // 집계에서 개별 제외(교사 아님)
 
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function fmt1(n){ return (Math.round(n*10)/10).toFixed(1); }
@@ -195,6 +196,7 @@
       var nm=(rows[i][IDX.name]||'').trim();
       if(!nm) continue;
       if(TEACHERS.indexOf(nm)!==-1){ teacherCount++; continue; }
+      if(EXCLUDE.indexOf(nm)!==-1){ continue; }
       students.push(rows[i]);
       var ts=(rows[i][IDX.time]||'').trim(); if(ts) lastTime=ts;
     }
