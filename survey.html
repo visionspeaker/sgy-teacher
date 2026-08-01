@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!--
+  송탄영광교회 중고등부 교사용 앱 — 수련회 설문조사 결과 대시보드
+  여름 수련회 설문조사 결과(학생 의견) 실시간 집계
+
+  Copyright (c) 2026 visionspeaker (실명: 강유석). All rights reserved.
+  무단 복제·배포·전송·전시 및 2차적저작물 작성 금지. 문의: visionspeaker[at]kakao.com
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>수련회 설문조사 결과 · 송탄영광교회 중고등부</title>
+<meta name="description" content="여름 수련회 설문조사 결과(학생 의견) 실시간 대시보드">
+<meta name="author" content="visionspeaker"/>
+<meta name="copyright" content="Copyright (c) 2026 visionspeaker. All rights reserved."/>
+<meta name="theme-color" content="#e8590c">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f1ea; --card:#ffffff; --line:#ece4d8;
+    --tx:#2c2620; --tx2:#6b6357; --tx3:#9a9184;
+    --primary:#e8590c; --primary-soft:#fdeee2;
+    --purple:#6c5ce7; --purple-soft:#efecff;
+    --teal:#0ca678; --teal-soft:#dff7f3;
+    --amber:#e8930c; --blue:#2f80ed;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--tx);
+    padding:0 0 40px;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+  header{background:linear-gradient(120deg,#f59e0b,#e8590c);color:#fff;padding:calc(env(safe-area-inset-top) + 20px) 0 22px;
+    box-shadow:0 6px 20px rgba(232,89,12,.22)}
+  .hd{display:flex;align-items:flex-start;gap:12px}
+  .hd .ic{width:46px;height:46px;flex:none;border-radius:13px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px}
+  .hd h1{font-size:19px;font-weight:800;margin:0}
+  .hd p{font-size:12.5px;margin:3px 0 0;opacity:.95}
+  .hbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+  .hbtn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--primary);font-weight:700;font-size:13px;
+    border:0;border-radius:11px;padding:10px 14px;text-decoration:none;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.10)}
+  .hbtn.ghost{background:rgba(255,255,255,.16);color:#fff;box-shadow:none;border:1px solid rgba(255,255,255,.4)}
+  .hbtn:active{transform:scale(.97)}
+  .updated{font-size:11.5px;opacity:.9;margin-top:12px;display:flex;align-items:center;gap:5px}
+
+  .sec-t{font-size:12px;font-weight:800;color:var(--tx3);letter-spacing:.5px;margin:26px 2px 12px;text-transform:uppercase}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px;box-shadow:0 3px 12px rgba(58,42,29,.05)}
+  .kpi .l{font-size:11.5px;color:var(--tx2);font-weight:500}
+  .kpi .v{font-size:26px;font-weight:800;color:var(--primary);margin-top:5px;line-height:1}
+  .kpi .v small{font-size:14px;color:var(--tx3);font-weight:700}
+  .kpi .s{font-size:11px;color:var(--tx3);margin-top:5px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px;
+    box-shadow:0 3px 12px rgba(58,42,29,.05);margin-bottom:14px}
+  .card h3{font-size:15px;font-weight:700;margin:0 0 3px}
+  .card .desc{font-size:11.5px;color:var(--tx3);margin:0 0 12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .chartBox{position:relative}
+
+  .avgList{display:flex;flex-direction:column;gap:12px}
+  .avgRow .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .avgRow .nm{font-size:13px;font-weight:600;color:var(--tx)}
+  .avgRow .sc{font-size:13px;font-weight:800;color:var(--primary)}
+  .avgRow .sc small{font-size:10.5px;color:var(--tx3);font-weight:600}
+  .bar{height:9px;border-radius:6px;background:#f0e9df;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#f59e0b,#e8590c)}
+
+  .seg{display:flex;gap:6px;background:#f0e9df;border-radius:12px;padding:4px;margin-bottom:12px}
+  .seg button{flex:1;border:0;background:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--tx2);
+    padding:8px 4px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:#fff;color:var(--primary);box-shadow:0 2px 6px rgba(58,42,29,.08)}
+  .feed{display:flex;flex-direction:column;gap:10px;max-height:520px;overflow-y:auto}
+  .cmt{background:#faf7f2;border:1px solid var(--line);border-radius:13px;padding:12px 13px}
+  .cmt .who{font-size:12px;font-weight:700;color:var(--primary);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+  .cmt .tx{font-size:13px;color:var(--tx);white-space:pre-wrap;word-break:break-word}
+  .empty{font-size:12.5px;color:var(--tx3);text-align:center;padding:24px 0}
+
+  .loading{text-align:center;color:var(--tx2);padding:60px 0;font-size:14px}
+  .loading i{font-size:30px;color:var(--primary);display:block;margin-bottom:12px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .errbox{background:#fff4f4;border:1px solid #f3caca;color:#b42318;border-radius:14px;padding:16px;font-size:13px;line-height:1.6}
+  .copyr{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;margin:22px 4px 2px}
+  @media(max-width:560px){ .kpis{gap:8px} .kpi{padding:13px 11px} .kpi .v{font-size:22px} .grid2{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="hd">
+      <div class="ic"><i class="ti ti-clipboard-data"></i></div>
+      <div>
+        <h1>여름 수련회 설문조사 결과</h1>
+        <p>학생 의견 실시간 집계 · 2026</p>
+      </div>
+    </div>
+    <div class="hbtns">
+      <a class="hbtn" href="https://docs.google.com/spreadsheets/d/1Fz7dWgf6tlE47697aQ1yeWxfljSkB7lK2QhhfGWTnME/edit?usp=drivesdk" target="_blank" rel="noopener"><i class="ti ti-table"></i>스프레드시트 바로가기</a>
+      <button class="hbtn ghost" id="reloadBtn"><i class="ti ti-refresh"></i>새로고침</button>
+      <a class="hbtn ghost" href="./"><i class="ti ti-arrow-left"></i>앱으로</a>
+    </div>
+    <div class="updated" id="updated"><i class="ti ti-clock"></i><span>불러오는 중…</span></div>
+  </div>
+</header>
+
+<div class="wrap" id="content">
+  <div class="loading"><i class="ti ti-loader-2"></i>설문 결과를 불러오는 중입니다…</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SHEET_ID = "1Fz7dWgf6tlE47697aQ1yeWxfljSkB7lK2QhhfGWTnME";
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv";
+  // 교사 명단(집계 제외) — 학생 의견만 취합
+  var TEACHERS = ["이윤아","서예진","조현태","나선인","홍윤기","이은규","최영미","이다은","황윤정","김수진","장요한","최영세","최시혁","강유석","박션"];
+
+  // ── CSV 파서(따옴표·줄바꿈 안전) ──
+  function parseCSV(text){
+    var rows=[], row=[], cur='', i=0, q=false;
+    while(i<text.length){
+      var ch=text[i];
+      if(q){
+        if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i+=2;continue;} q=false;i++;continue; }
+        cur+=ch;i++;continue;
+      }
+      if(ch==='"'){q=true;i++;continue;}
+      if(ch===','){row.push(cur);cur='';i++;continue;}
+      if(ch==='\r'){i++;continue;}
+      if(ch==='\n'){row.push(cur);rows.push(row);row=[];cur='';i++;continue;}
+      cur+=ch;i++;
+    }
+    if(cur!==''||row.length){row.push(cur);rows.push(row);}
+    return rows;
+  }
+
+  // 헤더 키워드로 열 인덱스 찾기(열 순서가 바뀌어도 견고)
+  function colIndex(headers, keywords){
+    for(var i=0;i<headers.length;i++){
+      var h=(headers[i]||'').replace(/\s+/g,'');
+      for(var k=0;k<keywords.length;k++){ if(h.indexOf(keywords[k])!==-1) return i; }
+    }
+    return -1;
+  }
+
+  function fmt1(n){ return (Math.round(n*10)/10).toFixed(1); }
+
+  var charts=[];
+  function destroyCharts(){ charts.forEach(function(c){ try{c.destroy();}catch(e){} }); charts=[]; }
+
+  function render(csv){
+    var rows = parseCSV(csv).filter(function(r){ return r.length>1; });
+    if(rows.length<2){ throw new Error("데이터가 없습니다."); }
+    var headers = rows[0];
+    var IDX = {
+      name:   colIndex(headers,["이름"]),
+      satis:  colIndex(headers,["전체적인만족도"]),
+      bus:    colIndex(headers,["버스"]),
+      meal:   colIndex(headers,["식사"]),
+      snack:  colIndex(headers,["간식"]),
+      word:   colIndex(headers,["저녁집회","말씀특강"]),
+      praise: colIndex(headers,["찬양콘서트","워십"]),
+      lodge:  colIndex(headers,["숙소"]),
+      trans:  colIndex(headers,["어떻게들어왔","출발전"]),
+      cost:   colIndex(headers,["수련회비","금액"]),
+      best:   colIndex(headers,["가장좋았던"]),
+      review: colIndex(headers,["후기"]),
+      thanks: colIndex(headers,["감사"])
+    };
+
+    // 학생 행만: 이름 있고 + 교사 명단 제외
+    var students = [];
+    for(var i=1;i<rows.length;i++){
+      var nm = (rows[i][IDX.name]||'').trim();
+      if(!nm) continue;
+      if(TEACHERS.indexOf(nm)!==-1) continue;
+      students.push(rows[i]);
+    }
+
+    var METRICS = [
+      {key:'satis', label:'전체 만족도', icon:'ti-mood-smile'},
+      {key:'word',  label:'저녁집회·말씀', icon:'ti-book-2'},
+      {key:'praise',label:'찬양·워십', icon:'ti-music'},
+      {key:'meal',  label:'식사', icon:'ti-tools-kitchen-2'},
+      {key:'snack', label:'밤 간식', icon:'ti-cookie'},
+      {key:'bus',   label:'이동 버스', icon:'ti-bus'},
+      {key:'lodge', label:'숙소', icon:'ti-bed'}
+    ];
+    function avg(key){
+      var s=0,c=0;
+      students.forEach(function(r){
+        var v=parseFloat((r[IDX[key]]||'').trim());
+        if(!isNaN(v)){ s+=v; c++; }
+      });
+      return c? s/c : 0;
+    }
+    var metricAvgs = METRICS.map(function(m){ return {label:m.label, icon:m.icon, val:avg(m.key)}; });
+
+    // 전체 만족도 분포 1~5
+    var dist=[0,0,0,0,0];
+    students.forEach(function(r){
+      var v=Math.round(parseFloat((r[IDX.satis]||'').trim()));
+      if(v>=1&&v<=5) dist[v-1]++;
+    });
+
+    // 교통수단(키워드 정규화)
+    function normTrans(t){
+      t=(t||'').replace(/\s+/g,'');
+      if(!t) return null;
+      if(t.indexOf('걸어')!==-1||t.indexOf('도보')!==-1) return '도보';
+      if(t.indexOf('교회')!==-1) return '교회 차';
+      if(t.indexOf('선생')!==-1) return '선생님 차';
+      if(t.indexOf('자차')!==-1) return '자차(가족)';
+      if(t.indexOf('부모')!==-1) return '부모님 차';
+      return '기타(카풀 등)';
+    }
+    // 수련회비(키워드 정규화)
+    function normCost(t){
+      t=(t||'').replace(/\s+/g,'');
+      if(!t) return null;
+      if(t.indexOf('적당')!==-1) return '적당하다';
+      if(t.indexOf('비싸')!==-1) return '비싸다';
+      if(t.indexOf('싸')!==-1) return '싸다';
+      return '기타';
+    }
+    function tally(key, normFn){
+      var m={};
+      students.forEach(function(r){
+        var v=normFn(r[IDX[key]]);
+        if(v){ m[v]=(m[v]||0)+1; }
+      });
+      return m;
+    }
+    var transM = tally('trans', normTrans);
+    var costM  = tally('cost', normCost);
+
+    // 자유의견(이름+내용)
+    function collect(key){
+      var out=[];
+      students.forEach(function(r){
+        var t=(r[IDX[key]]||'').trim();
+        if(t && t!=='.' && t!=='-' && t.length>1){ out.push({who:(r[IDX.name]||'').trim(), tx:t}); }
+      });
+      return out;
+    }
+    var fBest=collect('best'), fReview=collect('review'), fThanks=collect('thanks');
+
+    var overall = metricAvgs.reduce(function(a,b){return a+b.val;},0)/metricAvgs.length;
+
+    // ── HTML 구성 ──
+    var html='';
+    html+='<div class="sec-t">한눈에 보기</div>';
+    html+='<div class="kpis">';
+    html+='<div class="kpi"><div class="l">응답 학생</div><div class="v">'+students.length+'<small>명</small></div><div class="s">교사 제외 집계</div></div>';
+    html+='<div class="kpi"><div class="l">전체 만족도</div><div class="v">'+fmt1(avg("satis"))+'<small>/5</small></div><div class="s">평균 별점</div></div>';
+    html+='<div class="kpi"><div class="l">종합 평균</div><div class="v">'+fmt1(overall)+'<small>/5</small></div><div class="s">7개 항목 평균</div></div>';
+    html+='</div>';
+
+    html+='<div class="sec-t">항목별 평균 점수</div>';
+    html+='<div class="card"><div class="avgList">';
+    metricAvgs.forEach(function(m){
+      var pct=Math.max(0,Math.min(100, m.val/5*100));
+      html+='<div class="avgRow"><div class="top"><span class="nm"><i class="ti '+m.icon+'" style="color:var(--tx3);margin-right:5px;vertical-align:-2px"></i>'+m.label+'</span>'
+        +'<span class="sc">'+fmt1(m.val)+'<small>/5</small></span></div>'
+        +'<div class="bar"><i style="width:'+pct+'%"></i></div></div>';
+    });
+    html+='</div></div>';
+
+    html+='<div class="sec-t">분포 · 응답 현황</div>';
+    html+='<div class="grid2">';
+    html+='<div class="card"><h3>전체 만족도 분포</h3><div class="desc">1점(낮음) ~ 5점(높음)</div><div class="chartBox"><canvas id="cDist" height="200"></canvas></div></div>';
+    html+='<div class="card"><h3>수련회비 적정성</h3><div class="desc">학생이 느낀 금액 수준</div><div class="chartBox"><canvas id="cCost" height="200"></canvas></div></div>';
+    html+='</div>';
+    html+='<div class="card"><h3>교회 집결 방법(1일차)</h3><div class="desc">출발 전 교회로 온 방법</div><div class="chartBox"><canvas id="cTrans" height="190"></canvas></div></div>';
+
+    html+='<div class="sec-t">학생 의견</div>';
+    html+='<div class="card">';
+    html+='<div class="seg"><button data-f="review" class="on">후기 ('+fReview.length+')</button><button data-f="best">좋았던 순서 ('+fBest.length+')</button><button data-f="thanks">감사 메시지 ('+fThanks.length+')</button></div>';
+    html+='<div class="feed" id="feed"></div>';
+    html+='</div>';
+
+    html+='<div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>';
+
+    document.getElementById('content').innerHTML = html;
+
+    // 업데이트 시각
+    var now=new Date();
+    var hh=now.getHours(), ap=hh<12?'오전':'오후', h12=hh%12||12;
+    var mm=('0'+now.getMinutes()).slice(-2);
+    document.getElementById('updated').innerHTML='<i class="ti ti-clock"></i><span>최종 갱신 '+(now.getMonth()+1)+'/'+now.getDate()+' '+ap+' '+h12+':'+mm+' · 응답 '+students.length+'명</span>';
+
+    // ── 차트 ──
+    destroyCharts();
+    var ORANGE='#e8590c', tickC='#6b6357', gridC='rgba(0,0,0,.06)';
+    Chart.defaults.font.family="'Noto Sans KR', sans-serif";
+    Chart.defaults.color=tickC;
+
+    charts.push(new Chart(document.getElementById('cDist'),{
+      type:'bar',
+      data:{labels:['1점','2점','3점','4점','5점'],
+        datasets:[{data:dist,backgroundColor:['#f3b0a0','#f6c98f','#f6df8a','#f0a94e','#e8590c'],borderRadius:7,maxBarThickness:46}]},
+      options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.y+'명';}}}},
+        scales:{y:{beginAtZero:true,ticks:{precision:0,stepSize:1},grid:{color:gridC}},x:{grid:{display:false}}},
+        responsive:true,maintainAspectRatio:false}
+    }));
+
+    function pie(id, map, colors){
+      var labels=Object.keys(map), data=labels.map(function(k){return map[k];});
+      return new Chart(document.getElementById(id),{
+        type:'doughnut',
+        data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderColor:'#fff',borderWidth:2}]},
+        options:{cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:10,font:{size:11.5}}},
+          tooltip:{callbacks:{label:function(c){var tot=data.reduce(function(a,b){return a+b;},0);var p=tot?Math.round(c.parsed/tot*100):0;return ' '+c.label+': '+c.parsed+'명 ('+p+'%)';}}}},
+          responsive:true,maintainAspectRatio:false}
+      });
+    }
+    charts.push(pie('cCost', costM, ['#1dbf8f','#e8590c','#f0a94e','#c9c1b4']));
+    charts.push(pie('cTrans', transM, ['#e8590c','#6c5ce7','#2f80ed','#0ca678','#f0a94e','#c9c1b4']));
+
+    // ── 의견 피드 토글 ──
+    var feeds={review:fReview, best:fBest, thanks:fThanks};
+    var feedEl=document.getElementById('feed');
+    function showFeed(k){
+      var arr=feeds[k]||[];
+      if(!arr.length){ feedEl.innerHTML='<div class="empty">아직 등록된 내용이 없습니다.</div>'; return; }
+      feedEl.innerHTML=arr.map(function(o){
+        var who=o.who?o.who.replace(/</g,'&lt;'):'익명';
+        var tx=o.tx.replace(/</g,'&lt;');
+        return '<div class="cmt"><div class="who"><i class="ti ti-user-circle"></i>'+who+'</div><div class="tx">'+tx+'</div></div>';
+      }).join('');
+    }
+    var segBtns=document.querySelectorAll('.seg button');
+    segBtns.forEach(function(b){ b.addEventListener('click',function(){
+      segBtns.forEach(function(x){x.classList.remove('on');}); b.classList.add('on'); showFeed(b.dataset.f);
+    }); });
+    showFeed('review');
+  }
+
+  function showError(msg){
+    document.getElementById('content').innerHTML='<div class="errbox"><b>결과를 불러오지 못했습니다.</b><br>'+msg+
+      '<br><br>· 인터넷 연결을 확인하거나<br>· 잠시 후 새로고침 해주세요.<br>· 스프레드시트 공유 설정이 &ldquo;링크가 있는 모든 사용자&rdquo; 보기여야 실시간 집계가 가능합니다.</div>';
+    document.getElementById('updated').innerHTML='<i class="ti ti-alert-triangle"></i><span>불러오기 실패</span>';
+  }
+
+  function load(){
+    document.getElementById('content').innerHTML='<div class="loading"><i class="ti ti-loader-2"></i>설문 결과를 불러오는 중입니다…</div>';
+    fetch(CSV_URL + '&_cb=' + Date.now(), {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+      .then(function(t){ render(t); })
+      .catch(function(e){ showError(String(e.message||e)); });
+  }
+
+  document.getElementById('reloadBtn').addEventListener('click', load);
+  load();
+})();
+</script>
+</body>
+</html>
