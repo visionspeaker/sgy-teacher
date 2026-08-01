@@ -32,30 +32,28 @@
   .wrap{max-width:900px;margin:0 auto;padding:0 16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 22px}
 
-  /* 헤더 */
   .head{position:relative;overflow:hidden;padding-top:26px}
   .head .strip{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--teal) 0 40%,var(--amber2) 40% 72%,var(--coral2) 72% 100%)}
-  .head .kicker{font-size:13px;color:var(--tx3);font-weight:600;letter-spacing:.2px}
+  .head .kicker{font-size:13px;color:var(--tx3);font-weight:600}
   .head h1{font-size:30px;line-height:1.2;margin:6px 0 0;font-weight:900;letter-spacing:-.5px}
   .head h1 .sub{color:var(--tx3);font-weight:700}
   .metaRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:14px;font-size:13px;color:var(--tx2)}
-  .badge{display:inline-flex;align-items:center;gap:6px;background:#e5f2ec;color:var(--teal);font-weight:700;font-size:12.5px;
-    padding:5px 11px;border-radius:999px}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#e5f2ec;color:var(--teal);font-weight:700;font-size:12.5px;padding:5px 11px;border-radius:999px}
   .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   .metaRow .sep{color:var(--line)}
   .acts{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
-  .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
-    text-decoration:none;border-radius:11px;padding:9px 14px;border:1px solid var(--line);background:#fff;color:var(--tx)}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;border-radius:11px;padding:9px 14px;border:1px solid var(--line);background:#fff;color:var(--tx)}
   .btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}
   .btn:active{transform:scale(.97)}
 
   .grid{display:grid;gap:14px;margin-top:14px}
   .g-kpi{grid-template-columns:1.55fr 1fr 1fr}
   .g-2{grid-template-columns:1fr 1fr}
-  .sec-t{font-size:12px;font-weight:800;color:var(--tx3);letter-spacing:.6px;margin:26px 4px 12px;text-transform:uppercase}
+  .sec-t{font-size:12px;font-weight:800;color:var(--tx3);letter-spacing:.6px;margin:28px 4px 12px;text-transform:uppercase}
+  h3.t{font-size:17px;font-weight:800;margin:0}
+  .note{font-size:12.5px;color:var(--tx3);margin:6px 0 0}
 
-  /* KPI: 도넛 + 평균 + 미니분포 */
   .kpiMain{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
   .ring{width:118px;height:118px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;position:relative}
   .ring::after{content:"";position:absolute;inset:13px;background:var(--card);border-radius:50%}
@@ -71,21 +69,18 @@
   .mini .cnt{font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:3px}
   .mini .b{width:100%;max-width:34px;border-radius:6px 6px 3px 3px;min-height:3px}
   .mini .x{font-size:10.5px;color:var(--tx3);margin-top:5px}
-
   .hl .l{font-size:12px;color:var(--tx3);font-weight:600}
   .hl .big{font-size:26px;font-weight:800;margin-top:8px}
   .hl .s{font-size:12.5px;color:var(--tx2);margin-top:6px}
   .hl.best{border-top:3px solid var(--teal)}
   .hl.worst{border-top:3px solid var(--coral)}
 
-  /* 항목별 막대 */
   .avg{display:flex;flex-direction:column;gap:14px}
   .avgRow{display:grid;grid-template-columns:86px 1fr 40px;align-items:center;gap:12px}
   .avgRow .nm{font-size:13.5px;font-weight:600;color:var(--tx)}
   .avgRow .bar{height:12px;border-radius:7px;background:var(--track);overflow:hidden}
   .avgRow .bar > i{display:block;height:100%;border-radius:7px}
   .avgRow .sc{font-size:14px;font-weight:800;text-align:right}
-
   .subT{font-size:13px;color:var(--tx2);font-weight:600;margin:2px 0 9px}
   .subT.mt{margin-top:20px}
   .stack{display:flex;height:40px;border-radius:10px;overflow:hidden;background:var(--track)}
@@ -95,32 +90,57 @@
   .legend .d{width:9px;height:9px;border-radius:50%;flex:none}
   .legend .it b{color:var(--tx);font-weight:800}
 
-  /* 의견 피드 */
-  .seg-tabs{display:flex;gap:6px;background:var(--track);border-radius:12px;padding:4px;margin-bottom:14px}
-  .seg-tabs button{flex:1;border:0;background:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--tx2);
-    padding:9px 4px;border-radius:9px;cursor:pointer}
-  .seg-tabs button.on{background:#fff;color:var(--teal);box-shadow:0 1px 4px rgba(0,0,0,.06)}
-  .feed{display:flex;flex-direction:column;gap:11px;max-height:560px;overflow-y:auto}
-  .cmt{border:1px solid var(--line);border-radius:14px;padding:13px 15px;border-left:3px solid var(--green2)}
-  .cmt .who{font-size:12px;font-weight:800;color:var(--teal);margin-bottom:5px}
-  .cmt .tx{font-size:13.5px;color:var(--tx);white-space:pre-wrap;word-break:break-word;line-height:1.6}
-  .empty{font-size:12.5px;color:var(--tx3);text-align:center;padding:26px 0}
+  /* 응답 지도 (히트맵) */
+  .hmScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:6px}
+  .hmScroll::-webkit-scrollbar{height:7px}
+  .hmScroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+  .hm{min-width:560px}
+  .hmRow{display:grid;grid-template-columns:76px repeat(var(--cols),minmax(52px,1fr));gap:6px;align-items:center}
+  .hmRow + .hmRow{margin-top:6px}
+  .hmHead .hc{font-size:11.5px;font-weight:700;color:var(--tx2);text-align:center;padding-bottom:2px}
+  .hmHead .hn{font-size:12px;font-weight:700;color:var(--tx3)}
+  .hmRow .hn{font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cell{height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+  .hmAvg{margin-top:8px;border-top:1px solid var(--line);padding-top:8px}
+  .hmAvg .hn{font-weight:800;color:var(--tx)}
+  .hmAvg .ac{text-align:center;font-size:13.5px;font-weight:800;color:var(--tx)}
+  .hmLegend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--tx3)}
+  .hmLegend .sw{width:22px;height:14px;border-radius:4px}
+  .hmLegend .hint{margin-left:6px;color:var(--tx3)}
+
+  /* 키워드 칩 */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13.5px;font-weight:600;color:var(--tx)}
+  .chip b{font-weight:800;color:var(--teal)}
+  .chip.top{background:var(--teal);border-color:var(--teal);color:#fff}
+  .chip.top b{color:#fff}
+
+  /* 후기·감사 2단 카드 */
+  .mcards{column-count:2;column-gap:14px;margin-top:2px}
+  .mcard{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 14px;background:#fff;border:1px solid var(--line);
+    border-left:4px solid var(--green2);border-radius:14px;padding:14px 16px}
+  .mcHead{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex-wrap:wrap}
+  .mcWho{font-size:14px;font-weight:800;color:var(--tx)}
+  .mcBadge{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px}
+  .mcTx{font-size:13.5px;color:var(--tx);white-space:pre-wrap;word-break:break-word;line-height:1.6}
+  .empty{font-size:12.5px;color:var(--tx3);text-align:center;padding:20px 0}
 
   .loading{text-align:center;color:var(--tx2);padding:70px 0;font-size:14px}
   .loading i{font-size:30px;color:var(--teal);display:block;margin-bottom:12px;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .errbox{background:#fbeeeb;border:1px solid #eecabf;color:#a4402c;border-radius:16px;padding:18px;font-size:13px;line-height:1.6}
-  .copyr{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;margin:24px 4px 2px}
+  .copyr{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;margin:26px 4px 2px}
   @media(max-width:640px){
     .g-kpi,.g-2{grid-template-columns:1fr}
     .head h1{font-size:24px}
     .card{padding:18px 16px}
+    .mcards{column-count:1}
   }
 </style>
 </head>
 <body>
 <div class="wrap" id="root">
-  <div class="card loading" style="border:0;background:transparent"><i class="ti ti-loader-2"></i>설문 결과를 불러오는 중입니다…</div>
+  <div class="loading"><i class="ti ti-loader-2"></i>설문 결과를 불러오는 중입니다…</div>
 </div>
 
 <script>
@@ -133,7 +153,6 @@
 
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function fmt1(n){ return (Math.round(n*10)/10).toFixed(1); }
-  function pct(a,b){ return b? Math.round(a/b*100) : 0; }
 
   function parseCSV(text){
     var rows=[], row=[], cur='', i=0, q=false;
@@ -149,40 +168,26 @@
     if(cur!==''||row.length){row.push(cur);rows.push(row);}
     return rows;
   }
-  function colIndex(headers, keys){
-    for(var i=0;i<headers.length;i++){
-      var h=(headers[i]||'').replace(/\s+/g,'');
-      for(var k=0;k<keys.length;k++){ if(h.indexOf(keys[k])!==-1) return i; }
-    }
+  function colIndex(H, keys){
+    for(var i=0;i<H.length;i++){ var h=(H[i]||'').replace(/\s+/g,'');
+      for(var k=0;k<keys.length;k++){ if(h.indexOf(keys[k])!==-1) return i; } }
     return -1;
   }
-  function scoreColor(v){
-    if(v>=4.5) return '#0f6e56';
-    if(v>=4.0) return '#5aa885';
-    if(v>=3.5) return '#86c0a0';
-    if(v>=3.0) return '#d99a2b';
-    return '#c65a44';
-  }
+  function scoreColor(v){ if(v>=4.5)return '#0f6e56'; if(v>=4.0)return '#5aa885'; if(v>=3.5)return '#86c0a0'; if(v>=3.0)return '#d99a2b'; return '#c65a44'; }
+  function hmCell(v){ return ({1:['#c0503f','#fff'],2:['#e08a5a','#fff'],3:['#ecc94b','#5a4a12'],4:['#8fc9a0','#1c5a3f'],5:['#2f8f70','#fff']})[v] || ['#efeadf','#9c968a']; }
+  function satColor(v){ return ({1:'#c0503f',2:'#d5764f',3:'#d99a2b',4:'#5aa885',5:'#0f6e56'})[Math.round(v)] || '#b8b1a3'; }
+  function satBadge(v){ return ({1:['#f8e0dc','#a5402c'],2:['#f8e6dd','#b45a36'],3:['#faf0d8','#a9761a'],4:['#e8f2ec','#3f8168'],5:['#e3f0ea','#0f6e56']})[Math.round(v)] || ['#efeadf','#6f6a5f']; }
 
   function render(csv){
     var rows = parseCSV(csv).filter(function(r){ return r.length>1; });
     if(rows.length<2) throw new Error("데이터가 없습니다.");
     var H = rows[0];
     var IDX = {
-      time:  colIndex(H,["타임스탬프","타임스템프"]),
-      name:  colIndex(H,["이름"]),
-      satis: colIndex(H,["전체적인만족도"]),
-      bus:   colIndex(H,["버스"]),
-      meal:  colIndex(H,["식사"]),
-      snack: colIndex(H,["간식"]),
-      word:  colIndex(H,["저녁집회","말씀특강"]),
-      praise:colIndex(H,["찬양콘서트","워십"]),
-      lodge: colIndex(H,["숙소"]),
-      trans: colIndex(H,["어떻게들어왔","출발전"]),
-      cost:  colIndex(H,["수련회비","금액"]),
-      best:  colIndex(H,["가장좋았던"]),
-      review:colIndex(H,["후기"]),
-      thanks:colIndex(H,["감사"])
+      time:colIndex(H,["타임스탬프","타임스템프"]), name:colIndex(H,["이름"]),
+      satis:colIndex(H,["전체적인만족도"]), bus:colIndex(H,["버스"]), meal:colIndex(H,["식사"]),
+      snack:colIndex(H,["간식"]), word:colIndex(H,["저녁집회","말씀특강"]), praise:colIndex(H,["찬양콘서트","워십"]),
+      lodge:colIndex(H,["숙소"]), trans:colIndex(H,["어떻게들어왔","출발전"]), cost:colIndex(H,["수련회비","금액"]),
+      best:colIndex(H,["가장좋았던"]), review:colIndex(H,["후기"]), thanks:colIndex(H,["감사"])
     };
 
     var students=[], teacherCount=0, lastTime='';
@@ -195,109 +200,126 @@
     }
 
     var METRICS=[
-      {key:'satis',label:'전체 만족도'},
-      {key:'word', label:'저녁집회'},
-      {key:'praise',label:'찬양·워십'},
-      {key:'meal', label:'식사'},
-      {key:'snack',label:'밤 간식'},
-      {key:'bus',  label:'이동 버스'},
-      {key:'lodge',label:'숙소'}
+      {key:'satis',label:'전체 만족도'},{key:'word',label:'저녁집회'},{key:'praise',label:'찬양·워십'},
+      {key:'meal',label:'식사'},{key:'snack',label:'밤 간식'},{key:'bus',label:'버스'},{key:'lodge',label:'숙소'}
     ];
-    function avg(key){var s=0,c=0;students.forEach(function(r){var v=parseFloat((r[IDX[key]]||'').trim());if(!isNaN(v)){s+=v;c++;}});return c?s/c:0;}
-    var mAvg=METRICS.map(function(m){return {label:m.label,val:avg(m.key)};});
-    var sorted=mAvg.slice().sort(function(a,b){return b.val-a.val;});
-    var best=sorted[0], worst=sorted[sorted.length-1];
+    function num(r,key){ var v=parseFloat((r[IDX[key]]||'').trim()); return isNaN(v)?null:v; }
+    function avg(key){ var s=0,c=0; students.forEach(function(r){var v=num(r,key);if(v!=null){s+=v;c++;}}); return c?s/c:0; }
+    var mAvg=METRICS.map(function(m){ return {key:m.key,label:m.label,val:avg(m.key)}; });
+    var sorted=mAvg.slice().sort(function(a,b){return b.val-a.val;});          // 항목별 막대(버스 포함)
+    var pool=mAvg.filter(function(m){return m.key!=='bus';}).slice().sort(function(a,b){return b.val-a.val;}); // 최고/최저(버스 제외)
+    var best=pool[0], worst=pool[pool.length-1];
     var satisAvg=avg('satis');
 
     var dist=[0,0,0,0,0];
-    students.forEach(function(r){var v=Math.round(parseFloat((r[IDX.satis]||'').trim()));if(v>=1&&v<=5)dist[v-1]++;});
+    students.forEach(function(r){var v=Math.round(num(r,'satis'));if(v>=1&&v<=5)dist[v-1]++;});
     var distMax=Math.max.apply(null,dist)||1;
 
     function normTrans(t){t=(t||'').replace(/\s+/g,'');if(!t)return null;
       if(t.indexOf('걸어')!==-1||t.indexOf('도보')!==-1)return '걸어서';
-      if(t.indexOf('교회')!==-1)return '교회 차';
-      if(t.indexOf('선생')!==-1)return '선생님 차';
-      if(t.indexOf('자차')!==-1)return '자차(가족)';
-      if(t.indexOf('부모')!==-1)return '부모님 차';
-      return '다른 분 차';}
+      if(t.indexOf('교회')!==-1)return '교회 차'; if(t.indexOf('선생')!==-1)return '선생님 차';
+      if(t.indexOf('자차')!==-1)return '자차(가족)'; if(t.indexOf('부모')!==-1)return '부모님 차'; return '다른 분 차';}
     function normCost(t){t=(t||'').replace(/\s+/g,'');if(!t)return null;
-      if(t.indexOf('적당')!==-1)return '적당하다';
-      if(t.indexOf('비싸')!==-1)return '비싸다';
-      if(t.indexOf('싸')!==-1)return '싸다';
-      return '기타';}
+      if(t.indexOf('적당')!==-1)return '적당하다'; if(t.indexOf('비싸')!==-1)return '비싸다'; if(t.indexOf('싸')!==-1)return '싸다'; return '기타';}
     function tally(key,fn){var m={},order=[];students.forEach(function(r){var v=fn(r[IDX[key]]);if(v){if(!(v in m)){m[v]=0;order.push(v);}m[v]++;}});return {m:m,order:order};}
     var costT=tally('cost',normCost), transT=tally('trans',normTrans);
     var costColors={'적당하다':'#0f6e56','비싸다':'#d99a2b','싸다':'#c65a44','기타':'#b8b1a3'};
     var transPalette=['#0f6e56','#5aa885','#d99a2b','#c65a44','#8a86c2','#b8b1a3'];
 
-    function collect(key){var out=[];students.forEach(function(r){var t=(r[IDX[key]]||'').trim();if(t&&t!=='.'&&t!=='-'&&t.length>1)out.push({who:(r[IDX.name]||'').trim(),tx:t});});return out;}
-    var fReview=collect('review'), fBest=collect('best'), fThanks=collect('thanks');
+    // 가장 좋았던 순서 — 키워드 빈도
+    var KW=[
+      {label:'찬양·워십', re:/찬양|워십|콘서트/},
+      {label:'기도', re:/기도/},
+      {label:'저녁집회·말씀', re:/집회|말씀|설교|특강/},
+      {label:'식사·간식', re:/식사|간식|야식|치킨|국|먹/},
+      {label:'숙소·교제', re:/숙소|교제|룸메|친구|이야기|수다|방/}
+    ];
+    var kwCounts=KW.map(function(k){var c=0;students.forEach(function(r){var t=(r[IDX.best]||'');if(t&&k.re.test(t))c++;});return {label:k.label,n:c};})
+      .filter(function(x){return x.n>0;}).sort(function(a,b){return b.n-a.n;});
+
+    // 후기·감사 (이름+만족도+원문)
+    function collect(key){var out=[];students.forEach(function(r){var t=(r[IDX[key]]||'').trim();
+      if(t&&t!=='.'&&t!=='-'&&t.length>1)out.push({who:(r[IDX.name]||'').trim(),tx:t,sat:num(r,'satis')});});return out;}
+    var fReview=collect('review'), fThanks=collect('thanks');
+
+    // 응답 지도 데이터: 열=항목(평균 높은 순), 행=학생(개인 평균 높은 순)
+    var hmCols=mAvg.slice().sort(function(a,b){return b.val-a.val;});
+    var hmRows=students.map(function(r){
+      var vals=hmCols.map(function(c){return num(r,c.key);});
+      var pres=vals.filter(function(v){return v!=null;});
+      var mean=pres.length?pres.reduce(function(a,b){return a+b;},0)/pres.length:0;
+      return {name:(r[IDX.name]||'').trim(), vals:vals, mean:mean};
+    }).sort(function(a,b){return b.mean-a.mean;});
 
     var ringPct=Math.max(4,Math.min(100, satisAvg/5*100));
-
-    // ── HTML ──
     var h='';
+
     // 헤더
-    h+='<div class="card head">';
-    h+='<div class="strip"></div>';
+    h+='<div class="card head"><div class="strip"></div>';
     h+='<div class="kicker">송탄영광교회 중고등부</div>';
     h+='<h1>2026 여름수련회 <span class="sub">학생 설문 리포트</span></h1>';
     h+='<div class="metaRow"><span class="badge"><span class="dot"></span>설문 진행 중</span>';
     h+='<span>응답 <b>'+students.length+'</b>명</span><span class="sep">·</span>';
     h+='<span>마지막 응답 '+esc(lastTime||'-')+'</span><span class="sep">·</span>';
     h+='<span>교사·전도사 '+teacherCount+'명 제외</span></div>';
-    h+='<div class="acts">';
-    h+='<a class="btn pri" href="'+SHEET_URL+'" target="_blank" rel="noopener"><i class="ti ti-table"></i>스프레드시트 바로가기</a>';
+    h+='<div class="acts"><a class="btn pri" href="'+SHEET_URL+'" target="_blank" rel="noopener"><i class="ti ti-table"></i>스프레드시트 바로가기</a>';
     h+='<button class="btn" id="reloadBtn"><i class="ti ti-refresh"></i>새로고침</button>';
-    h+='<a class="btn" href="./"><i class="ti ti-arrow-left"></i>앱으로</a>';
-    h+='</div></div>';
+    h+='<a class="btn" href="./"><i class="ti ti-arrow-left"></i>앱으로</a></div></div>';
 
-    // KPI row
-    h+='<div class="grid g-kpi">';
-    h+='<div class="card"><div class="kpiMain">';
+    // KPI
+    h+='<div class="grid g-kpi"><div class="card"><div class="kpiMain">';
     h+='<div class="ring" style="background:conic-gradient(var(--teal) '+ringPct+'%, var(--track) 0)"><div class="in"><div class="l">응답</div><div class="n">'+students.length+'</div></div></div>';
-    h+='<div class="kpiR"><div class="lab">전체적인 만족도 평균</div><div class="big">'+fmt1(satisAvg)+'<small>/5.0</small></div>';
-    h+='<div class="mini">';
+    h+='<div class="kpiR"><div class="lab">전체적인 만족도 평균</div><div class="big">'+fmt1(satisAvg)+'<small>/5.0</small></div><div class="mini">';
     var distColor=['#d98368','#e2a06a','#e0b24e','#6fb391','#0f6e56'];
     for(var d=0;d<5;d++){var hp=Math.round(dist[d]/distMax*100);
       h+='<div class="col"><div class="cnt">'+dist[d]+'</div><div class="b" style="height:'+Math.max(4,hp)+'%;background:'+distColor[d]+'"></div><div class="x">'+(d+1)+'점</div></div>';}
     h+='</div></div></div></div>';
     h+='<div class="card hl best"><div class="l">가장 만족한 항목</div><div class="big" style="color:var(--teal)">'+esc(best.label)+'</div><div class="s">평균 '+fmt1(best.val)+'점</div></div>';
-    h+='<div class="card hl worst"><div class="l">가장 아쉬운 항목</div><div class="big" style="color:var(--coral)">'+esc(worst.label)+'</div><div class="s">평균 '+fmt1(worst.val)+'점</div></div>';
-    h+='</div>';
+    h+='<div class="card hl worst"><div class="l">가장 아쉬운 항목</div><div class="big" style="color:var(--coral)">'+esc(worst.label)+'</div><div class="s">평균 '+fmt1(worst.val)+'점</div></div></div>';
 
     // 항목별 만족도 + 비용/이동
-    h+='<div class="grid g-2">';
-    h+='<div class="card"><div class="sec-t" style="margin:0 0 4px">항목별 만족도</div><div class="subT">5점 만점 평균 · 높은 순</div><div class="avg">';
+    h+='<div class="grid g-2"><div class="card"><h3 class="t">항목별 만족도</h3><div class="subT">5점 만점 평균 · 높은 순</div><div class="avg">';
     sorted.forEach(function(m){var w=Math.max(0,Math.min(100,m.val/5*100));var c=scoreColor(m.val);
       h+='<div class="avgRow"><span class="nm">'+esc(m.label)+'</span><div class="bar"><i style="width:'+w+'%;background:'+c+'"></i></div><span class="sc" style="color:'+c+'">'+fmt1(m.val)+'</span></div>';});
     h+='</div></div>';
-
-    h+='<div class="card"><div class="sec-t" style="margin:0 0 4px">수련회비와 이동 수단</div><div class="subT">얼리버드 5만원 / 일반 6만원</div>';
+    h+='<div class="card"><h3 class="t">수련회비와 이동 수단</h3><div class="subT">얼리버드 5만원 / 일반 6만원</div>';
     h+=stackBlock('수련회비가 적정했나요?', costT, function(k){return costColors[k]||'#b8b1a3';});
     h+=stackBlock('1일차, 교회까지 어떻게 왔나요?', transT, function(k,i){return transPalette[i%transPalette.length];});
-    h+='</div>';
-    h+='</div>';
+    h+='</div></div>';
 
-    // 의견
-    h+='<div class="sec-t">학생 의견</div><div class="card">';
-    h+='<div class="seg-tabs"><button data-f="review" class="on">후기 ('+fReview.length+')</button><button data-f="best">좋았던 순서 ('+fBest.length+')</button><button data-f="thanks">감사 메시지 ('+fThanks.length+')</button></div>';
-    h+='<div class="feed" id="feed"></div></div>';
+    // 응답 지도(히트맵)
+    h+='<div class="sec-t">응답 지도</div><div class="card"><h3 class="t">응답 지도</h3><div class="note">학생 한 명이 각 항목에 준 점수 · 빨강일수록 낮은 점수</div>';
+    h+='<div class="hmScroll"><div class="hm" style="--cols:'+hmCols.length+'">';
+    h+='<div class="hmRow hmHead"><div class="hn">응답자</div>'+hmCols.map(function(c){return '<div class="hc">'+esc(c.label)+'</div>';}).join('')+'</div>';
+    hmRows.forEach(function(row){
+      h+='<div class="hmRow"><div class="hn">'+esc(row.name)+'</div>'+row.vals.map(function(v){
+        if(v==null) return '<div class="cell" style="background:#efeadf;color:#b9b2a4">·</div>';
+        var iv=Math.round(v), cc=hmCell(iv);
+        return '<div class="cell" style="background:'+cc[0]+';color:'+cc[1]+'">'+iv+'</div>';
+      }).join('')+'</div>';
+    });
+    h+='<div class="hmRow hmAvg"><div class="hn">평균</div>'+hmCols.map(function(c){return '<div class="ac">'+fmt1(c.val)+'</div>';}).join('')+'</div>';
+    h+='</div></div>';
+    h+='<div class="hmLegend"><span>낮음</span>';
+    [1,2,3,4,5].forEach(function(v){h+='<span class="sw" style="background:'+hmCell(v)[0]+'"></span>';});
+    h+='<span>높음</span><span class="hint">· 가로로 밀어서 전체 보기</span></div></div>';
+
+    // 가장 좋았던 순서
+    h+='<div class="sec-t">가장 좋았던 순서</div><div class="card"><h3 class="t">가장 좋았던 순서</h3><div class="note">주관식 응답에서 반복해 언급된 키워드</div><div class="chips">';
+    if(kwCounts.length){ kwCounts.forEach(function(k,i){ h+='<span class="chip'+(i===0?' top':'')+'">'+esc(k.label)+' <b>'+k.n+'명</b></span>'; }); }
+    else { h+='<span class="empty">아직 응답이 없습니다.</span>'; }
+    h+='</div></div>';
+
+    // 수련회 후기
+    h+='<div class="sec-t">수련회 후기</div><div class="card"><h3 class="t">수련회 후기</h3><div class="note">학생 응답 원문 · 왼쪽 색은 그 학생의 전체 만족도</div></div>';
+    h+=cardsBlock(fReview);
+    // 감사 메시지
+    h+='<div class="sec-t">감사 메시지</div><div class="card"><h3 class="t">감사 메시지</h3><div class="note">찬조·선생님들께 전하는 감사 · 왼쪽 색은 전체 만족도</div></div>';
+    h+=cardsBlock(fThanks);
 
     h+='<div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>';
 
     document.getElementById('root').innerHTML=h;
-
-    // 의견 피드
-    var feeds={review:fReview,best:fBest,thanks:fThanks};
-    var feedEl=document.getElementById('feed');
-    function show(k){var arr=feeds[k]||[];
-      if(!arr.length){feedEl.innerHTML='<div class="empty">아직 등록된 내용이 없습니다.</div>';return;}
-      feedEl.innerHTML=arr.map(function(o){return '<div class="cmt"><div class="who">'+esc(o.who||'익명')+'</div><div class="tx">'+esc(o.tx)+'</div></div>';}).join('');}
-    var tabs=document.querySelectorAll('.seg-tabs button');
-    tabs.forEach(function(b){b.addEventListener('click',function(){tabs.forEach(function(x){x.classList.remove('on');});b.classList.add('on');show(b.dataset.f);});});
-    show('review');
-
     var rb=document.getElementById('reloadBtn'); if(rb) rb.addEventListener('click',load);
 
     function stackBlock(title, t, colorFn){
@@ -308,15 +330,14 @@
         return '<span class="it"><span class="d" style="background:'+c+'"></span>'+esc(k)+' <b>'+t.m[k]+'</b></span>';}).join('');
       return '<div class="subT mt">'+esc(title)+'</div><div class="stack">'+segs+'</div><div class="legend">'+leg+'</div>';
     }
-  }
-  // stackBlock는 render 호출 전에도 필요하므로 밖에서도 정의
-  function stackBlock(title, t, colorFn){
-    var total=t.order.reduce(function(a,k){return a+t.m[k];},0)||1;
-    var segs=t.order.map(function(k,i){var w=t.m[k]/total*100;var c=colorFn(k,i);
-      return '<div class="seg" style="width:'+w+'%;background:'+c+'" title="'+k+' '+t.m[k]+'명">'+(w>=16?k:'')+'</div>';}).join('');
-    var leg=t.order.map(function(k,i){var c=colorFn(k,i);
-      return '<span class="it"><span class="d" style="background:'+c+'"></span>'+k+' <b>'+t.m[k]+'</b></span>';}).join('');
-    return '<div class="subT mt">'+title+'</div><div class="stack">'+segs+'</div><div class="legend">'+leg+'</div>';
+    function cardsBlock(arr){
+      if(!arr.length) return '<div class="card"><div class="empty">아직 등록된 내용이 없습니다.</div></div>';
+      return '<div class="mcards">'+arr.map(function(o){
+        var col=satColor(o.sat), bd=satBadge(o.sat);
+        var badge=(o.sat!=null)?'<span class="mcBadge" style="background:'+bd[0]+';color:'+bd[1]+'">만족도 '+Math.round(o.sat)+'</span>':'';
+        return '<div class="mcard" style="border-left-color:'+col+'"><div class="mcHead"><span class="mcWho">'+esc(o.who||'익명')+'</span>'+badge+'</div><div class="mcTx">'+esc(o.tx)+'</div></div>';
+      }).join('')+'</div>';
+    }
   }
 
   function showError(msg){
