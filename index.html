@@ -260,13 +260,13 @@
         <i class="ti ti-chevron-right ar"></i>
       </a>
       <div class="grid grid-top">
-        <a class="tile" href="https://vision153.notion.site/2026eda158ae8095999ac133933fd32a" target="_blank" rel="noopener">
-          <div class="ic no"><i class="ti ti-news"></i></div>
-          <div class="nm">온라인 주보</div><div class="ds">이번 주 예배 순서와 광고</div>
-        </a>
         <a class="tile" href="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/edit?usp=sharing" target="_blank" rel="noopener">
           <div class="ic rd"><i class="ti ti-calendar-check"></i></div>
           <div class="nm">온라인 출석체크</div><div class="ds">학생 출석 관리 시트</div>
+        </a>
+        <a class="tile" href="https://visionspeaker.github.io/youth-dashboard/">
+          <div class="ic dsh"><i class="ti ti-layout-dashboard"></i></div>
+          <div class="nm">사역 대시보드</div><div class="ds">출석·헌금·새친구 현황</div>
         </a>
         <a class="tile" href="https://notebooklm.google.com/notebook/39cf1a87-a821-49a9-925b-e399d86bea2b?authuser=3&pageId=none" target="_blank" rel="noopener">
           <div class="ic ai"><i class="ti ti-sparkles"></i></div>
@@ -279,10 +279,6 @@
         <a class="tile" href="https://band.us/@sgyct" target="_blank" rel="noopener">
           <div class="ic bd"><i class="ti ti-users-group"></i></div>
           <div class="nm">교사 밴드</div><div class="ds">공지·소통 커뮤니티</div>
-        </a>
-        <a class="tile" href="https://visionspeaker.github.io/youth-dashboard/">
-          <div class="ic dsh"><i class="ti ti-layout-dashboard"></i></div>
-          <div class="nm">사역 대시보드</div><div class="ds">출석·헌금·새친구 현황</div>
         </a>
         <div class="tile" onclick="go('offering')">
           <div class="ic am"><i class="ti ti-wallet"></i></div>
@@ -545,6 +541,8 @@ function go(s, keepScroll, skipHash){
       url:'https://docs.google.com/spreadsheets/d/1UNkBDRKk9MUJiGuaNoXLcAocCk7-hrP9oBlqDtuQ7Us/edit?usp=sharing' };
     const SURVEY = { t:'수련회 설문조사 결과 보기', s:'설문조사 결과 분석', ic:'ti-clipboard-data',
       url:'survey.html' };
+    const BULLETIN = { t:'온라인 주보', s:'이번 주 예배 순서와 광고', ic:'ti-news',
+      url:'https://vision153.notion.site/2026eda158ae8095999ac133933fd32a' };
 
     // 홈 상단 캠프 버튼: 신청은 T1 전까지, 설문은 T2 이후
     const cSignup = document.getElementById('campSignup');
@@ -569,6 +567,7 @@ function go(s, keepScroll, skipHash){
       if(now >= T1) h += row(SIGNUP, true, '');               // 신청: T1 이후 아카이브 노출(활성)
       h += (now >= T2) ? row(SURVEY, true, '')                 // 설문: T2 이후 활성
                        : row(SURVEY, false, '8/1(토) 08:00 오픈 예정'); // T2 전 잠금
+      h += row(BULLETIN, true, '');                            // 온라인 주보: 맨 아래 상시 노출
       box.innerHTML = h;
     }
   }catch(e){}
