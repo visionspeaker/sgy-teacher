@@ -199,6 +199,9 @@
       if(!nm) continue;
       if(TEACHERS.indexOf(nm)!==-1){ teacherCount++; continue; }
       if(EXCLUDE.indexOf(nm)!==-1){ continue; }
+      // 실제 응답만 집계: 점수 항목 중 하나라도 값이 있어야 함(이름칸 메모·미응답 행 제외)
+      var hasScore=['satis','word','praise','meal','snack','bus','lodge'].some(function(k){return !isNaN(parseFloat((rows[i][IDX[k]]||'').trim()));});
+      if(!hasScore) continue;
       students.push(rows[i]);
       var ts=(rows[i][IDX.time]||'').trim(); if(ts) lastTime=ts;
     }
