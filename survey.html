@@ -39,9 +39,11 @@
   .head h1 .sub{color:var(--tx3);font-weight:700}
   .metaRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:14px;font-size:13px;color:var(--tx2)}
   .badge{display:inline-flex;align-items:center;gap:6px;background:#e5f2ec;color:var(--teal);font-weight:700;font-size:12.5px;padding:5px 11px;border-radius:999px}
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .badge.done{background:#ece7db;color:var(--tx2)}
+  .badge i{font-size:14px}
   .metaRow .sep{color:var(--line)}
+  .metaSub{font-size:12.5px;color:var(--tx3);margin-top:9px;line-height:1.6}
+  .metaSub b{color:var(--tx2);font-weight:700}
   .acts{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
   .btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;border-radius:11px;padding:9px 14px;border:1px solid var(--line);background:#fff;color:var(--tx)}
   .btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}
@@ -260,10 +262,10 @@
     h+='<div class="card head"><div class="strip"></div>';
     h+='<div class="kicker">송탄영광교회 중고등부</div>';
     h+='<h1>2026 여름수련회 <span class="sub">학생 설문 리포트</span></h1>';
-    h+='<div class="metaRow"><span class="badge"><span class="dot"></span>설문 진행 중</span>';
+    h+='<div class="metaRow"><span class="badge done"><i class="ti ti-checks"></i>설문 종료 · 8/1~2</span>';
     h+='<span>응답 <b>'+students.length+'</b>명</span><span class="sep">·</span>';
-    h+='<span>마지막 응답 '+esc(lastTime||'-')+'</span><span class="sep">·</span>';
-    h+='<span>교사·전도사 '+teacherCount+'명 제외</span></div>';
+    h+='<span>마지막 응답 '+esc(lastTime||'-')+'</span></div>';
+    h+='<div class="metaSub">설문 미응답자: <b>신민준, 박온유, 앨런</b> (결과 반영 제외: 김도규)</div>';
     h+='<div class="acts"><a class="btn pri" href="'+SHEET_URL+'" target="_blank" rel="noopener"><i class="ti ti-table"></i>스프레드시트 바로가기</a>';
     h+='<button class="btn" id="reloadBtn"><i class="ti ti-refresh"></i>새로고침</button>';
     h+='<a class="btn" href="./"><i class="ti ti-arrow-left"></i>앱으로</a></div></div>';
@@ -276,8 +278,8 @@
     for(var d=0;d<5;d++){var hp=Math.round(dist[d]/distMax*100);
       h+='<div class="col"><div class="cnt">'+dist[d]+'</div><div class="b" style="height:'+Math.max(4,hp)+'%;background:'+distColor[d]+'"></div><div class="x">'+(d+1)+'점</div></div>';}
     h+='</div></div></div></div>';
-    h+='<div class="card hl best"><div class="l">가장 만족한 항목</div><div class="big" style="color:var(--teal)">'+esc(best.label)+'</div><div class="s">평균 '+fmt1(best.val)+'점</div></div>';
-    h+='<div class="card hl worst"><div class="l">가장 아쉬운 항목</div><div class="big" style="color:var(--coral)">'+esc(worst.label)+'</div><div class="s">평균 '+fmt1(worst.val)+'점</div></div></div>';
+    h+='<div class="card hl best"><div class="l">말씀·집회 만족도</div><div class="big" style="color:var(--teal)">'+fmt1(avg("word"))+'<span style="font-size:15px;color:var(--tx3)">/5</span></div><div class="s">저녁집회·말씀특강</div></div>';
+    h+='<div class="card hl best"><div class="l">찬양·워십 만족도</div><div class="big" style="color:var(--teal)">'+fmt1(avg("praise"))+'<span style="font-size:15px;color:var(--tx3)">/5</span></div><div class="s">찬양콘서트·주바라기</div></div></div>';
 
     // 항목별 만족도 + 비용/이동
     h+='<div class="grid g-2"><div class="card"><h3 class="t">항목별 만족도</h3><div class="subT">5점 만점 평균 · 높은 순</div><div class="avg">';
