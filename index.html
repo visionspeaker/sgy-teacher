@@ -230,6 +230,30 @@
   .attReason{width:100%;margin-top:7px;border:1px solid #cbb9a0;background:#fff;border-radius:8px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--tx);outline:none;box-sizing:border-box}
   .attReason:focus{border-color:var(--primary)}
   .attLoad{text-align:center;color:var(--tx2);padding:40px 0;font-size:13.5px}
+  .attDateSolo{margin:2px 0 12px}
+  .attGrp{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 2px 8px}
+  .attGrp .agL{font-size:12px;font-weight:800;letter-spacing:.3px}
+  .attGrp .agL span{opacity:.6;font-weight:600}
+  .attSaveCls{flex:none;font-size:11.5px;font-weight:700;color:#fff;background:var(--primary);border:0;border-radius:9px;padding:6px 12px;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+  .attSaveCls:active{transform:scale(.96)}
+  .attSaveCls[disabled]{opacity:.6}
+  #attStrip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:4px}
+  .stripHead{font-size:11.5px;font-weight:800;color:var(--tx3);margin-bottom:9px}
+  .stripHead span{color:#c3b9a8;font-weight:600}
+  .stripChips{display:flex;flex-wrap:wrap;gap:6px}
+  .scChip{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;background:#fdeceb;color:#d64532;border:1px solid #f3c9c4}
+  .scChip.done{background:#16a34a;color:#fff;border-color:#16a34a}
+  .stripLeg{display:flex;gap:16px;margin-top:11px;font-size:11px;color:var(--tx3)}
+  .stripLeg .d{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:4px}
+  .stripLeg .d.g{background:#16a34a} .stripLeg .d.r{background:#e24b4a}
+  .absBox{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .absHead{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:0;font-family:inherit;font-size:14px;font-weight:800;color:var(--tx);padding:14px 15px;cursor:pointer}
+  .absHead b{color:var(--primary);font-weight:800}
+  .absHead .ti{transition:transform .2s;color:var(--tx3)}
+  .absBody{padding:0 15px 14px}
+  .absActions{display:flex;justify-content:flex-end;margin-bottom:8px}
+  .absCopy{font-size:12px;font-weight:700;color:var(--primary);background:var(--surface);border:1px solid #f0cdb8;border-radius:9px;padding:6px 12px;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+  .absText{font-size:12.5px;color:#4a3b2c;line-height:1.9;background:#faf7f2;border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit}
   .ofView{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:9px;
     background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);border-radius:12px;padding:13px;
     font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:none}
@@ -287,10 +311,10 @@
         <i class="ti ti-chevron-right ar"></i>
       </a>
       <div class="grid grid-top">
-        <div class="tile" onclick="go('attend')">
+        <a class="tile" href="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/edit?usp=sharing" target="_blank" rel="noopener">
           <div class="ic rd"><i class="ti ti-calendar-check"></i></div>
-          <div class="nm">온라인 출석체크</div><div class="ds">앱에서 바로 출석 체크</div>
-        </div>
+          <div class="nm">온라인 출석체크</div><div class="ds">학생 출석 관리 시트</div>
+        </a>
         <a class="tile" href="https://visionspeaker.github.io/youth-dashboard/">
           <div class="ic dsh"><i class="ti ti-layout-dashboard"></i></div>
           <div class="nm">사역 대시보드</div><div class="ds">출석·헌금·새친구 현황</div>
@@ -420,18 +444,13 @@
     <!-- 페이지 7 · 출석체크 (앱 내 처리) -->
     <section class="screen" id="s-attend">
       <div class="sec-t">출석체크 · 주일</div>
-      <div class="attBar">
-        <div class="attDate"><i class="ti ti-calendar"></i><input type="date" id="attDate"></div>
-        <button class="attReload" id="attReload" aria-label="새로고침"><i class="ti ti-refresh"></i></button>
-      </div>
+      <div class="attDate attDateSolo"><i class="ti ti-calendar"></i><input type="date" id="attDate"></div>
       <div class="attSum">
         <div class="asc pres"><div class="l">출석</div><div class="v" id="asPres">0</div></div>
         <div class="asc abs"><div class="l">결석</div><div class="v" id="asAbs">0</div></div>
         <div class="asc rate"><div class="l">출석률</div><div class="v" id="asRate">0%</div></div>
       </div>
       <div id="attList"><div class="attLoad"><i class="ti ti-loader-2"></i> 명단을 불러오는 중…</div></div>
-      <button class="ofSave" id="attSave">저장하기</button>
-      <div class="ofStatus" id="attStatus"></div>
       <div class="copyr">© 2026 visionspeaker. All rights reserved. · 무단 복제·배포 금지</div>
     </section>
 
@@ -652,81 +671,115 @@ function go(s, keepScroll, skipHash){
     if(cur!==''||row.length){row.push(cur);rows.push(row);}
     return rows;
   }
-  (function(){ const d=new Date(), p=n=>('0'+n).slice(-2); dateEl.value=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); })();
+  // 날짜 기본값: 토요일까지는 지난 주일, 주일 당일엔 그날짜(= 이번 주 일요일)
+  (function(){ const d=new Date(); d.setDate(d.getDate()-d.getDay()); const p=n=>('0'+n).slice(-2); dateEl.value=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); })();
 
+  let saved={}; // 반별 저장 여부
+  const toast=(m)=>{ try{ if(typeof showToast==='function') showToast(m); }catch(e){} };
+  const isReg=(s)=> s.cls!=='새친구';   // 재적(장결은 명단에서 제외됨)
+
+  function classOrder(){ const o=[]; students.forEach(s=>{ if(o.indexOf(s.cls)===-1) o.push(s.cls); }); return o; }
   function updateCounts(){
-    const pres=students.filter(s=>s.present).length;
-    const active=students.filter(s=>!s.longAbs).length;
-    document.getElementById('asPres').textContent=pres;
-    document.getElementById('asAbs').textContent=Math.max(0,active-pres);
-    document.getElementById('asRate').textContent=(active?Math.round(pres/active*100):0)+'%';
+    const regTotal=students.filter(isReg).length;                 // 재적 43
+    const regPres=students.filter(s=>isReg(s)&&s.present).length;  // 재적 출석
+    const totalPres=students.filter(s=>s.present).length;          // 출석(새친구 포함)
+    document.getElementById('asPres').textContent=totalPres;
+    document.getElementById('asAbs').textContent=Math.max(0,regTotal-regPres);
+    document.getElementById('asRate').textContent=(regTotal?Math.round(regPres/regTotal*100):0)+'%';
+  }
+  function stripHTML(){
+    const cls=classOrder(), done=cls.filter(c=>saved[c]).length;
+    let h='<div class="stripHead">반별 저장 현황 <span>'+done+' / '+cls.length+' 반 완료</span></div><div class="stripChips">';
+    cls.forEach(c=>{ h+='<span class="scChip'+(saved[c]?' done':'')+'">'+esc(c)+'</span>'; });
+    h+='</div><div class="stripLeg"><span><i class="d g"></i>저장 완료</span><span><i class="d r"></i>미저장</span></div>';
+    return h;
+  }
+  function renderStrip(){ const el=document.getElementById('attStrip'); if(el) el.innerHTML=stripHTML(); }
+  function absentBoxHTML(){
+    const abs=students.filter(s=>!s.present && isReg(s));
+    const lines=abs.map(s=>'['+s.cls+'] '+s.name+(s.reason&&s.reason.trim()?' · '+s.reason.trim():''));
+    const txt=lines.length?lines.join('\n'):'결석자 없음';
+    return '<div class="absBox"><button class="absHead" id="absToggle"><span>결석자 명단 · 사유 <b>'+abs.length+'명</b></span><i class="ti ti-chevron-down"></i></button>'+
+      '<div class="absBody" id="absBody" style="display:none"><div class="absActions"><button class="absCopy" id="absCopy"><i class="ti ti-copy"></i>복사</button></div>'+
+      '<pre class="absText" id="absText">'+esc(txt)+'</pre></div></div>';
   }
   function render(){
-    const order=[], groups={};
-    students.forEach((s,i)=>{ if(!(s.cls in groups)){groups[s.cls]=[];order.push(s.cls);} groups[s.cls].push(i); });
-    let h='';
+    const order=classOrder(), groups={};
+    students.forEach((s,i)=>{ (groups[s.cls]=groups[s.cls]||[]).push(i); });
+    let h='<div id="attStrip">'+stripHTML()+'</div>';
     order.forEach(cls=>{
       const idxs=groups[cls], teacher=students[idxs[0]].teacher, gc=gcol(students[idxs[0]]);
       const presN=idxs.filter(i=>students[i].present).length;
-      h+='<div class="attGrp" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+' <span>('+presN+'/'+idxs.length+')</span></div>';
+      h+='<div class="attGrp"><span class="agL" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+' <span>('+presN+'/'+idxs.length+')</span></span>'+
+         '<button class="attSaveCls" data-cls="'+escA(cls)+'"><i class="ti ti-device-floppy"></i>이 반 저장</button></div>';
       h+='<div class="attGrid">';
       idxs.forEach(i=>{ const s=students[i], c=gcol(s);
         h+='<div class="attCard'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'" style="background:'+c[0]+';border:1px solid '+c[1]+';border-left:4px solid '+c[2]+'">'+
            '<div class="acTop"><span class="anm">'+esc(s.name)+(s.tag?'<span class="atag" style="color:'+c[3]+'">'+esc(s.tag)+'</span>':'')+'</span>'+
-           '<span class="apill">'+(s.present?'<i class="ti ti-check"></i>출석':'결석')+'</span></div>'+
-           (s.present?'':'<input class="attReason" placeholder="결석 사유 (선택)" value="'+escA(s.reason)+'">')+
+           '<span class="apill">'+(s.present?'출석':'결석')+'</span></div>'+
+           (s.present?'':'<input class="attReason" placeholder="결석 사유" value="'+escA(s.reason)+'">')+
            '</div>';
       });
       h+='</div>';
     });
+    h+=absentBoxHTML();
     listEl.innerHTML=h; updateCounts();
   }
   listEl.addEventListener('click', function(e){
+    const sv=e.target.closest('.attSaveCls'); if(sv){ saveClass(sv.dataset.cls); return; }
+    if(e.target.closest('#absToggle')){ const b=document.getElementById('absBody'); const open=b.style.display!=='none'; b.style.display=open?'none':''; const ch=document.querySelector('#absToggle .ti'); if(ch) ch.style.transform=open?'':'rotate(180deg)'; return; }
+    if(e.target.closest('#absCopy')){ copyAbsent(); return; }
     if(e.target.closest('.attReason')) return;      // 사유 입력칸은 토글 제외
     const card=e.target.closest('.attCard'); if(!card) return;
-    const i=+card.dataset.i; students[i].present=!students[i].present; render();
+    const i=+card.dataset.i; students[i].present=!students[i].present; saved[students[i].cls]=false; render();
   });
   listEl.addEventListener('input', function(e){
     const inp=e.target.closest('.attReason'); if(!inp) return;
-    const card=inp.closest('.attCard'); if(card) students[+card.dataset.i].reason=inp.value;
+    const card=inp.closest('.attCard'); if(!card) return;
+    const i=+card.dataset.i; students[i].reason=inp.value;
+    if(saved[students[i].cls]){ saved[students[i].cls]=false; renderStrip(); } // 저장 후 사유 수정 → 미저장으로
   });
+  function copyAbsent(){
+    const t=(document.getElementById('absText')||{}).textContent||'';
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(()=>toast('결석자 명단 복사됨')).catch(()=>fallback(t)); }
+    else fallback(t);
+    function fallback(x){ const ta=document.createElement('textarea'); ta.value=x; ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} ta.remove(); toast('결석자 명단 복사됨'); }
+  }
+  function saveClass(cls){
+    if(!loaded) return;
+    const date=dateEl.value; if(!date){ alert('날짜를 선택해 주세요.'); return; }
+    const recs=students.filter(s=>s.cls===cls).map(s=>({name:s.name, cls:s.cls, present:s.present, reason:s.present?'':(s.reason||'').trim()}));
+    const mark=()=>{ saved[cls]=true; renderStrip(); };
+    if(!ATTEND_API){ mark(); toast(cls+' 저장(화면) · 시트 미연결'); return; }
+    const btn=document.querySelector('.attSaveCls[data-cls="'+cls+'"]'); if(btn){ btn.disabled=true; }
+    fetch(ATTEND_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({date:date, cls:cls, records:recs})})
+      .then(r=>r.json()).then(res=>{ if(btn) btn.disabled=false;
+        if(res && res.ok){ mark(); toast(cls+' 저장 완료'); }
+        else { toast('저장 실패: '+((res&&res.error)||'재시도')); } })
+      .catch(e=>{ if(btn) btn.disabled=false; toast('저장 실패 · 잠시 후 재시도'); });
+  }
   function load(){
     listEl.innerHTML='<div class="attLoad"><i class="ti ti-loader-2"></i> 명단을 불러오는 중…</div>';
     fetch(ATT_CSV+'&_cb='+Date.now(),{cache:'no-store'})
       .then(r=>r.text()).then(csv=>{
         const rows=parseCSV(csv).filter(r=>r.length>3);
-        students=[]; const teacherByClass={};
+        students=[]; saved={}; const teacherByClass={};
         for(let i=2;i<rows.length;i++){
           const name=(rows[i][1]||'').trim(), cls=(rows[i][3]||'').trim();
           if(!name||!cls) continue;
+          if(cls==='장결') continue;                       // 장결 그룹 제외
           if(['출석','결석','출석률'].indexOf(name)!==-1) continue;
           const grade=(rows[i][4]||'').trim(), note=(rows[i][5]||'').trim(), t=(rows[i][6]||'').trim();
           if(t && t.indexOf('%')===-1 && !teacherByClass[cls]) teacherByClass[cls]=t;
-          const longAbs = /장기결석|장결/.test(note) || cls==='장결';
+          const longAbs = /장기결석/.test(note);
           const tag = (cls==='새친구') ? '새친구' : (longAbs ? '장기결석' : '');
           students.push({name, cls, grade, note, longAbs, tag, present:false, reason:'', teacher:''});
         }
         students.forEach(s=>{ s.teacher=teacherByClass[s.cls]||''; });
         loaded=true; render();
-      }).catch(e=>{ listEl.innerHTML='<div class="attLoad">명단을 불러오지 못했습니다. 새로고침 해주세요.</div>'; });
+      }).catch(e=>{ listEl.innerHTML='<div class="attLoad">명단을 불러오지 못했습니다. 다시 시도해 주세요.</div>'; });
   }
-  const saveBtn=document.getElementById('attSave');
-  saveBtn.onclick=function(){
-    if(!loaded) return;
-    const date=dateEl.value; if(!date){ alert('날짜를 선택해 주세요.'); return; }
-    const present=students.filter(s=>s.present).map(s=>s.name);
-    const records=students.map(s=>({name:s.name, cls:s.cls, present:s.present, reason:s.present?'':(s.reason||'').trim()}));
-    if(!ATTEND_API){ stEl.style.color='var(--danger)'; stEl.textContent='저장 기능이 아직 연결되지 않았어요. (관리자 설정 필요)'; return; }
-    const btn=this; btn.disabled=true; btn.textContent='저장 중…'; stEl.textContent='';
-    fetch(ATTEND_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({date:date, present:present, records:records, total:students.length})})
-      .then(r=>r.json()).then(res=>{
-        btn.disabled=false; btn.textContent='저장하기';
-        if(res && res.ok){ stEl.style.color='var(--primary)'; stEl.textContent='저장되었습니다 · '+date+' 출석 '+present.length+'명'; }
-        else { stEl.style.color='var(--danger)'; stEl.textContent='저장 실패: '+((res&&res.error)||'다시 시도해 주세요'); }
-      }).catch(e=>{ btn.disabled=false; btn.textContent='저장하기'; stEl.style.color='var(--danger)'; stEl.textContent='저장 실패 · 잠시 후 다시 시도해 주세요'; });
-  };
-  document.getElementById('attReload').onclick=load;
   load();
 })();
 

@@ -14,8 +14,9 @@
   5) 나온 '웹 앱 URL'(끝이 /exec)을 복사해서 전달해 주세요.
      그 주소를 앱(index.html)의 ATTEND_API 에 넣으면 저장이 연결됩니다.
 
-  [동작] 저장할 때마다 그 주일(날짜) 컬럼(H열부터)에 학생별 '출석'/'결석'을 기록합니다.
-         같은 날짜로 다시 저장하면 그 컬럼을 덮어씁니다.
+  [동작] 저장할 때마다 그 주일(날짜) 컬럼(H열부터)에 제출된 학생 행만 '출석'/사유(또는 '결석')로 기록합니다.
+         반별로 따로 저장해도 다른 반 값은 보존되며, 동시 저장은 잠금(LockService)으로 안전 처리됩니다.
+         같은 반을 다시 저장하면 그 반 학생 값만 갱신됩니다.
 */
 
 var ATT_SHEET_ID = 1874453017;   // 출석 탭(gid)
@@ -25,12 +26,15 @@ var COL_CLASS    = 4;            // D열: 반
 var FIRST_DATE_COL = 8;          // H열부터 날짜별 이력 기록
 
 function doPost(e){
+  var lock = LockService.getScriptLock();
   try{
+    lock.waitLock(20000); // 동시 저장 직렬화
+
     var body = JSON.parse(e.postData.contents);
     var date = String(body.date || '').trim();
     if(!date) return out({ ok:false, error:'날짜가 없습니다' });
 
-    // records: [{name, present, reason}] — 없으면 present 배열로 대체
+    // 제출된 학생만 이름→값 매핑 (해당 반 학생만 넘어옴)
     var val = {};
     if (body.records && body.records.length) {
       body.records.forEach(function(r){
@@ -60,22 +64,24 @@ function doPost(e){
     }
     sh.getRange(HEADER_ROW, col).setValue(date);
 
-    // 학생 행별 출석/결석 기록
-    var data = sh.getRange(1, 1, lastRow, COL_CLASS).getValues();
-    var writes = [], cnt = 0;
-    for(var r=HEADER_ROW+1; r<=lastRow; r++){
-      var nm = String(data[r-1][COL_NAME-1] || '').trim();
-      var cl = String(data[r-1][COL_CLASS-1] || '').trim();
-      if(!nm || !cl || nm==='출석' || nm==='결석' || nm==='출석률'){ writes.push(['']); continue; }
-      var v = (nm in val) ? val[nm] : '결석';
-      if(v === '출석') cnt++;
-      writes.push([v]);
+    // 제출된 학생 행만 갱신(다른 반 값은 그대로 보존)
+    var nRows = lastRow - HEADER_ROW;
+    var updated = 0;
+    if(nRows > 0){
+      var names = sh.getRange(HEADER_ROW+1, COL_NAME, nRows, 1).getValues();
+      var colVals = sh.getRange(HEADER_ROW+1, col, nRows, 1).getValues(); // 기존값 유지
+      for(var r=0; r<nRows; r++){
+        var nm = String(names[r][0] || '').trim();
+        if(nm && (nm in val)){ colVals[r][0] = val[nm]; updated++; }
+      }
+      sh.getRange(HEADER_ROW+1, col, nRows, 1).setValues(colVals);
     }
-    if(writes.length) sh.getRange(HEADER_ROW+1, col, writes.length, 1).setValues(writes);
 
-    return out({ ok:true, date:date, column:col, present:cnt });
+    return out({ ok:true, date:date, column:col, updated:updated });
   }catch(err){
     return out({ ok:false, error:String(err) });
+  }finally{
+    try{ lock.releaseLock(); }catch(e){}
   }
 }
 
