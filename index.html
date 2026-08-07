@@ -216,18 +216,19 @@
   .asc.pres{background:#eafaf0} .asc.pres .l{color:#4a8a63} .asc.pres .v{color:#16a34a}
   .asc.abs{background:#fdece8} .asc.abs .l{color:#b4553a} .asc.abs .v{color:#e05a34}
   .asc.rate{background:#fff3e3} .asc.rate .l{color:#b07a1a} .asc.rate .v{color:#d98a1a}
-  .attGrp{margin:14px 2px 8px;font-size:12px;font-weight:800;color:var(--tx3);letter-spacing:.3px}
-  .attGrp span{color:#c3b9a8;font-weight:600}
-  .attRow{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;cursor:pointer;user-select:none}
-  .attRow:active{transform:scale(.995)}
-  .attRow .anm{font-size:14px;font-weight:600;color:var(--tx);flex:1}
-  .attRow .atag{font-size:10px;padding:1px 6px;border-radius:999px;margin-left:4px;background:var(--primary-soft);color:var(--primary)}
-  .attRow .ag{font-size:11px;color:var(--tx3)}
-  .attRow .apill{font-size:12px;font-weight:700;padding:5px 13px;border-radius:999px;background:#f0ebe2;color:#b0a99c;flex:none;display:inline-flex;align-items:center;gap:4px}
-  .attRow.on{background:#f2fbf5;border-color:#c9edd6}
-  .attRow.on .apill{background:#16a34a;color:#fff}
-  .attRow.longabs{opacity:.62;border-style:dashed}
-  .attRow.longabs .atag{background:#eee7dd;color:#8a8175}
+  .attGrp{margin:16px 2px 8px;font-size:12px;font-weight:800;letter-spacing:.3px}
+  .attGrp span{opacity:.6;font-weight:600}
+  .attGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .attCard{border:1px solid var(--line);border-left:4px solid #ccc;border-radius:12px;padding:10px 11px;cursor:pointer;user-select:none}
+  .attCard:active{transform:scale(.99)}
+  .attCard .acTop{display:flex;align-items:center;gap:6px}
+  .attCard .anm{font-size:13.5px;font-weight:700;color:var(--tx);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .attCard .atag{font-size:9.5px;padding:1px 6px;border-radius:999px;margin-left:4px;background:#fff;opacity:.85}
+  .attCard .apill{flex:none;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;background:#eee7dd;color:#8a8175;display:inline-flex;align-items:center;gap:3px}
+  .attCard.on .apill{background:#16a34a;color:#fff}
+  .attCard.longabs{opacity:.72}
+  .attReason{width:100%;margin-top:7px;border:1px solid #cbb9a0;background:#fff;border-radius:8px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--tx);outline:none;box-sizing:border-box}
+  .attReason:focus{border-color:var(--primary)}
   .attLoad{text-align:center;color:var(--tx2);padding:40px 0;font-size:13.5px}
   .ofView{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:9px;
     background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);border-radius:12px;padding:13px;
@@ -630,6 +631,15 @@ function go(s, keepScroll, skipHash){
   let students = [], loaded = false;
 
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function escA(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+  // 학년(반)별 카드 색: [배경, 테두리, 왼쪽띠, 제목]
+  const GRADE={
+    '중1':['#e6f1fb','#cfe2f5','#2f80ed','#185fa5'], '중2':['#e1f5ee','#c7e9de','#0ca678','#0f6e56'],
+    '중3':['#eaf3de','#d5e6bf','#63991f','#3b6d11'], '고1':['#faeeda','#f0dcb8','#e09a1a','#a5620a'],
+    '고2':['#faece7','#f0d7cd','#d85a30','#993c1d'], '고3':['#efedfe','#ddd9f7','#7f77dd','#4a3f9a'],
+    '새친구':['#fdeee2','#f7d9c2','#e8590c','#c2410c'], '장결':['#f1efe8','#ddd8cc','#9a9184','#6b655a']
+  };
+  function gcol(s){ const k=(s.cls==='새친구')?'새친구':(s.cls==='장결')?'장결':(GRADE[s.grade]?s.grade:'장결'); return GRADE[k]; }
   function parseCSV(t){
     var rows=[],row=[],cur='',i=0,q=false;
     while(i<t.length){var c=t[i];
@@ -656,21 +666,29 @@ function go(s, keepScroll, skipHash){
     students.forEach((s,i)=>{ if(!(s.cls in groups)){groups[s.cls]=[];order.push(s.cls);} groups[s.cls].push(i); });
     let h='';
     order.forEach(cls=>{
-      const idxs=groups[cls], teacher=students[idxs[0]].teacher;
+      const idxs=groups[cls], teacher=students[idxs[0]].teacher, gc=gcol(students[idxs[0]]);
       const presN=idxs.filter(i=>students[i].present).length;
-      h+='<div class="attGrp">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+' <span>('+presN+'/'+idxs.length+')</span></div>';
-      idxs.forEach(i=>{ const s=students[i];
-        h+='<div class="attRow'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'">'+
-           '<span class="anm">'+esc(s.name)+(s.tag?'<span class="atag">'+esc(s.tag)+'</span>':'')+'</span>'+
-           '<span class="ag">'+esc(s.grade)+'</span>'+
-           '<span class="apill">'+(s.present?'<i class="ti ti-check"></i>출석':'결석')+'</span></div>';
+      h+='<div class="attGrp" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+' <span>('+presN+'/'+idxs.length+')</span></div>';
+      h+='<div class="attGrid">';
+      idxs.forEach(i=>{ const s=students[i], c=gcol(s);
+        h+='<div class="attCard'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'" style="background:'+c[0]+';border:1px solid '+c[1]+';border-left:4px solid '+c[2]+'">'+
+           '<div class="acTop"><span class="anm">'+esc(s.name)+(s.tag?'<span class="atag" style="color:'+c[3]+'">'+esc(s.tag)+'</span>':'')+'</span>'+
+           '<span class="apill">'+(s.present?'<i class="ti ti-check"></i>출석':'결석')+'</span></div>'+
+           (s.present?'':'<input class="attReason" placeholder="결석 사유 (선택)" value="'+escA(s.reason)+'">')+
+           '</div>';
       });
+      h+='</div>';
     });
     listEl.innerHTML=h; updateCounts();
   }
   listEl.addEventListener('click', function(e){
-    const row=e.target.closest('.attRow'); if(!row) return;
-    const i=+row.dataset.i; students[i].present=!students[i].present; render();
+    if(e.target.closest('.attReason')) return;      // 사유 입력칸은 토글 제외
+    const card=e.target.closest('.attCard'); if(!card) return;
+    const i=+card.dataset.i; students[i].present=!students[i].present; render();
+  });
+  listEl.addEventListener('input', function(e){
+    const inp=e.target.closest('.attReason'); if(!inp) return;
+    const card=inp.closest('.attCard'); if(card) students[+card.dataset.i].reason=inp.value;
   });
   function load(){
     listEl.innerHTML='<div class="attLoad"><i class="ti ti-loader-2"></i> 명단을 불러오는 중…</div>';
@@ -686,7 +704,7 @@ function go(s, keepScroll, skipHash){
           if(t && t.indexOf('%')===-1 && !teacherByClass[cls]) teacherByClass[cls]=t;
           const longAbs = /장기결석|장결/.test(note) || cls==='장결';
           const tag = (cls==='새친구') ? '새친구' : (longAbs ? '장기결석' : '');
-          students.push({name, cls, grade, note, longAbs, tag, present:false, teacher:''});
+          students.push({name, cls, grade, note, longAbs, tag, present:false, reason:'', teacher:''});
         }
         students.forEach(s=>{ s.teacher=teacherByClass[s.cls]||''; });
         loaded=true; render();
@@ -697,10 +715,11 @@ function go(s, keepScroll, skipHash){
     if(!loaded) return;
     const date=dateEl.value; if(!date){ alert('날짜를 선택해 주세요.'); return; }
     const present=students.filter(s=>s.present).map(s=>s.name);
+    const records=students.map(s=>({name:s.name, cls:s.cls, present:s.present, reason:s.present?'':(s.reason||'').trim()}));
     if(!ATTEND_API){ stEl.style.color='var(--danger)'; stEl.textContent='저장 기능이 아직 연결되지 않았어요. (관리자 설정 필요)'; return; }
     const btn=this; btn.disabled=true; btn.textContent='저장 중…'; stEl.textContent='';
     fetch(ATTEND_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({date:date, present:present, total:students.length})})
+      body:JSON.stringify({date:date, present:present, records:records, total:students.length})})
       .then(r=>r.json()).then(res=>{
         btn.disabled=false; btn.textContent='저장하기';
         if(res && res.ok){ stEl.style.color='var(--primary)'; stEl.textContent='저장되었습니다 · '+date+' 출석 '+present.length+'명'; }

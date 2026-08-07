@@ -30,8 +30,17 @@ function doPost(e){
     var date = String(body.date || '').trim();
     if(!date) return out({ ok:false, error:'날짜가 없습니다' });
 
-    var present = {};
-    (body.present || []).forEach(function(n){ present[String(n).trim()] = true; });
+    // records: [{name, present, reason}] — 없으면 present 배열로 대체
+    var val = {};
+    if (body.records && body.records.length) {
+      body.records.forEach(function(r){
+        var nm = String(r.name || '').trim();
+        if (!nm) return;
+        val[nm] = r.present ? '출석' : ((r.reason && String(r.reason).trim()) ? String(r.reason).trim() : '결석');
+      });
+    } else {
+      (body.present || []).forEach(function(n){ val[String(n).trim()] = '출석'; });
+    }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = null, sheets = ss.getSheets();
@@ -58,8 +67,9 @@ function doPost(e){
       var nm = String(data[r-1][COL_NAME-1] || '').trim();
       var cl = String(data[r-1][COL_CLASS-1] || '').trim();
       if(!nm || !cl || nm==='출석' || nm==='결석' || nm==='출석률'){ writes.push(['']); continue; }
-      if(present[nm]){ writes.push(['출석']); cnt++; }
-      else { writes.push(['결석']); }
+      var v = (nm in val) ? val[nm] : '결석';
+      if(v === '출석') cnt++;
+      writes.push([v]);
     }
     if(writes.length) sh.getRange(HEADER_ROW+1, col, writes.length, 1).setValues(writes);
 
