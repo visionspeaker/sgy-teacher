@@ -675,6 +675,7 @@ function go(s, keepScroll, skipHash){
   (function(){ const d=new Date(); d.setDate(d.getDate()-d.getDay()); const p=n=>('0'+n).slice(-2); dateEl.value=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); })();
 
   let saved={}; // 반별 저장 여부
+  const SUBTEACH={ '중1':'최영세', '중2남':'최시혁' }; // 반별 부담임
   const toast=(m)=>{ try{ if(typeof showToast==='function') showToast(m); }catch(e){} };
   const isReg=(s)=> s.cls!=='새친구';   // 재적(장결은 명단에서 제외됨)
 
@@ -710,8 +711,9 @@ function go(s, keepScroll, skipHash){
     order.forEach(cls=>{
       const idxs=groups[cls], teacher=students[idxs[0]].teacher, gc=gcol(students[idxs[0]]);
       const presN=idxs.filter(i=>students[i].present).length;
-      h+='<div class="attGrp"><span class="agL" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+' <span>('+presN+'/'+idxs.length+')</span></span>'+
-         '<button class="attSaveCls" data-cls="'+escA(cls)+'"><i class="ti ti-device-floppy"></i>이 반 저장</button></div>';
+      const total=idxs.length, pct=total?Math.round(presN/total*100):0, sub=SUBTEACH[cls]||'';
+      h+='<div class="attGrp"><span class="agL" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+(sub?' · 부담임 '+esc(sub):'')+' <span>('+presN+'/'+total+') '+pct+'%</span></span>'+
+         '<button class="attSaveCls" data-cls="'+escA(cls)+'"><i class="ti ti-device-floppy"></i>'+esc(cls)+' 저장</button></div>';
       h+='<div class="attGrid">';
       idxs.forEach(i=>{ const s=students[i], c=gcol(s);
         h+='<div class="attCard'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'" style="background:'+c[0]+';border:1px solid '+c[1]+';border-left:4px solid '+c[2]+'">'+
