@@ -665,6 +665,7 @@ function go(s, keepScroll, skipHash){
 (function(){
   const ATTEND_API = "https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec"; // Apps Script 웹앱(교회 계정)
   const ATT_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=1874453017";
+  const ATT_LOG_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent("출석기록"); // 저장 내역(누적 로그) 탭
   const listEl = document.getElementById('attList');
   if(!listEl) return;
   const stEl = document.getElementById('attStatus');
@@ -696,7 +697,28 @@ function go(s, keepScroll, skipHash){
   function openMenu(){ buildMenu(); adMenu.style.display='block'; adCtr.classList.add('open');
     const s=adMenu.querySelector('.adOpt.sel'); if(s) adMenu.scrollTop=s.offsetTop-adMenu.clientHeight/2+s.offsetHeight/2; }
   function closeMenu(){ adMenu.style.display='none'; adCtr.classList.remove('open'); }
-  function setDate(d){ curDate=toSun(d); saved={}; renderDate(); if(loaded) render(); }
+  function setDate(d){ curDate=toSun(d); saved={}; resetMarks(); renderDate(); if(loaded){ render(); loadSaved(); } }
+  function resetMarks(){ students.forEach(s=>{ s.present=false; s.reason=''; }); }
+  // 저장된 출석 내역(출석기록 탭)을 현재 주일 기준으로 화면에 복원
+  function applyLog(csv){
+    const rows=parseCSV(csv); if(!rows.length) return;
+    const today=curISO();
+    for(let i=1;i<rows.length;i++){ const r=rows[i]; if(r.length<6) continue;
+      const d=(r[0]||'').trim(); if(d!==today) continue;
+      const cls=(r[1]||'').trim(); if(!cls) continue;
+      const map={};
+      (r[4]||'').split(/,\s*/).map(x=>x.trim()).filter(Boolean).forEach(n=>{ map[n]={present:true,reason:''}; });
+      (r[5]||'').split(/,\s*/).map(x=>x.trim()).filter(Boolean).forEach(it=>{ const m=it.match(/^(.+?)\((.*)\)$/); if(m){ map[m[1].trim()]={present:false,reason:m[2].trim()}; } else { map[it]={present:false,reason:''}; } });
+      students.forEach(s=>{ if(s.cls===cls && (s.name in map)){ s.present=map[s.name].present; s.reason=map[s.name].reason; } });
+      saved[cls]=true;
+    }
+  }
+  function loadSaved(){
+    if(!ATTEND_API) return;                 // 시트 미연결이면 복원 불필요
+    fetch(ATT_LOG_CSV+'&_cb='+Date.now(),{cache:'no-store'})
+      .then(r=>r.text()).then(csv=>{ applyLog(csv); if(loaded) render(); })
+      .catch(e=>{});
+  }
   adCtr.addEventListener('click', ()=>{ if(adMenu.style.display==='none') openMenu(); else closeMenu(); });
   document.getElementById('adPrev').addEventListener('click', ()=>{ setDate(addW(curDate,-1)); closeMenu(); });
   document.getElementById('adNext').addEventListener('click', ()=>{ setDate(addW(curDate, 1)); closeMenu(); });
@@ -836,7 +858,7 @@ function go(s, keepScroll, skipHash){
           students.push({name, cls, grade, note, longAbs, tag, present:false, reason:'', teacher:''});
         }
         students.forEach(s=>{ s.teacher=teacherByClass[s.cls]||''; });
-        loaded=true; render();
+        loaded=true; render(); loadSaved();   // 명단 후 저장된 출석내역 복원
       }).catch(e=>{ listEl.innerHTML='<div class="attLoad">명단을 불러오지 못했습니다. 다시 시도해 주세요.</div>'; });
   }
   load();
