@@ -74,6 +74,12 @@
   .campBtn .t1{font-size:14.5px;font-weight:600;color:#4c33b8}
   .campBtn .t2{font-size:11.5px;color:#7a63d6;margin-top:2px}
   .campBtn .ar{font-size:20px;color:#7a63d6;flex:none}
+  .campBtn.campAtt{background:#fdeee2;border-color:#f7d9c2;box-shadow:0 4px 12px rgba(232,89,12,.14)}
+  .campBtn.campAtt .ci{background:#fbdcc4;color:#c2410c}
+  .campBtn.campAtt .t1{color:#9a3412;display:flex;align-items:center}
+  .campBtn.campAtt .t2{color:#c2764a}
+  .campBtn.campAtt .ar{color:#c2764a}
+  .tPill{font-size:10.5px;font-weight:700;color:#fff;background:#e24b4a;padding:2px 8px;border-radius:999px;letter-spacing:.3px;margin-left:7px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
   .grid-top{margin-top:16px}
   .copyr{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;margin:18px 4px 2px}
@@ -325,6 +331,11 @@
       <a class="campBtn" id="campSurvey" style="display:none" href="survey.html">
         <div class="ci"><i class="ti ti-clipboard-data"></i></div>
         <div class="ct"><div class="t1">수련회 설문조사 결과 보기</div><div class="t2">설문조사 결과 분석</div></div>
+        <i class="ti ti-chevron-right ar"></i>
+      </a>
+      <a class="campBtn campAtt" href="#attend">
+        <div class="ci"><i class="ti ti-calendar-check"></i></div>
+        <div class="ct"><div class="t1">출석체크<span class="tPill">테스트</span></div><div class="t2">앱에서 바로 출석 체크 · 시트 자동 저장</div></div>
         <i class="ti ti-chevron-right ar"></i>
       </a>
       <div class="grid grid-top">
@@ -654,7 +665,6 @@ function go(s, keepScroll, skipHash){
     const box = document.getElementById('archiveList');
     if(box){
       let h = '';
-      h += row(ATTEND, true, '');                             // 출석체크: 상시 상단
       if(now >= T1) h += row(SIGNUP, true, '');               // 신청: T1 이후 아카이브 노출(활성)
       h += (now >= T2) ? row(SURVEY, true, '')                 // 설문: T2 이후 활성
                        : row(SURVEY, false, '8/1(토) 08:00 오픈 예정'); // T2 전 잠금
