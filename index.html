@@ -231,6 +231,18 @@
   .attReason:focus{border-color:var(--primary)}
   .attLoad{text-align:center;color:var(--tx2);padding:40px 0;font-size:13.5px}
   .attDateSolo{margin:2px 0 12px}
+  .attDateNav{position:relative;display:flex;align-items:stretch;gap:8px;margin:2px 0 12px}
+  .adBtn{flex:none;width:44px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--primary);font-size:19px;cursor:pointer;font-family:inherit}
+  .adBtn:active{transform:scale(.95)}
+  .adCtr{flex:1;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-family:inherit;cursor:pointer}
+  .adDate{font-size:16px;font-weight:800;color:var(--tx)}
+  .adDate .cv{font-size:11px;color:var(--primary);margin-left:5px;vertical-align:1px;display:inline-block;transition:transform .2s}
+  .adCtr.open .adDate .cv{transform:rotate(180deg)}
+  .adSub{font-size:11.5px;color:var(--tx3);margin-top:2px}
+  .adMenu{position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 6px);z-index:40;width:250px;max-height:264px;overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.14);padding:6px}
+  .adOpt{padding:9px 12px;border-radius:8px;font-size:13.5px;color:var(--tx);cursor:pointer;white-space:nowrap;font-weight:600}
+  .adOpt:active{background:#faf3ee}
+  .adOpt.sel{background:#fbeee7;color:var(--primary);font-weight:800}
   .attGrp{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 2px 8px}
   .attGrp .agL{font-size:12px;font-weight:800;letter-spacing:.3px}
   .attGrp .agL span{opacity:.6;font-weight:600}
@@ -238,12 +250,14 @@
   .attSaveCls:active{transform:scale(.96)}
   .attSaveCls[disabled]{opacity:.6}
   #attStrip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:4px}
-  .stripHead{font-size:11.5px;font-weight:800;color:var(--tx3);margin-bottom:9px}
+  .stripTop{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .stripHead{font-size:11.5px;font-weight:800;color:var(--tx3)}
   .stripHead span{color:#c3b9a8;font-weight:600}
   .stripChips{display:flex;flex-wrap:wrap;gap:6px}
+  .stripChips+.stripChips{margin-top:7px}
   .scChip{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;background:#fdeceb;color:#d64532;border:1px solid #f3c9c4}
   .scChip.done{background:#16a34a;color:#fff;border-color:#16a34a}
-  .stripLeg{display:flex;gap:16px;margin-top:11px;font-size:11px;color:var(--tx3)}
+  .stripLeg{display:flex;gap:14px;font-size:11px;color:var(--tx3)}
   .stripLeg .d{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:4px}
   .stripLeg .d.g{background:#16a34a} .stripLeg .d.r{background:#e24b4a}
   .absBox{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -444,7 +458,15 @@
     <!-- 페이지 7 · 출석체크 (앱 내 처리) -->
     <section class="screen" id="s-attend">
       <div class="sec-t">출석체크 · 주일</div>
-      <div class="attDate attDateSolo"><i class="ti ti-calendar"></i><input type="date" id="attDate"></div>
+      <div class="attDateNav" id="attDateNav">
+        <button class="adBtn" id="adPrev" aria-label="이전 주일"><i class="ti ti-chevron-left"></i></button>
+        <button class="adCtr" id="adCtr" type="button">
+          <div class="adDate"><span id="adDateT">—</span><span class="cv">▾</span></div>
+          <div class="adSub" id="adSubT">주일</div>
+        </button>
+        <button class="adBtn" id="adNext" aria-label="다음 주일"><i class="ti ti-chevron-right"></i></button>
+        <div class="adMenu" id="adMenu" style="display:none"></div>
+      </div>
       <div class="attSum">
         <div class="asc pres"><div class="l">출석</div><div class="v" id="asPres">0</div></div>
         <div class="asc abs"><div class="l">결석</div><div class="v" id="asAbs">0</div></div>
@@ -645,9 +667,41 @@ function go(s, keepScroll, skipHash){
   const ATT_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=1874453017";
   const listEl = document.getElementById('attList');
   if(!listEl) return;
-  const dateEl = document.getElementById('attDate');
   const stEl = document.getElementById('attStatus');
   let students = [], loaded = false;
+
+  // ── 주일 전용 날짜 컨트롤 ──
+  let curDate = null;                                   // 항상 일요일(주일)로 정규화
+  const pz = n => ('0'+n).slice(-2);
+  function toSun(d){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-x.getDay()); return x; }
+  function addW(d,w){ const x=new Date(d); x.setDate(x.getDate()+w*7); return x; }
+  function curISO(){ return curDate.getFullYear()+'-'+pz(curDate.getMonth()+1)+'-'+pz(curDate.getDate()); }
+  function nthSunMonth(d){ return Math.floor((d.getDate()-1)/7)+1; }           // 그 달의 n번째 주일
+  function nthSunYear(d){ const j=new Date(d.getFullYear(),0,1); const f=new Date(j); f.setDate(1+((7-j.getDay())%7)); return Math.round((d-f)/6048e5)+1; } // 연 주차
+  function fmtDisp(d){ return d.getFullYear()+'. '+(d.getMonth()+1)+'. '+d.getDate(); }
+  function optLabel(d){ return (d.getMonth()+1)+'/'+d.getDate()+' ('+(d.getMonth()+1)+'월 '+nthSunMonth(d)+'주, '+nthSunYear(d)+'주차)'; }
+  const dnav=document.getElementById('attDateNav');
+  const adDateT=document.getElementById('adDateT'), adSubT=document.getElementById('adSubT');
+  const adCtr=document.getElementById('adCtr'), adMenu=document.getElementById('adMenu');
+  function renderDate(){
+    adDateT.textContent=fmtDisp(curDate);
+    adSubT.textContent='주일 · '+curDate.getFullYear()+'년 '+(curDate.getMonth()+1)+'월 '+nthSunMonth(curDate)+'주차';
+  }
+  function buildMenu(){
+    let h='';
+    for(let i=-20;i<=8;i++){ const d=addW(curDate,i); const sel=(d.getFullYear()===curDate.getFullYear()&&d.getMonth()===curDate.getMonth()&&d.getDate()===curDate.getDate());
+      h+='<div class="adOpt'+(sel?' sel':'')+'" data-iso="'+d.getFullYear()+'-'+pz(d.getMonth()+1)+'-'+pz(d.getDate())+'">'+optLabel(d)+'</div>'; }
+    adMenu.innerHTML=h;
+  }
+  function openMenu(){ buildMenu(); adMenu.style.display='block'; adCtr.classList.add('open');
+    const s=adMenu.querySelector('.adOpt.sel'); if(s) adMenu.scrollTop=s.offsetTop-adMenu.clientHeight/2+s.offsetHeight/2; }
+  function closeMenu(){ adMenu.style.display='none'; adCtr.classList.remove('open'); }
+  function setDate(d){ curDate=toSun(d); saved={}; renderDate(); if(loaded) render(); }
+  adCtr.addEventListener('click', ()=>{ if(adMenu.style.display==='none') openMenu(); else closeMenu(); });
+  document.getElementById('adPrev').addEventListener('click', ()=>{ setDate(addW(curDate,-1)); closeMenu(); });
+  document.getElementById('adNext').addEventListener('click', ()=>{ setDate(addW(curDate, 1)); closeMenu(); });
+  adMenu.addEventListener('click', e=>{ const o=e.target.closest('.adOpt'); if(!o) return; const [y,m,da]=o.dataset.iso.split('-').map(Number); setDate(new Date(y,m-1,da)); closeMenu(); });
+  document.addEventListener('click', e=>{ if(dnav && !dnav.contains(e.target)) closeMenu(); });
 
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function escA(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -672,7 +726,7 @@ function go(s, keepScroll, skipHash){
     return rows;
   }
   // 날짜 기본값: 토요일까지는 지난 주일, 주일 당일엔 그날짜(= 이번 주 일요일)
-  (function(){ const d=new Date(); d.setDate(d.getDate()-d.getDay()); const p=n=>('0'+n).slice(-2); dateEl.value=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); })();
+  curDate = toSun(new Date()); renderDate();
 
   let saved={}; // 반별 저장 여부
   const SUBTEACH={ '중1':'최영세', '중2남':'최시혁' }; // 반별 부담임
@@ -690,9 +744,12 @@ function go(s, keepScroll, skipHash){
   }
   function stripHTML(){
     const cls=classOrder(), done=cls.filter(c=>saved[c]).length;
-    let h='<div class="stripHead">반별 저장 현황 <span>'+done+' / '+cls.length+' 반 완료</span></div><div class="stripChips">';
-    cls.forEach(c=>{ h+='<span class="scChip'+(saved[c]?' done':'')+'">'+esc(c)+'</span>'; });
-    h+='</div><div class="stripLeg"><span><i class="d g"></i>저장 완료</span><span><i class="d r"></i>미저장</span></div>';
+    const mid=cls.filter(c=>/^중/.test(c)), hi=cls.filter(c=>!/^중/.test(c));
+    const chip=c=>'<span class="scChip'+(saved[c]?' done':'')+'">'+esc(c)+'</span>';
+    let h='<div class="stripTop"><div class="stripHead">반별 체크 현황 <span>· '+done+'/'+cls.length+'반 완료</span></div>'+
+      '<div class="stripLeg"><span><i class="d g"></i>저장 완료</span><span><i class="d r"></i>미저장</span></div></div>';
+    h+='<div class="stripChips">'+mid.map(chip).join('')+'</div>';
+    if(hi.length) h+='<div class="stripChips">'+hi.map(chip).join('')+'</div>';
     return h;
   }
   function renderStrip(){ const el=document.getElementById('attStrip'); if(el) el.innerHTML=stripHTML(); }
@@ -749,7 +806,7 @@ function go(s, keepScroll, skipHash){
   }
   function saveClass(cls){
     if(!loaded) return;
-    const date=dateEl.value; if(!date){ alert('날짜를 선택해 주세요.'); return; }
+    const date=curISO(); if(!date){ alert('날짜를 선택해 주세요.'); return; }
     const recs=students.filter(s=>s.cls===cls).map(s=>({name:s.name, cls:s.cls, present:s.present, reason:s.present?'':(s.reason||'').trim()}));
     const mark=()=>{ saved[cls]=true; renderStrip(); };
     if(!ATTEND_API){ mark(); toast(cls+' 저장(화면) · 시트 미연결'); return; }
