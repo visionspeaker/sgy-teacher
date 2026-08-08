@@ -663,7 +663,7 @@ function go(s, keepScroll, skipHash){
 
 // ── 앱 내 출석체크: 명단은 시트에서 읽고, 저장은 Apps Script로 기록 ──
 (function(){
-  const ATTEND_API = ""; // 배포 후 Apps Script 웹앱 /exec 주소를 여기에 입력
+  const ATTEND_API = "https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec"; // Apps Script 웹앱(교회 계정)
   const ATT_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=1874453017";
   const listEl = document.getElementById('attList');
   if(!listEl) return;
