@@ -230,6 +230,9 @@
   .attReason{width:100%;margin-top:7px;border:1px solid #cbb9a0;background:#fff;border-radius:8px;padding:6px 8px;font-size:12px;font-family:inherit;color:var(--tx);outline:none;box-sizing:border-box}
   .attReason:focus{border-color:var(--primary)}
   .attLoad{text-align:center;color:var(--tx2);padding:40px 0;font-size:13.5px}
+  .attReason.ro{background:#f6f2ea;border-style:dashed;color:var(--tx2);cursor:default}
+  .roBar{display:flex;align-items:center;gap:6px;margin:0 0 10px;padding:8px 12px;border-radius:10px;background:#f1efe8;border:1px solid #ddd8cc;color:#6b655a;font-size:12.5px;font-weight:700}
+  .roBar .ti{font-size:15px}
   .attDateSolo{margin:2px 0 12px}
   .attDateNav{position:relative;display:flex;align-items:stretch;gap:8px;margin:2px 0 12px}
   .adBtn{flex:none;width:44px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--primary);font-size:19px;cursor:pointer;font-family:inherit}
@@ -666,10 +669,13 @@ function go(s, keepScroll, skipHash){
   const ATTEND_API = "https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec"; // Apps Script 웹앱(교회 계정)
   const ATT_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=1874453017";
   const ATT_LOG_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent("출석기록"); // 저장 내역(누적 로그) 탭
+  const WEEK_CSV = n => "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&sheet=" + n;   // 주차별 탭(YYMMDD) — 1월~ 과거 기록
+  const FIRST_SUN = new Date(2026,0,4);           // 기록 시작 주일
   const listEl = document.getElementById('attList');
   if(!listEl) return;
   const stEl = document.getElementById('attStatus');
   let students = [], loaded = false;
+  let readonly = false, baseRoster = null, baseCsv = '', loadSeq = 0;
 
   // ── 주일 전용 날짜 컨트롤 ──
   let curDate = null;                                   // 항상 일요일(주일)로 정규화
@@ -690,14 +696,17 @@ function go(s, keepScroll, skipHash){
   }
   function buildMenu(){
     let h='';
-    for(let i=-20;i<=8;i++){ const d=addW(curDate,i); const sel=(d.getFullYear()===curDate.getFullYear()&&d.getMonth()===curDate.getMonth()&&d.getDate()===curDate.getDate());
-      h+='<div class="adOpt'+(sel?' sel':'')+'" data-iso="'+d.getFullYear()+'-'+pz(d.getMonth()+1)+'-'+pz(d.getDate())+'">'+optLabel(d)+'</div>'; }
+    const last = addW(toSun(new Date()), 8);
+    for(let d=new Date(FIRST_SUN); d<=last; d=addW(d,1)){
+      const sel=(d.getFullYear()===curDate.getFullYear()&&d.getMonth()===curDate.getMonth()&&d.getDate()===curDate.getDate());
+      h+='<div class="adOpt'+(sel?' sel':'')+'" data-iso="'+d.getFullYear()+'-'+pz(d.getMonth()+1)+'-'+pz(d.getDate())+'">'+optLabel(d)+'</div>';
+    }
     adMenu.innerHTML=h;
   }
   function openMenu(){ buildMenu(); adMenu.style.display='block'; adCtr.classList.add('open');
     const s=adMenu.querySelector('.adOpt.sel'); if(s) adMenu.scrollTop=s.offsetTop-adMenu.clientHeight/2+s.offsetHeight/2; }
   function closeMenu(){ adMenu.style.display='none'; adCtr.classList.remove('open'); }
-  function setDate(d){ curDate=toSun(d); saved={}; resetMarks(); renderDate(); if(loaded){ render(); loadSaved(); } }
+  function setDate(d){ curDate=toSun(d); saved={}; resetMarks(); renderDate(); loadForDate(); }
   function resetMarks(){ students.forEach(s=>{ s.present=false; s.reason=''; }); }
   // 저장된 출석 내역(출석기록 탭)을 현재 주일 기준으로 화면에 복원
   function applyLog(csv){
@@ -768,7 +777,7 @@ function go(s, keepScroll, skipHash){
     const cls=classOrder(), done=cls.filter(c=>saved[c]).length;
     const mid=cls.filter(c=>/^중/.test(c)), hi=cls.filter(c=>!/^중/.test(c));
     const chip=c=>'<span class="scChip'+(saved[c]?' done':'')+'">'+esc(c)+'</span>';
-    let h='<div class="stripTop"><div class="stripHead">반별 체크 현황 <span>· '+done+'/'+cls.length+'반 완료</span></div>'+
+    let h='<div class="stripTop"><div class="stripHead">반별 체크 현황 <span>· '+done+'/'+cls.length+(readonly?'반 기록':'반 완료')+'</span></div>'+
       '<div class="stripLeg"><span><i class="d g"></i>저장 완료</span><span><i class="d r"></i>미저장</span></div></div>';
     h+='<div class="stripChips">'+mid.map(chip).join('')+'</div>';
     if(hi.length) h+='<div class="stripChips">'+hi.map(chip).join('')+'</div>';
@@ -786,19 +795,19 @@ function go(s, keepScroll, skipHash){
   function render(){
     const order=classOrder(), groups={};
     students.forEach((s,i)=>{ (groups[s.cls]=groups[s.cls]||[]).push(i); });
-    let h='<div id="attStrip">'+stripHTML()+'</div>';
+    let h=(readonly?'<div class="roBar"><i class="ti ti-lock"></i>지난 기록 · 읽기 전용</div>':'')+'<div id="attStrip">'+stripHTML()+'</div>';
     order.forEach(cls=>{
       const idxs=groups[cls], teacher=students[idxs[0]].teacher, gc=gcol(students[idxs[0]]);
       const presN=idxs.filter(i=>students[i].present).length;
       const total=idxs.length, pct=total?Math.round(presN/total*100):0, sub=SUBTEACH[cls]||'';
       h+='<div class="attGrp"><span class="agL" style="color:'+gc[3]+'">'+esc(cls)+(teacher?' · 담임 '+esc(teacher):'')+(sub?' · 부담임 '+esc(sub):'')+' <span>('+presN+'/'+total+') '+pct+'%</span></span>'+
-         '<button class="attSaveCls" data-cls="'+escA(cls)+'"><i class="ti ti-device-floppy"></i>'+esc(cls)+' 저장</button></div>';
+         (readonly?'':'<button class="attSaveCls" data-cls="'+escA(cls)+'"><i class="ti ti-device-floppy"></i>'+esc(cls)+' 저장</button>')+'</div>';
       h+='<div class="attGrid">';
       idxs.forEach(i=>{ const s=students[i], c=gcol(s);
         h+='<div class="attCard'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'" style="background:'+c[0]+';border:1px solid '+c[1]+';border-left:4px solid '+c[2]+'">'+
            '<div class="acTop"><span class="anm">'+esc(s.name)+(s.tag?'<span class="atag" style="color:'+c[3]+'">'+esc(s.tag)+'</span>':'')+'</span>'+
            '<span class="apill">'+(s.present?'출석':'결석')+'</span></div>'+
-           (s.present?'':'<input class="attReason" placeholder="결석 사유" value="'+escA(s.reason)+'">')+
+           (s.present?'':(readonly?(s.reason?'<div class="attReason ro">'+esc(s.reason)+'</div>':''):'<input class="attReason" placeholder="결석 사유" value="'+escA(s.reason)+'">'))+
            '</div>';
       });
       h+='</div>';
@@ -811,6 +820,7 @@ function go(s, keepScroll, skipHash){
     if(e.target.closest('#absToggle')){ const b=document.getElementById('absBody'); const open=b.style.display!=='none'; b.style.display=open?'none':''; const ch=document.querySelector('#absToggle .ti'); if(ch) ch.style.transform=open?'':'rotate(180deg)'; return; }
     if(e.target.closest('#absCopy')){ copyAbsent(); return; }
     if(e.target.closest('.attReason')) return;      // 사유 입력칸은 토글 제외
+    if(readonly) return;
     const card=e.target.closest('.attCard'); if(!card) return;
     const i=+card.dataset.i; students[i].present=!students[i].present; saved[students[i].cls]=false; render();
   });
@@ -840,28 +850,59 @@ function go(s, keepScroll, skipHash){
         else { toast('저장 실패: '+((res&&res.error)||'재시도')); } })
       .catch(e=>{ if(btn) btn.disabled=false; toast('저장 실패 · 잠시 후 재시도'); });
   }
-  function load(){
-    listEl.innerHTML='<div class="attLoad"><i class="ti ti-loader-2"></i> 명단을 불러오는 중…</div>';
-    fetch(ATT_CSV+'&_cb='+Date.now(),{cache:'no-store'})
-      .then(r=>r.text()).then(csv=>{
-        const rows=parseCSV(csv).filter(r=>r.length>3);
-        students=[]; saved={}; const teacherByClass={};
-        for(let i=2;i<rows.length;i++){
-          const name=(rows[i][1]||'').trim(), cls=(rows[i][3]||'').trim();
-          if(!name||!cls) continue;
-          if(cls==='장결') continue;                       // 장결 그룹 제외
-          if(['출석','결석','출석률'].indexOf(name)!==-1) continue;
-          const grade=(rows[i][4]||'').trim(), note=(rows[i][5]||'').trim(), t=(rows[i][6]||'').trim();
-          if(t && t.indexOf('%')===-1 && !teacherByClass[cls]) teacherByClass[cls]=t;
-          const longAbs = /장기결석/.test(note);
-          const tag = (cls==='새친구') ? '새친구' : (longAbs ? '장기결석' : '');
-          students.push({name, cls, grade, note, longAbs, tag, present:false, reason:'', teacher:''});
-        }
-        students.forEach(s=>{ s.teacher=teacherByClass[s.cls]||''; });
-        loaded=true; render(); loadSaved();   // 명단 후 저장된 출석내역 복원
-      }).catch(e=>{ listEl.innerHTML='<div class="attLoad">명단을 불러오지 못했습니다. 다시 시도해 주세요.</div>'; });
+  // 명단 CSV / 주차별 스냅샷 CSV 공통 파서 (useCheck=true면 C열 TRUE/FALSE를 출석으로 읽음)
+  function parseRoster(csv, useCheck){
+    const rows=parseCSV(csv).filter(r=>r.length>3);
+    const out=[], teacherByClass={};
+    for(let i=2;i<rows.length;i++){
+      const name=(rows[i][1]||'').trim(), cls=(rows[i][3]||'').trim();
+      if(!name||!cls) continue;
+      if(cls==='장결') continue;                       // 장결 그룹 제외
+      if(['출석','결석','출석률'].indexOf(name)!==-1) continue;
+      const chk=(rows[i][2]||'').trim().toUpperCase();
+      const grade=(rows[i][4]||'').trim(), note=(rows[i][5]||'').trim(), t=(rows[i][6]||'').trim();
+      if(t && t!==cls && t.indexOf('%')===-1 && !teacherByClass[cls]) teacherByClass[cls]=t;
+      const longAbs = /장기결석/.test(note);
+      const tag = (cls==='새친구') ? '새친구' : (longAbs ? '장기결석' : '');
+      const present = useCheck ? (chk==='TRUE') : false;
+      const reason  = (useCheck && !present && !longAbs) ? note : '';
+      out.push({name, cls, grade, note, longAbs, tag, present, reason, teacher:''});
+    }
+    out.forEach(s=>{ s.teacher=teacherByClass[s.cls]||''; });
+    return out;
   }
-  load();
+  const clone = a => a.map(s=>Object.assign({}, s));
+  function yymmdd(d){ return String(d.getFullYear()).slice(2)+pz(d.getMonth()+1)+pz(d.getDate()); }
+  function txt(u){ return fetch(u+'&_cb='+Date.now(),{cache:'no-store'}).then(r=> r.ok ? r.text() : Promise.reject(r.status)); }
+
+  // 명단(현재 재적) 1회 로드 — 없는 탭을 요청하면 구글이 이 명단 탭을 돌려주므로 '탭 없음' 판별 기준으로도 쓴다
+  function ensureBase(){
+    if(baseRoster) return Promise.resolve();
+    return txt(ATT_CSV).then(csv=>{ baseCsv=csv.trim(); baseRoster=parseRoster(csv, false); });
+  }
+
+  // 선택한 주일 로드: 주차별 탭(YYMMDD) 스냅샷이 있으면 그대로, 없으면 명단+출석기록 복원
+  function loadForDate(){
+    const tab=yymmdd(curDate), token=++loadSeq;
+    readonly = curDate < toSun(new Date());          // 이번 주 이전 = 읽기 전용
+    loaded=false; saved={};
+    listEl.innerHTML='<div class="attLoad"><i class="ti ti-loader-2"></i> 불러오는 중…</div>';
+    ensureBase().then(()=>txt(WEEK_CSV(tab))).then(csv=>{
+      if(token!==loadSeq) return;
+      const snap = (csv.trim()!==baseCsv) ? parseRoster(csv, true) : [];
+      if(snap.length){
+        students=snap; loaded=true;
+        classOrder().forEach(c=>{ saved[c]=students.some(s=>s.cls===c && s.present); });
+        render(); return;
+      }
+      students=clone(baseRoster); loaded=true; render(); loadSaved();
+    }).catch(()=>{
+      if(token!==loadSeq) return;
+      if(baseRoster){ students=clone(baseRoster); loaded=true; render(); loadSaved(); }
+      else listEl.innerHTML='<div class="attLoad">명단을 불러오지 못했습니다. 다시 시도해 주세요.</div>';
+    });
+  }
+  loadForDate();
 })();
 
 // 좌우 스와이프: 손가락을 따라 화면이 밀리고, 놓으면 스냅되어 넘어감
