@@ -89,7 +89,8 @@
   .arItem .ci{width:40px;height:40px;border-radius:11px;background:var(--primary-soft);color:var(--primary);
     display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
   .arItem .ct{flex:1;min-width:0}
-  .arItem .t1{font-size:14.5px;font-weight:600;color:var(--tx)}
+  .arItem .t1{font-size:14.5px;font-weight:600;color:var(--tx);display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+  .rTag{font-size:10px;font-weight:700;color:#5b3ec9;background:#efeaff;border:1px solid #ddd2ff;padding:2px 7px;border-radius:999px;white-space:nowrap}
   .arItem .t2{font-size:11.5px;color:var(--tx3);margin-top:2px}
   .arItem .ar{font-size:20px;color:var(--tx3);flex:none}
   .arItem.lock{opacity:.6}
@@ -326,11 +327,6 @@
       <a class="campBtn" id="campSignup" href="https://docs.google.com/spreadsheets/d/1UNkBDRKk9MUJiGuaNoXLcAocCk7-hrP9oBlqDtuQ7Us/edit?usp=sharing" target="_blank" rel="noopener">
         <div class="ci"><i class="ti ti-tent"></i></div>
         <div class="ct"><div class="t1">수련회 신청 결과 바로가기</div><div class="t2">여름 수련회 참가 신청자_2026</div></div>
-        <i class="ti ti-chevron-right ar"></i>
-      </a>
-      <a class="campBtn" id="campSurvey" style="display:none" href="survey.html">
-        <div class="ci"><i class="ti ti-clipboard-data"></i></div>
-        <div class="ct"><div class="t1">수련회 설문조사 결과 보기</div><div class="t2">설문조사 결과 분석</div></div>
         <i class="ti ti-chevron-right ar"></i>
       </a>
       <a class="campBtn campAtt" href="#attend">
@@ -637,9 +633,9 @@ function go(s, keepScroll, skipHash){
     const qt = new URLSearchParams(location.search).get('t'); // 검증용 시간 오버라이드
     if(qt){ const d = new Date(qt); if(!isNaN(d.getTime())) now = d; }
 
-    const SIGNUP = { t:'수련회 신청 결과 바로가기', s:'여름 수련회 참가 신청자_2026', ic:'ti-tent',
+    const SIGNUP = { t:'수련회 신청 결과', s:'참가 신청자 명단', ic:'ti-tent', tag:'2026 여름 수련회',
       url:'https://docs.google.com/spreadsheets/d/1UNkBDRKk9MUJiGuaNoXLcAocCk7-hrP9oBlqDtuQ7Us/edit?usp=sharing' };
-    const SURVEY = { t:'수련회 설문조사 결과 보기', s:'설문조사 결과 분석', ic:'ti-clipboard-data',
+    const SURVEY = { t:'수련회 설문조사 결과 보기', s:'설문조사 결과 분석', ic:'ti-clipboard-data', tag:'2026 여름 수련회',
       url:'survey.html' };
     const BULLETIN = { t:'온라인 주보', s:'이번 주 예배 순서와 광고', ic:'ti-news',
       url:'https://vision153.notion.site/2026eda158ae8095999ac133933fd32a' };
@@ -654,7 +650,7 @@ function go(s, keepScroll, skipHash){
     // 아카이브 목록
     const row = function(o, active, lockTxt){
       const body = '<div class="ci"><i class="ti ' + o.ic + '"></i></div>' +
-        '<div class="ct"><div class="t1">' + o.t + '</div><div class="t2">' + o.s + '</div></div>' +
+        '<div class="ct"><div class="t1">' + o.t + (o.tag ? '<span class="rTag">' + o.tag + '</span>' : '') + '</div><div class="t2">' + o.s + '</div></div>' +
         (active ? '<i class="ti ti-chevron-right ar"></i>'
                 : '<span class="arLockTag"><i class="ti ti-lock"></i>' + lockTxt + '</span>');
       const tgt = /^https?:/.test(o.url) ? ' target="_blank" rel="noopener"' : '';
@@ -665,9 +661,10 @@ function go(s, keepScroll, skipHash){
     const box = document.getElementById('archiveList');
     if(box){
       let h = '';
-      if(now >= T1) h += row(SIGNUP, true, '');               // 신청: T1 이후 아카이브 노출(활성)
-      h += (now >= T2) ? row(SURVEY, true, '')                 // 설문: T2 이후 활성
+      // 최근에 종료된 순서로: 설문(수련회 후) → 신청 → 주보
+      h += (now >= T2) ? row(SURVEY, true, '')                 // 설문: T2 이후 활성(상단)
                        : row(SURVEY, false, '8/1(토) 08:00 오픈 예정'); // T2 전 잠금
+      if(now >= T1) h += row(SIGNUP, true, '');               // 신청: T1 이후 노출
       h += row(BULLETIN, true, '');                            // 온라인 주보: 맨 아래 상시 노출
       box.innerHTML = h;
     }
