@@ -1165,5 +1165,28 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
   };
 })();
 </script>
+
+<style>
+.attSaveCls.saved{background:#16a34a}
+.attSaveCls.saved:active{transform:scale(.96)}
+</style>
+<script>
+(function(){
+ function chipOf(c){var l=document.querySelectorAll('.scChip');for(var i=0;i<l.length;i++){if(l[i].textContent.trim()===c)return l[i];}return null;}
+ function paint(btn){
+   var c=btn.getAttribute('data-cls'); if(!c) return;
+   var chip=chipOf(c); var saved=chip&&chip.classList.contains('done');
+   if(saved){
+     if(btn.dataset.uxs!=='1'){btn.classList.add('saved');btn.dataset.uxs='1';btn.innerHTML='<i class="ti ti-check"></i>저장 완료 · 수정하기';}
+   } else {
+     if(btn.dataset.uxs!=='0'){btn.classList.remove('saved');btn.dataset.uxs='0';btn.innerHTML='<i class="ti ti-device-floppy"></i>'+c+' 저장';}
+   }
+ }
+ function paintAll(){var b=document.querySelectorAll('.attSaveCls');for(var i=0;i<b.length;i++)paint(b[i]);}
+ var raf=null; function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=null;paintAll();});}
+ try{var mo=new MutationObserver(schedule);mo.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});}catch(e){}
+ schedule(); setInterval(schedule,2000);
+})();
+</script>
 </body>
 </html>
