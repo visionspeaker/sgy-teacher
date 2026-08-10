@@ -1299,5 +1299,84 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 })();
 </script>
 
+
+<style>
+.ofSave.ofSaved{background:#16a34a}
+</style>
+<script>
+(function(){
+ function ready(fn){if(document.readyState!=="loading")fn();else document.addEventListener("DOMContentLoaded",fn);}
+ ready(function(){ setTimeout(run,300); });
+
+ function run(){
+   rearrangeHome();
+   renameSurvey();
+   wireOfferingSave();
+ }
+
+ function rearrangeHome(){
+   var home=document.getElementById("s-home");
+   if(!home)return;
+   var grid=home.querySelector(".grid.grid-top");
+   if(!grid)return;
+
+   // #3: 출석체크(앱)를 grid 첫 타일로, 테스트 제거
+   if(!grid.querySelector('a.tile[href="#attend"]')){
+     var tile=document.createElement("a");
+     tile.className="tile"; tile.href="#attend";
+     tile.innerHTML='<div class="ic rd"><i class="ti ti-calendar-check"></i></div><div class="nm">출석체크</div><div class="ds">앱에서 바로 출석 체크</div>';
+     grid.insertBefore(tile, grid.firstElementChild);
+   }
+   var camp=home.querySelector(".campBtn.campAtt");
+   if(camp)camp.remove();
+
+   // #2: 온라인 출석체크 타일 -> 아카이브 맨 위
+   var online=null, tiles=grid.querySelectorAll("a.tile");
+   for(var i=0;i<tiles.length;i++){var nm=tiles[i].querySelector(".nm");if(nm&&nm.textContent.trim()==="온라인 출석체크"){online=tiles[i];break;}}
+   if(online){
+     var href=online.getAttribute("href");
+     var arcList=document.getElementById("archiveList");
+     if(arcList){
+       var exists=false, ex=arcList.querySelectorAll(".arItem .t1");
+       for(var j=0;j<ex.length;j++){if(/온라인 출석체크/.test(ex[j].textContent)){exists=true;break;}}
+       if(!exists){
+         var ar=document.createElement("a");
+         ar.className="arItem"; ar.href=href; ar.target="_blank"; ar.rel="noopener";
+         ar.innerHTML='<div class="ci"><i class="ti ti-calendar-check"></i></div><div class="ct"><div class="t1">온라인 출석체크</div><div class="t2">학생 출석 관리 시트</div></div>';
+         arcList.insertBefore(ar, arcList.firstElementChild);
+       }
+     }
+     online.remove();
+   }
+ }
+
+ function renameSurvey(){
+   // #4: 수련회 설문조사 결과 보기 -> 수련회 설문조사 결과
+   var t1=document.querySelector('#archiveList .arItem[href="survey.html"] .t1');
+   if(!t1)return;
+   for(var k=0;k<t1.childNodes.length;k++){
+     var n=t1.childNodes[k];
+     if(n.nodeType===3 && /설문조사 결과 보기/.test(n.nodeValue)){
+       n.nodeValue=n.nodeValue.replace("설문조사 결과 보기","설문조사 결과");
+     }
+   }
+ }
+
+ function wireOfferingSave(){
+   // #1: 저장하기 -> 저장 완료 · 수정하기 (수정 시 복귀)
+   var sec=document.getElementById("s-offering");
+   if(!sec)return;
+   var btn=sec.querySelector(".ofSave");
+   if(!btn||btn.dataset.uxw)return;
+   btn.dataset.uxw="1";
+   function saved(){btn.classList.add("ofSaved");btn.innerHTML='<i class="ti ti-check"></i>저장 완료 · 수정하기';}
+   function unsaved(){btn.classList.remove("ofSaved");btn.innerHTML='<i class="ti ti-device-floppy"></i>저장하기';}
+   btn.addEventListener("click",function(){setTimeout(saved,450);});
+   sec.addEventListener("input",function(e){if(e.target&&e.target.closest&&e.target.closest(".ofSave"))return;unsaved();});
+   sec.addEventListener("change",function(e){if(e.target&&e.target.closest&&e.target.closest(".ofSave"))return;unsaved();});
+ }
+})();
+</script>
+
 </body>
 </html>
