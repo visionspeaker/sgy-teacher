@@ -1426,5 +1426,50 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 })();
 </script>
 
+
+<script>
+(function(){
+ var SS="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo";
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ var longKeys=null;
+ function loadLong(){
+   fetch(SS+"/gviz/tq?tqx=out:csv&gid=1874453017&cb="+Date.now()).then(function(r){return r.text();}).then(function(t){
+     var rows=parseCSV(t),s=[];
+     for(var i=1;i<rows.length;i++){var bg=(rows[i][5]||"");if(/장기결석/.test(bg)){var nm=(rows[i][1]||"").trim();var cl=(rows[i][3]||"").trim();if(nm&&cl)s.push("["+cl+"] "+nm);}}
+     longKeys=s; label();
+   }).catch(function(){});
+ }
+ function label(){
+   if(!longKeys||!longKeys.length)return;
+   var pre=document.getElementById("absText"); if(!pre)return;
+   var lines=pre.textContent.split("\n"), changed=false;
+   for(var i=0;i<lines.length;i++){
+     var ln=lines[i].trim();
+     if(!ln||/장기결석/.test(ln))continue;
+     for(var j=0;j<longKeys.length;j++){
+       if(ln===longKeys[j]){ lines[i]=longKeys[j]+" 장기결석"; changed=true; break; }
+     }
+   }
+   if(changed) pre.textContent=lines.join("\n");
+ }
+ function fallbackCopy(txt){ try{var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);}catch(e){} }
+ var box=document.querySelector(".absBox");
+ if(box){ new MutationObserver(label).observe(box,{subtree:true,childList:true,characterData:true}); }
+ var copy=document.getElementById("absCopy");
+ if(copy){
+   copy.addEventListener("click",function(e){
+     e.preventDefault(); e.stopImmediatePropagation();
+     label();
+     var p=document.getElementById("absText"); var txt=p?p.textContent:"";
+     if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).catch(function(){fallbackCopy(txt);}); } else { fallbackCopy(txt); }
+     var old=copy.innerHTML; copy.innerHTML='<i class="ti ti-check"></i>복사됨';
+     setTimeout(function(){copy.innerHTML=old;},1200);
+   },true);
+ }
+ loadLong();
+ setInterval(label,1500);
+})();
+</script>
+
 </body>
 </html>
