@@ -1400,5 +1400,31 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 })();
 </script>
 
+
+<script>
+(function(){
+ function recompute(){
+   var hs=document.querySelectorAll(".agL");
+   if(!hs.length)return;
+   var pres=0,jae=0,ok=false;
+   for(var i=0;i<hs.length;i++){
+     var tx=hs[i].textContent;
+     var m=tx.match(/\((\d+)\/(\d+)\)/);
+     if(!m)continue; ok=true;
+     pres+=(+m[1]);
+     if(!/새친구/.test(tx)) jae+=(+m[2]);
+   }
+   if(!ok||!jae)return;
+   var rate=Math.round(pres/jae*100)+"%";
+   var el=document.querySelector(".asc.rate .v");
+   if(el && el.textContent.trim()!==rate){ el.textContent=rate; }
+ }
+ var sec=document.getElementById("s-attend");
+ if(sec){ new MutationObserver(recompute).observe(sec,{subtree:true,childList:true,characterData:true}); }
+ setInterval(recompute,1200);
+ recompute();
+})();
+</script>
+
 </body>
 </html>
