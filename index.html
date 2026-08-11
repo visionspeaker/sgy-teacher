@@ -1378,5 +1378,27 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 })();
 </script>
 
+
+<script>
+(function(){
+ function toSun(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());return x;}
+ function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+ var CAP=iso(toSun(new Date()));
+ function curISO(){var c=document.getElementById("adCtr");if(!c)return null;var m=c.innerText.match(/(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/);if(!m)return null;return m[1]+"-"+String(+m[2]).padStart(2,"0")+"-"+String(+m[3]).padStart(2,"0");}
+ function atCap(){var c=curISO();return c!==null && c>=CAP;}
+ var next=document.getElementById("adNext");
+ var prev=document.getElementById("adPrev");
+ if(next){
+   next.addEventListener("click",function(e){ if(atCap()){ e.preventDefault(); e.stopImmediatePropagation(); paint(); } },true);
+ }
+ function paint(){ if(next){ next.style.opacity=atCap()?"0.35":""; next.style.cursor=atCap()?"default":""; } }
+ function clamp(){ var c=curISO(); if(c!==null && c>CAP && prev){ prev.click(); } paint(); }
+ var ctr=document.getElementById("adCtr");
+ if(ctr){ new MutationObserver(clamp).observe(ctr,{childList:true,subtree:true,characterData:true}); }
+ setInterval(paint,1500);
+ paint();
+})();
+</script>
+
 </body>
 </html>
