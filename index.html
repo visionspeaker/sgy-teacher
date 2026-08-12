@@ -1473,12 +1473,16 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 
 
 <style>
-.dlWrap{background:#fff;border:1px solid #f0e3d2;border-radius:12px;padding:14px 14px 12px;margin-top:14px}
-.dlTitle{font-size:15px;font-weight:700;color:#3a2a1d}
-.dlNote{font-size:12px;color:#9a8873;margin:3px 0 11px}
+#dlRes{position:fixed;inset:0;background:rgba(58,42,29,.45);z-index:99999;display:none}
+#dlRes.on{display:block}
+#dlResCard{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:560px;background:#fbf4ec;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 14px 26px;-webkit-overflow-scrolling:touch}
+#dlResHd{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+#dlResHd b{font-size:18px;font-weight:700;color:#3a2a1d}
+#dlResX{background:#fff;border:1px solid #f0e3d2;border-radius:10px;width:34px;height:34px;font-size:18px;color:#8a7a63;cursor:pointer;line-height:1;font-family:inherit}
+#dlResNote{font-size:12px;color:#9a8873;margin-bottom:12px}
 .dlList{display:flex;flex-direction:column;gap:8px}
 .dlRow{display:flex;align-items:center;gap:8px}
-.dlGo{flex:1;display:flex;align-items:center;gap:10px;text-decoration:none;background:#fbf4ec;border:1px solid #f0e3d2;border-radius:10px;padding:9px 11px;min-width:0}
+.dlGo{flex:1;display:flex;align-items:center;gap:10px;text-decoration:none;background:#fff;border:1px solid #f0e3d2;border-radius:10px;padding:9px 11px;min-width:0}
 .dlIc{width:30px;height:30px;flex:none;border-radius:8px;background:#fbe3d8;color:#e8590c;display:flex;align-items:center;justify-content:center;font-size:16px}
 .dlTx{min-width:0;display:flex;flex-direction:column;line-height:1.3}
 .dlName{font-size:13.5px;font-weight:700;color:#3a2a1d}
@@ -1491,31 +1495,40 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
  var MENUS=[["home","홈","ti-home"],["attend","출석체크","ti-calendar-check"],["offering","헌금 현황","ti-coin"],["share","공유 링크","ti-link"],["plan","연간계획","ti-calendar"],["contact","문의하기","ti-message"],["archive","아카이브","ti-archive"]];
  function base(){return (location.origin+location.pathname).replace(/index\.html$/,"");}
  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
- function build(){
-   var arc=document.getElementById("s-archive"); if(!arc)return;
-   if(document.getElementById("dlWrap"))return;
+ function copy(t){ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(function(){fb(t);});}else fb(t); }
+ function fb(t){try{var ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);}catch(e){}}
+ var overlay=null;
+ function buildOverlay(){
+   overlay=document.createElement("div"); overlay.id="dlRes";
    var b=base();
-   var h='<div class="dlTitle">딥링크 모음</div><div class="dlNote">각 메뉴로 바로 가는 링크입니다. 복사해서 공유하세요.</div><div class="dlList">';
+   var h='<div id="dlResCard"><div id="dlResHd"><b>딥링크 모음</b><button id="dlResX" type="button" aria-label="닫기">×</button></div><div id="dlResNote">각 메뉴로 바로 가는 링크입니다. 복사해서 공유하세요.</div><div class="dlList">';
    for(var i=0;i<MENUS.length;i++){var m=MENUS[i];var url=b+"#"+m[0];
      h+='<div class="dlRow"><a class="dlGo" href="#'+m[0]+'"><span class="dlIc"><i class="ti '+m[2]+'"></i></span><span class="dlTx"><span class="dlName">'+esc(m[1])+'</span><span class="dlUrl">'+esc(url)+'</span></span></a><button class="dlCopy" type="button" aria-label="링크 복사" data-url="'+esc(url)+'"><i class="ti ti-copy"></i></button></div>';
    }
-   h+='</div>';
-   var wrap=document.createElement("div"); wrap.id="dlWrap"; wrap.className="dlWrap"; wrap.innerHTML=h;
-   var list=document.getElementById("archiveList");
-   if(list&&list.parentNode) list.parentNode.appendChild(wrap); else arc.appendChild(wrap);
-   wrap.addEventListener("click",function(e){
-     var btn=e.target.closest(".dlCopy"); if(!btn)return;
-     e.preventDefault();
-     var u=btn.getAttribute("data-url"); copy(u);
-     var ic=btn.querySelector("i"); var old=ic.className; ic.className="ti ti-check";
-     setTimeout(function(){ic.className=old;},1200);
+   h+='</div></div>';
+   overlay.innerHTML=h;
+   document.body.appendChild(overlay);
+   overlay.addEventListener("click",function(e){
+     if(e.target===overlay || e.target.closest("#dlResX")){ closeRes(); return; }
+     var btn=e.target.closest(".dlCopy");
+     if(btn){ e.preventDefault(); var u=btn.getAttribute("data-url"); copy(u); var ic=btn.querySelector("i"); var old=ic.className; ic.className="ti ti-check"; setTimeout(function(){ic.className=old;},1200); return; }
+     if(e.target.closest(".dlGo")){ closeRes(); }
    });
  }
- function copy(t){ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(function(){fb(t);});}else fb(t); }
- function fb(t){try{var ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);}catch(e){}}
+ function closeRes(){ if(overlay)overlay.classList.remove("on"); }
+ function openRes(){ if(!overlay)buildOverlay(); overlay.classList.add("on"); }
+ function addMenu(){
+   var list=document.getElementById("archiveList"); if(!list)return;
+   if(document.getElementById("dlMenuItem"))return;
+   var a=document.createElement("a");
+   a.id="dlMenuItem"; a.className="arItem"; a.href="#";
+   a.innerHTML='<div class="ci"><i class="ti ti-link"></i></div><div class="ct"><div class="t1">딥링크 모음</div><div class="t2">각 메뉴로 바로 가는 링크</div></div>';
+   a.addEventListener("click",function(e){ e.preventDefault(); e.stopImmediatePropagation(); openRes(); });
+   list.appendChild(a);
+ }
  function ready(fn){if(document.readyState!=="loading")fn();else document.addEventListener("DOMContentLoaded",fn);}
- ready(function(){setTimeout(build,400);});
- setInterval(build,2000);
+ ready(function(){setTimeout(addMenu,400);});
+ setInterval(addMenu,2000);
 })();
 </script>
 
