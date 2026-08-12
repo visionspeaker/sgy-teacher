@@ -1573,5 +1573,103 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 })();
 </script>
 
+
+<style>
+body:not(.offAuthed) .ofSheet{display:none !important;}
+body:not(.offAuthed) #s-offering .ofItem,
+body:not(.offAuthed) #s-offering .ofDate,
+body:not(.offAuthed) #s-offering .ofSave{display:none !important;}
+#offLock{display:none;background:#f6efe4;border:1px dashed #d9c4a8;border-radius:12px;padding:22px 14px;text-align:center;color:#9a8873;margin-top:6px}
+body:not(.offAuthed) #s-offering #offLock{display:block;}
+#offLock .ic{font-size:26px;color:#c8ad86}
+#offLock .msg{font-size:13px;margin:6px 0 12px}
+#offLoginBtn{display:inline-flex;align-items:center;gap:6px;background:#e8590c;color:#fff;border:0;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer}
+#offWho{display:none;font-size:12px;color:#9a8873;margin-top:8px;text-align:right}
+body.offAuthed #s-offering #offWho{display:block;}
+#offWho a{color:#e8590c;cursor:pointer;text-decoration:underline;margin-left:6px}
+#offLg{position:fixed;inset:0;background:rgba(58,42,29,.45);z-index:100000;display:none;align-items:center;justify-content:center;padding:20px}
+#offLg.on{display:flex}
+#offLgCard{background:#fff;width:100%;max-width:360px;border-radius:14px;padding:16px 15px 18px;box-sizing:border-box}
+#offLgCard h3{margin:0 0 12px;font-size:16px;font-weight:700;color:#3a2a1d}
+#offLg label{display:block;font-size:12px;color:#9a8873;margin:0 0 5px}
+#offLg input[type=text],#offLg input[type=password]{width:100%;box-sizing:border-box;border:1px solid #f0e3d2;border-radius:10px;padding:10px 12px;font-size:15px;font-family:inherit;margin-bottom:12px;background:#fbf4ec;color:#3a2a1d}
+#offLg .rowck{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#5f513f;margin-bottom:14px}
+#offLg .btns{display:flex;gap:8px}
+#offLg .btns button{flex:1;border-radius:10px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+#offLgGo{background:#e8590c;color:#fff;border:0}
+#offLgX{background:#fff;color:#8a7a63;border:1px solid #f0e3d2}
+#offLgErr{color:#c0392b;font-size:12px;margin:-6px 0 10px;display:none}
+</style>
+<script>
+(function(){
+ var OFF_API="https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
+ var LSK="sgyOffAuth";
+ var _f=window.fetch.bind(window);
+ function getAuth(){ try{ var s=localStorage.getItem(LSK)||sessionStorage.getItem(LSK); return s?JSON.parse(s):null; }catch(e){ return null; } }
+ function setAuth(a,persist){ try{ (persist?localStorage:sessionStorage).setItem(LSK, JSON.stringify(a)); }catch(e){} }
+ function clearAuth(){ try{ localStorage.removeItem(LSK); sessionStorage.removeItem(LSK); }catch(e){} }
+ function authed(){ var a=getAuth(); return !!(a&&a.token); }
+ function applyState(){
+   document.body.classList.toggle("offAuthed", authed());
+   var w=document.getElementById("offWhoName"); if(w){ var a=getAuth(); w.textContent=(a&&a.user)?a.user:""; }
+ }
+ window.fetch=function(url,opts){
+   try{
+     if(typeof url==="string" && url.indexOf(OFF_API)===0 && opts && String(opts.method||"").toUpperCase()==="POST" && opts.body){
+       var b=JSON.parse(opts.body);
+       if(b && !b.action){ var a=getAuth(); if(a&&a.token){ b.token=a.token; opts=Object.assign({},opts,{body:JSON.stringify(b)}); } }
+     }
+   }catch(e){}
+   return _f(url,opts);
+ };
+ function ensureUI(){
+   var sec=document.getElementById("s-offering"); if(!sec) return;
+   var row=sec.querySelector(".ofBtnRow");
+   if(!document.getElementById("offWho") && row){
+     var who=document.createElement("div"); who.id="offWho";
+     who.innerHTML='<span id="offWhoName"></span> 님 · <a id="offLogout">로그아웃</a>';
+     row.parentNode.insertBefore(who, row);
+     who.querySelector("#offLogout").addEventListener("click",function(){ clearAuth(); applyState(); });
+   }
+   if(!document.getElementById("offLock")){
+     var lock=document.createElement("div"); lock.id="offLock";
+     lock.innerHTML='<div class="ic"><i class="ti ti-lock"></i></div><div class="msg">입력·수정은 담당 교사만 가능합니다</div><button id="offLoginBtn" type="button"><i class="ti ti-login-2"></i> 로그인하고 입력하기</button>';
+     if(row&&row.parentNode) row.parentNode.insertBefore(lock, row.nextSibling); else sec.appendChild(lock);
+     lock.querySelector("#offLoginBtn").addEventListener("click",openLogin);
+   }
+   if(!document.getElementById("offLg")){
+     var m=document.createElement("div"); m.id="offLg";
+     m.innerHTML='<div id="offLgCard"><h3>헌금 입력 로그인</h3><label>이름</label><input id="offLgUser" type="text" autocomplete="off" placeholder="이름 입력 (예: 최영미)"><label>비밀번호</label><input id="offLgPass" type="password" autocomplete="off" placeholder="비밀번호"><div id="offLgErr"></div><label class="rowck"><input id="offLgRemember" type="checkbox" checked> 이 기기에서 자동 로그인</label><div class="btns"><button id="offLgX" type="button">취소</button><button id="offLgGo" type="button">로그인</button></div></div>';
+     document.body.appendChild(m);
+     m.addEventListener("click",function(e){ if(e.target===m) closeLogin(); });
+     m.querySelector("#offLgX").addEventListener("click",closeLogin);
+     m.querySelector("#offLgGo").addEventListener("click",doLogin);
+     m.querySelector("#offLgPass").addEventListener("keydown",function(e){ if(e.key==="Enter") doLogin(); });
+   }
+   applyState();
+ }
+ function openLogin(){ ensureUI(); var m=document.getElementById("offLg"); document.getElementById("offLgErr").style.display="none"; m.classList.add("on"); setTimeout(function(){var u=document.getElementById("offLgUser"); if(u)u.focus();},60); }
+ function closeLogin(){ var m=document.getElementById("offLg"); if(m) m.classList.remove("on"); }
+ function doLogin(){
+   var u=(document.getElementById("offLgUser").value||"").trim();
+   var p=document.getElementById("offLgPass").value||"";
+   var rem=document.getElementById("offLgRemember").checked;
+   var err=document.getElementById("offLgErr");
+   var go=document.getElementById("offLgGo"); go.disabled=true; go.textContent="확인 중…";
+   _f(OFF_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"login",user:u,pass:p})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      go.disabled=false; go.textContent="로그인";
+      if(j&&j.ok){ setAuth({user:j.user,token:j.token}, rem); applyState(); closeLogin(); document.getElementById("offLgPass").value=""; }
+      else { err.textContent=(j&&j.error)||"로그인 실패"; err.style.display="block"; }
+    })
+    .catch(function(){ go.disabled=false; go.textContent="로그인"; err.textContent="연결 오류. 다시 시도하세요."; err.style.display="block"; });
+ }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(function(){ ensureUI(); applyState(); },400); });
+ setInterval(function(){ ensureUI(); },2000);
+})();
+</script>
+
 </body>
 </html>
