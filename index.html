@@ -1671,5 +1671,78 @@ body.offAuthed #s-offering #offWho{display:block;}
 })();
 </script>
 
+
+<style>
+#offCp{position:fixed;inset:0;background:rgba(58,42,29,.45);z-index:100001;display:none;align-items:center;justify-content:center;padding:20px}
+#offCp.on{display:flex}
+#offCpCard{background:#fff;width:100%;max-width:360px;border-radius:14px;padding:16px 15px 18px;box-sizing:border-box}
+#offCpCard h3{margin:0 0 4px;font-size:16px;font-weight:700;color:#3a2a1d}
+#offCpWho{font-size:12px;color:#9a8873;margin-bottom:12px}
+#offCp label{display:block;font-size:12px;color:#9a8873;margin:0 0 5px}
+#offCp input{width:100%;box-sizing:border-box;border:1px solid #f0e3d2;border-radius:10px;padding:10px 12px;font-size:15px;font-family:inherit;margin-bottom:11px;background:#fbf4ec;color:#3a2a1d}
+#offCpMsg{font-size:12px;margin:-4px 0 10px;display:none}
+#offCp .btns{display:flex;gap:8px}
+#offCp .btns button{flex:1;border-radius:10px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+#offCpGo{background:#e8590c;color:#fff;border:0}
+#offCpX{background:#fff;color:#8a7a63;border:1px solid #f0e3d2}
+</style>
+<script>
+(function(){
+ var OFF_API="https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
+ var LSK="sgyOffAuth";
+ var _f=window.fetch.bind(window);
+ function getAuth(){ try{ var s=localStorage.getItem(LSK)||sessionStorage.getItem(LSK); return s?JSON.parse(s):null; }catch(e){ return null; } }
+ function buildModal(){
+   if(document.getElementById("offCp")) return;
+   var m=document.createElement("div"); m.id="offCp";
+   m.innerHTML='<div id="offCpCard"><h3>비밀번호 변경</h3><div id="offCpWho"></div><label>현재 비밀번호</label><input id="offCpOld" type="password" autocomplete="off"><label>새 비밀번호</label><input id="offCpNew" type="password" autocomplete="off"><label>새 비밀번호 확인</label><input id="offCpNew2" type="password" autocomplete="off"><div id="offCpMsg"></div><div class="btns"><button id="offCpX" type="button">취소</button><button id="offCpGo" type="button">변경하기</button></div></div>';
+   document.body.appendChild(m);
+   m.addEventListener("click",function(e){ if(e.target===m) closeCp(); });
+   m.querySelector("#offCpX").addEventListener("click",closeCp);
+   m.querySelector("#offCpGo").addEventListener("click",doChange);
+ }
+ function openCp(){
+   buildModal();
+   var a=getAuth();
+   document.getElementById("offCpWho").textContent=(a&&a.user)?(a.user+" 님의 비밀번호를 변경합니다"):"";
+   ["offCpOld","offCpNew","offCpNew2"].forEach(function(id){document.getElementById(id).value="";});
+   var msg=document.getElementById("offCpMsg"); msg.style.display="none";
+   document.getElementById("offCp").classList.add("on");
+   setTimeout(function(){document.getElementById("offCpOld").focus();},60);
+ }
+ function closeCp(){ var m=document.getElementById("offCp"); if(m) m.classList.remove("on"); }
+ function showMsg(t,ok){ var msg=document.getElementById("offCpMsg"); msg.textContent=t; msg.style.color=ok?"#16a34a":"#c0392b"; msg.style.display="block"; }
+ function doChange(){
+   var oldp=document.getElementById("offCpOld").value||"";
+   var np=document.getElementById("offCpNew").value||"";
+   var n2=document.getElementById("offCpNew2").value||"";
+   if(np!==n2){ showMsg("새 비밀번호가 일치하지 않습니다",false); return; }
+   if(np.length<4){ showMsg("새 비밀번호는 4자 이상이어야 합니다",false); return; }
+   var a=getAuth(); if(!a||!a.token){ showMsg("로그인이 필요합니다",false); return; }
+   var go=document.getElementById("offCpGo"); go.disabled=true; go.textContent="변경 중…";
+   _f(OFF_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"changepass",token:a.token,oldpass:oldp,newpass:np})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      go.disabled=false; go.textContent="변경하기";
+      if(j&&j.ok){ showMsg("비밀번호가 변경되었습니다",true); setTimeout(closeCp,1100); }
+      else { showMsg((j&&j.error)||"변경 실패",false); }
+    })
+    .catch(function(){ go.disabled=false; go.textContent="변경하기"; showMsg("연결 오류. 다시 시도하세요.",false); });
+ }
+ function addLink(){
+   var who=document.getElementById("offWho"); if(!who) return;
+   if(document.getElementById("offChgPw")) return;
+   var logout=who.querySelector("#offLogout"); if(!logout) return;
+   var a=document.createElement("a"); a.id="offChgPw"; a.textContent="비밀번호 변경"; a.style.cursor="pointer";
+   a.addEventListener("click",openCp);
+   logout.parentNode.insertBefore(a, logout);
+   logout.parentNode.insertBefore(document.createTextNode(" · "), logout);
+ }
+ setInterval(addLink,1500);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(addLink,600); });
+})();
+</script>
+
 </body>
 </html>
