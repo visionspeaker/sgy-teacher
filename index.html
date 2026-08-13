@@ -1751,5 +1751,36 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 #offWho a{font-size:13px;padding:9px 14px;border:1px solid #e8590c;border-radius:10px;color:#e8590c;text-decoration:none;font-weight:700;line-height:1.2}
 #offWho a:active{background:#fbe3d8}
 </style>
+
+<style>
+#s-offering .ofSave:disabled{opacity:.45;cursor:default}
+</style>
+<script>
+(function(){
+ function snap(){
+   var sec=document.getElementById("s-offering"); if(!sec) return "";
+   var dt=document.getElementById("ofDate"); var date=dt?(dt.value||""):"";
+   var parts=[]; var items=sec.querySelectorAll(".ofItem");
+   for(var i=0;i<items.length;i++){ var a=items[i].querySelector("input"); var ta=items[i].querySelector("textarea"); parts.push((a?a.value.trim():"")+"|"+(ta?ta.value.trim():"")); }
+   return date+"::"+parts.join("##");
+ }
+ function btn(){ return document.querySelector("#s-offering .ofSave"); }
+ function setDisabled(dis){ var b=btn(); if(!b)return; b.disabled=!!dis; }
+ var baseline=null;
+ function refresh(){ baseline=snap(); setDisabled(true); }
+ function onEdit(e){ if(baseline===null)return; if(e.target&&e.target.closest&&e.target.closest("#s-offering")){ if(e.target.closest(".ofSave"))return; setDisabled(snap()===baseline); } }
+ document.addEventListener("input",onEdit,true);
+ document.addEventListener("change",function(e){ if(e.target&&e.target.id==="ofDate"){ setTimeout(refresh,2600); return; } onEdit(e); },true);
+ document.addEventListener("click",function(e){ if(e.target&&e.target.closest&&e.target.closest("#s-offering .ofSave")){ setTimeout(refresh,1800); } },true);
+ var sec=document.getElementById("s-offering");
+ var lastVis=false;
+ function tick(){ var s=document.getElementById("s-offering"); if(!s)return; var vis=s.classList.contains("on"); if(vis&&!lastVis){ setTimeout(refresh,2600); } lastVis=vis; }
+ if(sec){ new MutationObserver(tick).observe(sec,{attributes:true,attributeFilter:["class"]}); }
+ setInterval(tick,1000);
+ function ready(fn){ if(document.readyState!=="loading")fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(refresh,2800); });
+})();
+</script>
+
 </body>
 </html>
