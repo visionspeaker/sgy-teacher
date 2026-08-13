@@ -949,7 +949,7 @@ function go(s, keepScroll, skipHash){
 })();
 
 // ── 헌금 현황: 항목별 금액·명단을 시트(헌금명단 탭)에 저장 ──
-const OFFERING_API = "https://script.google.com/macros/s/AKfycbwi_c-LZqhUOlWSu8ZcqOKp8aDSxvgFejCtNBDo7OAfTy_Jey34GfLHiO60akNRTkZl/exec";
+const OFFERING_API = "https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
 (function(){
   const ITEMS = [
     { key:'십일조',    ic:'10',                 cls:'am', txt:'#e8590c', bg:'#fff0e2' },
@@ -1744,5 +1744,12 @@ body.offAuthed #s-offering #offWho{display:block;}
 })();
 </script>
 
+
+<style>
+body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-wrap:wrap;font-size:0;margin-top:12px}
+#offWho #offWhoName{font-size:13px;color:#5f513f;margin-right:auto}
+#offWho a{font-size:13px;padding:9px 14px;border:1px solid #e8590c;border-radius:10px;color:#e8590c;text-decoration:none;font-weight:700;line-height:1.2}
+#offWho a:active{background:#fbe3d8}
+</style>
 </body>
 </html>
