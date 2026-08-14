@@ -1782,5 +1782,49 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 })();
 </script>
 
+<script>
+/* enh_v16: 결석 사유 입력/저장 시 하단 '결석자 명단·사유'를 화면 상태로 즉시 재구성 */
+(function(){
+ function txtName(anm){
+   if(!anm) return "";
+   var c=anm.firstChild;
+   var t=(c&&c.nodeType===3)?c.textContent:anm.textContent;
+   return (t||"").trim();
+ }
+ function rebuild(){
+   var list=document.getElementById("attList"); if(!list) return;
+   var pre=document.getElementById("absText"); if(!pre) return;
+   var grids=list.querySelectorAll(".attGrid");
+   var lines=[], count=0;
+   grids.forEach(function(grid){
+     var hdr=grid.previousElementSibling;
+     while(hdr && !(hdr.classList&&hdr.classList.contains("attGrp"))) hdr=hdr.previousElementSibling;
+     var agl=hdr?hdr.querySelector(".agL"):null; if(!agl) return;
+     var cls=(agl.textContent||"").trim().split(/\s+/)[0];
+     if(cls==="새친구") return;                       // 새친구는 명단 제외(재적 기준)
+     grid.querySelectorAll(".attCard").forEach(function(card){
+       if(card.classList.contains("on")) return;      // 출석은 제외
+       var name=txtName(card.querySelector(".anm")); if(!name) return;
+       var reEl=card.querySelector(".attReason");
+       var reason=reEl?(reEl.value||"").trim():"";
+       var longAbs=card.classList.contains("longabs");
+       lines.push("["+cls+"] "+name+(longAbs?" 장기결석":"")+(reason?" · "+reason:""));
+       count++;
+     });
+   });
+   var next=lines.length?lines.join("\n"):"결석자 없음";
+   if(pre.textContent!==next) pre.textContent=next;   // 변경시에만 갱신(루프 방지)
+   var b=document.querySelector("#absToggle b"); if(b){ var nb=count+"명"; if(b.textContent!==nb) b.textContent=nb; }
+ }
+ var t=null;
+ function schedule(){ if(t) clearTimeout(t); t=setTimeout(rebuild,80); }
+ // 사유 입력 즉시 반영
+ document.addEventListener("input",function(e){ if(e.target&&e.target.classList&&e.target.classList.contains("attReason")) schedule(); },true);
+ // 반별 저장 클릭 후 반영
+ document.addEventListener("click",function(e){ if(e.target&&e.target.closest&&e.target.closest(".attSaveCls")) setTimeout(rebuild,60); },true);
+ // 안전망: 출석화면이 열려 있으면 주기적으로 동기화
+ setInterval(function(){ var s=document.getElementById("s-attend"); if(s&&s.classList.contains("on")) rebuild(); },1500);
+})();
+</script>
 </body>
 </html>
