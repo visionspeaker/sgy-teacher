@@ -1833,27 +1833,29 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 #sgyEmpty .st{margin-top:10px;border:1px dashed #e6cdb4;border-radius:10px;padding:16px;text-align:center;color:#a98d70;font-size:13px;background:#fdf8f2}
 #sgyMemo{background:#fff;border:1px solid #f0e3d2;border-radius:12px;padding:12px 14px;margin:12px 0}
 #sgyMemo .h{margin:0 0 8px;font-size:14px;font-weight:500;color:#3a2a1d;display:flex;align-items:center;gap:6px}
-#sgyMemoT{width:100%;box-sizing:border-box;border:1px solid #f0e3d2;border-radius:10px;background:#fbf4ec;padding:10px 12px;font-size:14px;font-family:inherit;min-height:70px;resize:vertical;color:#3a2a1d}
+#sgyMemoT{width:100%;box-sizing:border-box;border:1px solid #f0e3d2;border-radius:10px;background:#fbf4ec;padding:10px 12px;font-size:14px;font-family:inherit;min-height:56px;overflow:hidden;resize:none;color:#3a2a1d;line-height:1.6}
 #sgyMemo .row{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:10px}
-#sgyMemoB{background:#e8590c;color:#fff;border:0;border-radius:10px;padding:9px 18px;font-size:13.5px;font-weight:500;font-family:inherit;cursor:pointer}
-#sgyMemoB:disabled{opacity:.5;cursor:default}
+#sgyMemoB{background:#e8590c;color:#fff;border:0;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:500;font-family:inherit;cursor:pointer}
+#sgyMemoB.saved{background:#2f9e44}
 #sgyMemoS{font-size:12px;color:#9a8873}
+.sgyGrade{font-size:11px;color:#9a8873;font-weight:400;margin-left:5px}
 </style>
 <script>
-/* enh_v17: 빈 새친구 반 표시(담임 유지·미저장 제외) + 그 날 특이사항 메모 1칸(저장·복원) */
+/* enh_v18: 빈 새친구 반 표시 + 특이사항 메모(수정하기 토글·내용 따라 자동 높이) + 영어반 학년 표기 */
 (function(){
  var API="https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec";
  var LOG="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=993744121";
  var EMPTY="새친구", TEACHER="이은규", MCLS="특이사항";
+ var ENG="영어반", GRADES={"앨런":"중2","반잭키":"고2","반레이첼":"중3"};
  var memo="", loadedFor=null, dirty=false;
  function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
- function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
  function attendOn(){ var s=document.getElementById("s-attend"); return !!(s&&s.classList.contains("on")); }
  function curISO(){ var el=document.getElementById("adDateT"); var s=el?el.textContent:""; var m=s.match(/(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/); return m?(m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2)):""; }
+ function nameOf(anm){ var c=anm&&anm.firstChild; return (c&&c.nodeType===3?c.textContent:"").trim(); }
 
  function rosterHasEmpty(list){
    var has=false;
-   list.querySelectorAll(".attGrp .agL").forEach(function(a){ var t=(a.textContent||"").trim(); if(t.indexOf(EMPTY)===0) has=true; });
+   list.querySelectorAll(".attGrp .agL").forEach(function(a){ if((a.textContent||"").trim().indexOf(EMPTY)===0) has=true; });
    return has;
  }
  function injectEmpty(list){
@@ -1866,6 +1868,27 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
    if(abs&&abs.parentNode) abs.parentNode.insertBefore(div, abs); else list.appendChild(div);
  }
 
+ function applyGrades(list){
+   list.querySelectorAll(".attGrid").forEach(function(grid){
+     var hdr=grid.previousElementSibling; while(hdr&&!(hdr.classList&&hdr.classList.contains("attGrp"))) hdr=hdr.previousElementSibling;
+     var agl=hdr&&hdr.querySelector(".agL"); if(!agl) return;
+     if((agl.textContent||"").trim().indexOf(ENG)!==0) return;
+     grid.querySelectorAll(".attCard").forEach(function(card){
+       var anm=card.querySelector(".anm"); if(!anm || anm.querySelector(".sgyGrade")) return;
+       var g=GRADES[nameOf(anm)]; if(!g) return;
+       var s=document.createElement("span"); s.className="sgyGrade"; s.textContent="("+g+")";
+       var atag=anm.querySelector(".atag");
+       if(atag) anm.insertBefore(s, atag); else anm.appendChild(s);
+     });
+   });
+ }
+
+ function autoGrow(ta){ if(!ta) return; ta.style.height="auto"; ta.style.height=Math.max(56, ta.scrollHeight)+"px"; }
+ function updateBtn(){
+   var b=document.getElementById("sgyMemoB"); if(!b) return;
+   if(dirty){ b.textContent="메모 저장"; b.className=""; }
+   else { b.textContent="저장 완료 · 수정하기"; b.className="saved"; }
+ }
  function injectMemo(list){
    if(document.getElementById("sgyMemo")) return;
    var abs=list.querySelector(".absBox");
@@ -1874,10 +1897,10 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
      '<textarea id="sgyMemoT" placeholder="예) 오늘 예배 후 반별 모임 · 안내문 배부 등"></textarea>'+
      '<div class="row"><span id="sgyMemoS"></span><button id="sgyMemoB" type="button">메모 저장</button></div>';
    if(abs&&abs.parentNode) abs.parentNode.insertBefore(div, abs.nextSibling); else list.appendChild(div);
-   var ta=div.querySelector("#sgyMemoT"); ta.value=memo;
-   var b=div.querySelector("#sgyMemoB"); b.disabled=!dirty;
-   ta.addEventListener("input",function(){ memo=ta.value; dirty=true; b.disabled=false; var st=document.getElementById("sgyMemoS"); if(st) st.textContent=""; });
-   b.addEventListener("click",saveMemo);
+   var ta=div.querySelector("#sgyMemoT"); ta.value=memo; autoGrow(ta);
+   ta.addEventListener("input",function(){ memo=ta.value; dirty=true; autoGrow(ta); updateBtn(); var st=document.getElementById("sgyMemoS"); if(st) st.textContent=""; });
+   div.querySelector("#sgyMemoB").addEventListener("click",function(){ if(dirty) saveMemo(); else { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } });
+   updateBtn();
  }
 
  function loadMemo(iso){
@@ -1887,8 +1910,8 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
      for(var i=1;i<rows.length;i++){ var d=(rows[i][0]||"").trim(), c=(rows[i][1]||"").trim(); if(c===MCLS && d.indexOf(iso)>=0){ found=(rows[i][4]||"").trim(); } }
      if(curISO()!==iso) return;
      memo=found; dirty=false;
-     var ta=document.getElementById("sgyMemoT"); if(ta) ta.value=memo;
-     var b=document.getElementById("sgyMemoB"); if(b) b.disabled=true;
+     var ta=document.getElementById("sgyMemoT"); if(ta){ ta.value=memo; autoGrow(ta); }
+     updateBtn();
      var st=document.getElementById("sgyMemoS"); if(st) st.textContent="";
    }).catch(function(){});
  }
@@ -1896,22 +1919,23 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  function saveMemo(){
    var iso=curISO(); if(!iso) return;
    var b=document.getElementById("sgyMemoB"), st=document.getElementById("sgyMemoS");
-   b.disabled=true; b.textContent="저장 중…";
+   b.disabled=true; b.textContent="저장 중…"; b.className="";
    var body={date:iso, cls:MCLS, records:[{name:memo, present:true, reason:""}]};
    fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)})
-    .then(function(r){return r.json();}).then(function(j){ b.textContent="메모 저장";
-      if(j&&j.ok){ dirty=false; b.disabled=true; if(st) st.textContent="저장됨"; }
-      else { b.disabled=false; if(st) st.textContent="저장 실패 · 다시 시도"; } })
-    .catch(function(){ b.textContent="메모 저장"; b.disabled=false; if(st) st.textContent="연결 오류"; });
+    .then(function(r){return r.json();}).then(function(j){ b.disabled=false;
+      if(j&&j.ok){ dirty=false; updateBtn(); if(st) st.textContent="저장됨"; }
+      else { dirty=true; updateBtn(); if(st) st.textContent="저장 실패 · 다시 시도"; } })
+    .catch(function(){ b.disabled=false; dirty=true; updateBtn(); if(st) st.textContent="연결 오류"; });
  }
 
  function tick(){
    if(!attendOn()) return;
    var list=document.getElementById("attList"); if(!list) return;
-   if(list.querySelector(".attLoad")) return;   // 아직 로딩 중
+   if(list.querySelector(".attLoad")) return;
    var iso=curISO();
    if(iso && iso!==loadedFor){ loadMemo(iso); }
    injectEmpty(list);
+   applyGrades(list);
    injectMemo(list);
  }
  setInterval(tick,900);
