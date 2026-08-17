@@ -1944,5 +1944,45 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 })();
 </script>
 
+
+<style>
+.sgyBadge{background:#fdeee4;color:#c2410c;font-size:10.5px;padding:2px 7px;border-radius:20px;margin-left:6px;font-weight:500;vertical-align:middle}
+</style>
+<script>
+/* enh_v19: 신급 교육 신청 결과 — 아카이브 상시 카드 + 홈 상단 배너(2026-08-23~09-20 기간 노출, 배지 '신청중') */
+(function(){
+ var SHEET="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?gid=278425150#gid=278425150";
+ var START="2026-08-23", END="2026-09-20";
+ function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2); }
+ function inWindow(){ if(window.__sgyForceSingeup===true) return true; if(window.__sgyForceSingeup===false) return false; var t=todayISO(); return t>=START && t<=END; }
+
+ function ensureArchive(){
+   var list=document.getElementById("archiveList"); if(!list) return;
+   if(document.getElementById("sgySingeupAr")) return;
+   var a=document.createElement("a"); a.id="sgySingeupAr"; a.className="arItem"; a.href=SHEET; a.target="_blank"; a.rel="noopener";
+   a.innerHTML='<div class="ci"><i class="ti ti-clipboard-check"></i></div><div class="ct"><div class="t1">신급 교육 신청 결과</div><div class="t2">신청 명단·결과 확인</div></div>';
+   list.insertBefore(a, list.firstChild);
+ }
+
+ function ensureHome(){
+   var camp=document.querySelector("#s-home .campBtn") || document.querySelector(".campBtn");
+   var panel=camp?camp.parentNode:document.querySelector("#s-home .panel");
+   var existing=document.getElementById("sgySingeupHome");
+   if(!inWindow()){ if(existing) existing.remove(); return; }
+   if(existing || !panel) return;
+   var a=document.createElement("a"); a.id="sgySingeupHome"; a.className="campBtn"; a.href=SHEET; a.target="_blank"; a.rel="noopener";
+   a.innerHTML='<div class="ci"><i class="ti ti-clipboard-check"></i></div>'+
+     '<div class="ct"><div class="t1">신급 교육 신청 결과 <span class="sgyBadge">신청중</span></div>'+
+     '<div class="t2">신청 결과 바로 확인 · 8/23~9/20</div></div><i class="ti ti-chevron-right"></i>';
+   if(camp && camp.nextSibling) panel.insertBefore(a, camp.nextSibling); else panel.appendChild(a);
+ }
+
+ function tick(){ ensureArchive(); ensureHome(); }
+ setInterval(tick, 1500);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick, 600); });
+})();
+</script>
+
 </body>
 </html>
