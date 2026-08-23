@@ -843,6 +843,12 @@ function go(s, keepScroll, skipHash){
     else fallback(t);
     function fallback(x){ const ta=document.createElement('textarea'); ta.value=x; ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} ta.remove(); toast('결석자 명단 복사됨'); }
   }
+  window.__sgyAddFriend=function(name, note, cb){
+    name=String(name||'').trim(); if(!name){ if(cb)cb(false,'이름을 입력하세요'); return; }
+    function done(res){ if(res&&res.ok){ students.push({name:name, cls:'새친구', grade:'', note:String(note||''), longAbs:false, tag:'새친구', present:true, reason:'', teacher:'이은규'}); saved['새친구']=false; render(); if(cb)cb(true); } else { if(cb)cb(false,(res&&res.error)||'추가 실패'); } }
+    if(!ATTEND_API){ done({ok:true}); return; }
+    fetch(ATTEND_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'addFriend',name:name,note:String(note||'')})}).then(function(r){return r.json();}).then(done).catch(function(){ if(cb)cb(false,'연결 오류'); });
+  };
   function saveClass(cls){
     if(!loaded) return;
     const date=curISO(); if(!date){ alert('날짜를 선택해 주세요.'); return; }
@@ -1981,6 +1987,75 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  setInterval(tick, 1500);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ setTimeout(tick, 600); });
+})();
+</script>
+
+
+<style>
+.sgyAddBtn{background:#e8590c;color:#fff;border:0;border-radius:9px;padding:6px 11px;font-size:12.5px;font-weight:500;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+#sgyAddModal{position:fixed;inset:0;background:rgba(58,42,29,.45);z-index:100002;display:none;align-items:center;justify-content:center;padding:20px}
+#sgyAddModal.on{display:flex}
+#sgyAddModal .card{background:#fff;width:100%;max-width:360px;border-radius:14px;padding:16px 15px 18px;box-sizing:border-box}
+#sgyAddModal h3{margin:0 0 12px;font-size:16px;font-weight:700;color:#3a2a1d}
+#sgyAddModal label{display:block;font-size:12px;color:#9a8873;margin:0 0 4px}
+#sgyAddModal input{width:100%;box-sizing:border-box;border:1px solid #f0e3d2;border-radius:10px;padding:10px 12px;font-size:15px;font-family:inherit;margin-bottom:11px;background:#fbf4ec;color:#3a2a1d}
+#sgyAddErr{color:#c0392b;font-size:12px;margin:-4px 0 10px;display:none}
+#sgyAddModal .btns{display:flex;gap:8px}
+#sgyAddModal .btns button{flex:1;border-radius:10px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+#sgyAddGo{background:#e8590c;color:#fff;border:0}
+#sgyAddCancel{background:#fff;color:#8a7a63;border:1px solid #f0e3d2}
+</style>
+<script>
+/* enh_v20: 출석체크 새친구 추가 UI(이름+학교·연락처) → 명단 시트에 추가 + 즉시 출석카드 */
+(function(){
+ var EMPTY="새친구";
+ function attendOn(){ var s=document.getElementById("s-attend"); return !!(s&&s.classList.contains("on")); }
+ function mkBtn(){ var b=document.createElement("button"); b.type="button"; b.className="sgyAddBtn"; b.innerHTML='<i class="ti ti-user-plus"></i> 새친구 추가'; b.addEventListener("click",openModal); return b; }
+
+ function ensureBtn(){
+   if(!attendOn()) return;
+   var empty=document.getElementById("sgyEmpty");
+   if(empty){
+     var h=empty.querySelector(".h");
+     if(h && !h.querySelector(".sgyAddBtn")){ h.style.display="flex"; h.style.justifyContent="space-between"; h.style.alignItems="center"; h.style.gap="8px"; h.appendChild(mkBtn()); }
+     return;
+   }
+   var grp=null;
+   document.querySelectorAll("#attList .attGrp").forEach(function(g){ var a=g.querySelector(".agL"); if(a&&(a.textContent||"").trim().indexOf(EMPTY)===0) grp=g; });
+   if(grp && !grp.querySelector(".sgyAddBtn")){ var save=grp.querySelector(".attSaveCls"); var b=mkBtn(); if(save&&save.parentNode) save.parentNode.insertBefore(b, save); else grp.appendChild(b); }
+ }
+
+ function buildModal(){
+   if(document.getElementById("sgyAddModal")) return;
+   var m=document.createElement("div"); m.id="sgyAddModal";
+   m.innerHTML='<div class="card"><h3>새친구 추가</h3>'+
+     '<label>이름 *</label><input id="sgyAddName" type="text" autocomplete="off" placeholder="이름">'+
+     '<label>학교·연락처 (선택)</label><input id="sgyAddNote" type="text" autocomplete="off" placeholder="예) 송탄중2, 010-0000-0000">'+
+     '<div id="sgyAddErr"></div>'+
+     '<div class="btns"><button id="sgyAddCancel" type="button">취소</button><button id="sgyAddGo" type="button">추가</button></div></div>';
+   document.body.appendChild(m);
+   m.addEventListener("click",function(e){ if(e.target===m) closeModal(); });
+   m.querySelector("#sgyAddCancel").addEventListener("click",closeModal);
+   m.querySelector("#sgyAddGo").addEventListener("click",submit);
+   m.querySelector("#sgyAddName").addEventListener("keydown",function(e){ if(e.key==="Enter") submit(); });
+ }
+ function openModal(){ buildModal(); ["sgyAddName","sgyAddNote"].forEach(function(id){document.getElementById(id).value="";}); var er=document.getElementById("sgyAddErr"); er.style.display="none"; document.getElementById("sgyAddModal").classList.add("on"); setTimeout(function(){document.getElementById("sgyAddName").focus();},60); }
+ function closeModal(){ var m=document.getElementById("sgyAddModal"); if(m) m.classList.remove("on"); }
+ function showErr(t){ var er=document.getElementById("sgyAddErr"); er.textContent=t; er.style.display="block"; }
+ function submit(){
+   var name=(document.getElementById("sgyAddName").value||"").trim();
+   var note=(document.getElementById("sgyAddNote").value||"").trim();
+   if(!name){ showErr("이름을 입력하세요"); return; }
+   if(typeof window.__sgyAddFriend!=="function"){ showErr("새로고침 후 다시 시도하세요"); return; }
+   var go=document.getElementById("sgyAddGo"); go.disabled=true; go.textContent="추가 중…";
+   window.__sgyAddFriend(name, note, function(ok,msg){
+     go.disabled=false; go.textContent="추가";
+     if(ok){ closeModal(); } else { showErr(msg||"추가 실패"); }
+   });
+ }
+ setInterval(ensureBtn, 1000);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(ensureBtn,800); });
 })();
 </script>
 
