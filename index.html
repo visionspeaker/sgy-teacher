@@ -2059,5 +2059,41 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 })();
 </script>
 
+
+<style>
+#sgyEmptyEng{background:#fff;border:1px solid #f0e3d2;border-radius:12px;padding:12px 14px;margin:10px 0}
+#sgyEmptyEng .h{font-weight:500;color:#c2410c;font-size:14px}
+#sgyEmptyEng .st{margin-top:10px;border:1px dashed #e6cdb4;border-radius:10px;padding:16px;text-align:center;color:#a98d70;font-size:13px;background:#fdf8f2}
+</style>
+<script>
+/* enh_v21: 빈 영어반 표시(담임 박션 · 인원 없을 때 카드 유지, 이후 학생 배정 대비) */
+(function(){
+ var ENG="영어반", TEACHER="박션";
+ function attendOn(){ var s=document.getElementById("s-attend"); return !!(s&&s.classList.contains("on")); }
+ function rosterHasEng(list){
+   var has=false;
+   list.querySelectorAll(".attGrp .agL").forEach(function(a){ if((a.textContent||"").trim().indexOf(ENG)===0) has=true; });
+   return has;
+ }
+ function injectEmptyEng(list){
+   if(rosterHasEng(list)){ var e0=document.getElementById("sgyEmptyEng"); if(e0) e0.remove(); return; }
+   if(document.getElementById("sgyEmptyEng")) return;
+   var anchor=document.getElementById("sgyEmpty") || list.querySelector(".absBox");
+   var div=document.createElement("div"); div.id="sgyEmptyEng";
+   div.innerHTML='<div class="h">'+ENG+' · 담임 '+TEACHER+' <span style="color:#9a8873;font-weight:400">인원 없음</span></div>'+
+     '<div class="st"><div style="font-size:20px;color:#d8b48c"><i class="ti ti-language"></i></div><div style="margin-top:4px">등록된 인원이 없습니다</div><div style="font-size:12px;color:#bda588">학생이 배정되면 명단에 표시돼요</div></div>';
+   if(anchor&&anchor.parentNode) anchor.parentNode.insertBefore(div, anchor); else list.appendChild(div);
+ }
+ function tick(){
+   if(!attendOn()) return;
+   var list=document.getElementById("attList"); if(!list) return;
+   if(list.querySelector(".attLoad")) return;
+   injectEmptyEng(list);
+ }
+ setInterval(tick,900);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,900); });
+})();
+</script>
 </body>
 </html>
