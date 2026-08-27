@@ -1962,7 +1962,14 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2); }
  function inWindow(){ if(window.__sgyForceSingeup===true) return true; if(window.__sgyForceSingeup===false) return false; var t=todayISO(); return t>=START && t<=END; }
 
- function ensureArchive(){ var el=document.getElementById("sgySingeupAr"); if(el) el.remove(); }
+ function ensureArchive(){
+   var list=document.getElementById("archiveList"); if(!list) return;
+   if(inWindow()){ var ex=document.getElementById("sgySingeupAr"); if(ex) ex.remove(); return; }
+   if(document.getElementById("sgySingeupAr")) return;
+   var a=document.createElement("a"); a.id="sgySingeupAr"; a.className="arItem"; a.href=SHEET; a.target="_blank"; a.rel="noopener";
+   a.innerHTML='<div class="ci"><i class="ti ti-clipboard-check"></i></div><div class="ct"><div class="t1">신급 교육 신청 결과</div><div class="t2">신청 명단·결과 확인</div></div>';
+   list.insertBefore(a, list.firstChild);
+ }
 
  function ensureHome(){
    var camp=document.querySelector("#s-home .campBtn") || document.querySelector(".campBtn");
