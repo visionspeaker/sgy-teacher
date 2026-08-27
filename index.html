@@ -363,7 +363,7 @@
           <div class="ic tl"><i class="ti ti-calendar-event"></i></div>
           <div class="nm">연간계획</div><div class="ds">한 해 일정과 행사</div>
         </div>
-        <a class="tile" href="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?usp=sharing" target="_blank" rel="noopener">
+        <a class="tile" href="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?gid=0#gid=0" target="_blank" rel="noopener">
           <div class="ic pk"><i class="ti ti-clipboard-text"></i></div>
           <div class="nm">입회원서</div><div class="ds">새친구 등록 결과</div>
         </a>
@@ -2093,6 +2093,85 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  setInterval(tick,900);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ setTimeout(tick,900); });
+})();
+</script>
+
+<style>
+#singeupModal{position:fixed;inset:0;background:rgba(58,42,29,.45);z-index:100003;display:none;align-items:center;justify-content:center;padding:16px}
+#singeupModal.on{display:flex}
+#singeupModal .card{background:#fff;width:100%;max-width:400px;max-height:82vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+#singeupModal .hd{background:#fdeee4;padding:14px 16px;border-bottom:1px solid #f5d9c6;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#singeupModal .hd .t1{font-size:16px;font-weight:500;color:#c2410c;display:flex;align-items:center;gap:7px}
+#singeupModal .hd .t2{font-size:12px;color:#b5896b;margin-top:2px}
+#singeupModal .x{background:none;border:0;color:#c2410c;font-size:22px;line-height:1;cursor:pointer;font-family:inherit;padding:0 2px}
+#singeupSum{display:flex;gap:8px;padding:12px 16px}
+#singeupSum .b{flex:1;background:#faf4ec;border-radius:10px;padding:9px;text-align:center}
+#singeupSum .b .n{font-size:11px;color:#9a8873}
+#singeupSum .b .v{font-size:20px;font-weight:500;color:#3a2a1d}
+#singeupList{padding:0 12px 12px;overflow:auto}
+#singeupList .row{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #f0e3d2;border-radius:10px;padding:11px 13px;margin-bottom:8px}
+#singeupList .nm{font-size:15px;font-weight:500;color:#3a2a1d}
+#singeupList .wh{font-size:11.5px;color:#a8987f;margin-top:1px}
+#singeupList .bd{font-size:12px;font-weight:500;padding:4px 11px;border-radius:20px;white-space:nowrap}
+#singeupList .empty{text-align:center;color:#a8987f;font-size:13px;padding:22px 0}
+#singeupFoot{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-top:1px solid #f5e7d8}
+#singeupFoot .st{color:#9a8873;font-size:11.5px}
+#singeupRe{background:#fff;border:1px solid #f0e3d2;color:#8a7a63;border-radius:9px;padding:6px 12px;font-size:12.5px;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+</style>
+<script>
+/* enh_v22: 신급 교육 신청 결과 앱 내 표시(스프레드시트 값 gviz 로드) — 구글시트 탭 혼동 방지 */
+(function(){
+ var CSVBASE="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/gviz/tq?tqx=out:csv&gid=278425150";
+ var COLORS={"입교":["#e1f5ee","#0f6e56"],"학습":["#e6f1fb","#185fa5"],"세례":["#faece7","#993c1d"]};
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ function fmtWhen(s){ var m=String(s||"").match(/(\d{1,2})\.\s*(\d{1,2})\s*(오전|오후)?\s*(\d{1,2}):(\d{2})/); if(!m) return String(s||"").trim(); return m[1]+"/"+m[2]+(m[3]?" "+m[3]:"")+" "+m[4]+":"+m[5]; }
+
+ function buildModal(){
+   if(document.getElementById("singeupModal")) return;
+   var m=document.createElement("div"); m.id="singeupModal";
+   m.innerHTML='<div class="card">'+
+     '<div class="hd"><div><div class="t1"><i class="ti ti-clipboard-check"></i> 신급 교육 신청 결과</div><div class="t2">신청 명단 · 앱에서 바로 확인</div></div><button class="x" id="singeupX" type="button" aria-label="닫기">&times;</button></div>'+
+     '<div id="singeupSum"></div>'+
+     '<div id="singeupList"></div>'+
+     '<div id="singeupFoot"><span class="st" id="singeupSt"></span><button id="singeupRe" type="button"><i class="ti ti-refresh"></i> 새로고침</button></div>'+
+     '</div>';
+   document.body.appendChild(m);
+   m.addEventListener("click",function(e){ if(e.target===m) closeModal(); });
+   m.querySelector("#singeupX").addEventListener("click",closeModal);
+   m.querySelector("#singeupRe").addEventListener("click",function(){ load(true); });
+ }
+ function openModal(){ buildModal(); document.getElementById("singeupModal").classList.add("on"); load(false); }
+ function closeModal(){ var m=document.getElementById("singeupModal"); if(m) m.classList.remove("on"); }
+
+ function render(recs){
+   var sum=document.getElementById("singeupSum"), list=document.getElementById("singeupList");
+   if(!sum||!list) return;
+   var by={}; recs.forEach(function(r){ by[r.course]=(by[r.course]||0)+1; });
+   var order=["입교","학습","세례"]; var keys=order.filter(function(k){return by[k];}).concat(Object.keys(by).filter(function(k){return order.indexOf(k)<0;}));
+   var chips='<div class="b"><div class="n">전체</div><div class="v">'+recs.length+'</div></div>';
+   keys.slice(0,3).forEach(function(k){ var col=COLORS[k]?COLORS[k][1]:"#5f5e5a"; chips+='<div class="b"><div class="n">'+(k||"기타")+'</div><div class="v" style="color:'+col+'">'+by[k]+'</div></div>'; });
+   sum.innerHTML=chips;
+   if(!recs.length){ list.innerHTML='<div class="empty">아직 신청 내역이 없습니다</div>'; return; }
+   var html="";
+   recs.forEach(function(r){ var c=COLORS[r.course]||["#f1efe8","#5f5e5a"]; html+='<div class="row"><div><div class="nm">'+esc(r.name)+'</div><div class="wh">'+esc(fmtWhen(r.when))+'</div></div><span class="bd" style="background:'+c[0]+';color:'+c[1]+'">'+esc(r.course||"-")+'</span></div>'; });
+   list.innerHTML=html;
+ }
+ function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+
+ function load(force){
+   var st=document.getElementById("singeupSt"); if(st) st.textContent="불러오는 중…";
+   fetch(CSVBASE+"&cb="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();}).then(function(t){
+     var rows=parseCSV(t), recs=[];
+     for(var i=1;i<rows.length;i++){ if(!(rows[i][1]||"").trim()) continue; recs.push({when:(rows[i][0]||"").trim(), name:(rows[i][1]||"").trim(), course:(rows[i][2]||"").trim()}); }
+     render(recs);
+     if(st){ var d=new Date(); st.textContent="업데이트 "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2); }
+   }).catch(function(){ if(st) st.textContent="불러오기 실패 · 새로고침"; var list=document.getElementById("singeupList"); if(list&&!list.children.length) list.innerHTML='<div class="empty">불러오지 못했습니다. 새로고침을 눌러 주세요.</div>'; });
+ }
+
+ document.addEventListener("click",function(e){
+   var t=e.target.closest && e.target.closest("#sgySingeupHome, #sgySingeupAr");
+   if(t){ e.preventDefault(); e.stopPropagation(); openModal(); }
+ }, true);
 })();
 </script>
 </body>
