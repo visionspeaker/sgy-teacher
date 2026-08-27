@@ -2193,5 +2193,52 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  ready(function(){ setTimeout(tick, 900); });
 })();
 </script>
+
+<style>
+/* enh_v24: 출석 요약 4단 레이아웃 */
+.attSum{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+.attSum .asc{width:auto!important;min-width:0!important;padding-left:4px!important;padding-right:4px!important}
+.attSum .asc .v{font-size:20px!important}
+.attSum .asc.sae .l{color:#c2410c}
+.attSum .asc.sae .v{color:#e8590c}
+</style>
+<script>
+/* enh_v24: 출석 요약 3단→4단 (출석·결석·새친구·출석률). 새친구=오늘 출석한 새친구 반 인원 수(.on 카드 기준) */
+(function(){
+ function ensureCard(){
+   var sum=document.querySelector(".attSum"); if(!sum) return null;
+   var sae=document.getElementById("asSae");
+   if(!sae){
+     var rate=document.getElementById("asRate");
+     var rateCard=rate?rate.closest(".asc"):null;
+     var div=document.createElement("div"); div.className="asc sae";
+     div.innerHTML='<div class="l">새친구</div><div class="v" id="asSae">0</div>';
+     if(rateCard && rateCard.parentNode===sum){ sum.insertBefore(div, rateCard); } else { sum.appendChild(div); }
+     sae=document.getElementById("asSae");
+   }
+   return sae;
+ }
+ function countSae(){
+   var list=document.getElementById("attList"); if(!list) return 0;
+   var grid=null;
+   list.querySelectorAll(".attGrp").forEach(function(g){
+     var a=g.querySelector(".agL");
+     if(a && (a.textContent||"").trim().indexOf("새친구")===0){
+       var n=g.nextElementSibling;
+       if(n && n.classList && n.classList.contains("attGrid")) grid=n;
+     }
+   });
+   return grid ? grid.querySelectorAll(".attCard.on").length : 0;
+ }
+ function tick(){
+   var s=document.getElementById("s-attend"); if(!(s&&s.classList.contains("on"))) return;
+   var sae=ensureCard(); if(!sae) return;
+   sae.textContent=String(countSae());
+ }
+ setInterval(tick,700);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,700); });
+})();
+</script>
 </body>
 </html>
