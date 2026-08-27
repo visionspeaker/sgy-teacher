@@ -2175,5 +2175,23 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }, true);
 })();
 </script>
+
+<script>
+/* enh_v23: 아카이브 카드 순서 조정 — 온라인 출석체크를 수련회 신청 결과와 온라인 주보 사이로 */
+(function(){
+ var MOVE="온라인 출석체크", BEFORE="온라인 주보";
+ function titleOf(c){ var t=c.querySelector(".t1"); return t?(t.textContent||"").trim():""; }
+ function tick(){
+   var list=document.getElementById("archiveList"); if(!list) return;
+   var cards=list.querySelectorAll(".arItem");
+   var move=null, before=null;
+   cards.forEach(function(c){ var t=titleOf(c); if(t===MOVE) move=c; else if(t===BEFORE) before=c; });
+   if(move && before && move.nextElementSibling!==before){ list.insertBefore(move, before); }
+ }
+ setInterval(tick, 900);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick, 900); });
+})();
+</script>
 </body>
 </html>
