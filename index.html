@@ -2244,5 +2244,10 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  ready(function(){ setTimeout(tick,700); });
 })();
 </script>
+
+<style>
+/* enh_v25: 장기결석 학생이 '출석'으로 표시되면 장기결석 배지 자동 숨김 */
+.attCard.longabs.on .atag{display:none!important}
+</style>
 </body>
 </html>
