@@ -2249,5 +2249,52 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 /* enh_v25: 장기결석 학생이 '출석'으로 표시되면 장기결석 배지 자동 숨김 */
 .attCard.longabs.on .atag{display:none!important}
 </style>
+
+<script>
+/* enh_v26: 딥링크 모음 최신화 — 홈 메뉴(외부 도구·입회원서 등)를 딥링크 목록에 자동 추가 */
+(function(){
+ function urlOf(row){
+   var b=row.querySelector(".dlCopy"); var u=b?b.getAttribute("data-url"):"";
+   if(!u){ var g=row.querySelector(".dlGo"); u=g?g.getAttribute("href"):""; }
+   return (u||"").trim();
+ }
+ function existingUrls(list){
+   var s={}; list.querySelectorAll(".dlRow").forEach(function(r){ var u=urlOf(r); if(u) s[u]=1; }); return s;
+ }
+ function makeRow(name, url, iconCls){
+   var div=document.createElement("div"); div.className="dlRow";
+   div.innerHTML='<a class="dlGo" target="_blank" rel="noopener"><span class="dlIc"><i></i></span><span class="dlTx"><span class="dlName"></span><span class="dlUrl"></span></span></a>'+
+     '<button class="dlCopy" type="button" aria-label="링크 복사"><i class="ti ti-copy"></i></button>';
+   div.querySelector(".dlGo").setAttribute("href", url);
+   div.querySelector(".dlIc i").className = iconCls || "ti ti-link";
+   div.querySelector(".dlName").textContent = name;
+   div.querySelector(".dlUrl").textContent = url;
+   var btn=div.querySelector(".dlCopy"); btn.setAttribute("data-url", url);
+   btn.addEventListener("click", function(e){
+     e.preventDefault(); e.stopPropagation();
+     try{ if(navigator.clipboard) navigator.clipboard.writeText(url); }catch(_){}
+     var ic=btn.querySelector("i"); if(ic){ var old=ic.className; ic.className="ti ti-check"; setTimeout(function(){ ic.className=old; }, 1200); }
+   });
+   return div;
+ }
+ function tick(){
+   var list=document.querySelector(".dlList"); if(!list) return;
+   var r=list.getBoundingClientRect(); if(!(r.width>0 && r.height>0)) return;
+   var have=existingUrls(list);
+   document.querySelectorAll("#s-home a.tile[href]").forEach(function(t){
+     var href=(t.getAttribute("href")||"").trim();
+     if(href.indexOf("http")!==0) return;
+     if(have[href]) return;
+     var nmEl=t.querySelector(".nm"); var name=nmEl?nmEl.textContent.trim():(t.textContent||"").replace(/\s+/g," ").trim().slice(0,16);
+     var icEl=t.querySelector("i.ti"); var iconCls=icEl?icEl.className:"ti ti-link";
+     list.appendChild(makeRow(name, href, iconCls));
+     have[href]=1;
+   });
+ }
+ setInterval(tick, 700);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick, 700); });
+})();
+</script>
 </body>
 </html>
