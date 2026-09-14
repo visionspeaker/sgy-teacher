@@ -2632,5 +2632,26 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
+
+<script>
+/* enh_v32: 헌금 폼 로드 시 저장된 금액이 있는데 총액이 0원으로 남는 문제 보정 (자동 재계산) */
+(function(){
+ function digits(s){ return String(s||"").replace(/[^0-9]/g,""); }
+ function fix(){
+   var sec=document.getElementById("s-offering"); if(!(sec && sec.classList.contains("on"))) return;
+   var list=document.getElementById("ofList"); if(!list) return;
+   var totalEl=document.getElementById("ofTotal"); if(!totalEl) return;
+   var inputs=[].slice.call(list.querySelectorAll("input"));
+   var withVal=inputs.filter(function(el){ return digits(el.value).length>0; });
+   var totalNum=digits(totalEl.textContent);
+   /* 금액 칸에 값이 있는데 총액이 0(또는 빈값)이면, 앱 자체 합산 로직을 강제로 다시 돌린다 */
+   if(withVal.length>0 && (totalNum==="" || totalNum==="0")){
+     withVal.forEach(function(el){ el.dispatchEvent(new Event("input",{bubbles:true})); });
+   }
+ }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setInterval(fix, 1000); });
+})();
+</script>
 </body>
 </html>
