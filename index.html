@@ -2296,5 +2296,65 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  ready(function(){ setTimeout(tick, 700); });
 })();
 </script>
+
+<script>
+/* enh_v27: 장기결석 자동 판정 — 출석기록 기준 최근 5주 연속 결석이면 카드에 장기결석 자동 부여
+   (명단 비고의 수동 '장기결석' 표시와 무관하게, 실제 출석기록으로 판정) */
+(function(){
+ var LOG="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=993744121";
+ var TH=5; // 5주 연속 결석
+ var autoSet=null, lastFetch=0, fetching=false;
+ function norm(n){ return String(n||"").replace(/\([^)]*\)/g,"").replace(/장기결석/g,"").replace(/\s+/g,"").trim(); }
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ function ns(cell){ return String(cell||"").split(",").map(norm).filter(Boolean); }
+ function compute(rows){
+   var byDate={};
+   for(var i=1;i<rows.length;i++){ var d=(rows[i][0]||"").trim(); if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+     if(!byDate[d]) byDate[d]={p:{},a:{}};
+     ns(rows[i][4]).forEach(function(n){ byDate[d].p[n]=1; });
+     ns(rows[i][5]).forEach(function(n){ byDate[d].a[n]=1; }); }
+   var dates=Object.keys(byDate).sort();
+   var all={}; dates.forEach(function(d){ Object.keys(byDate[d].p).forEach(function(n){all[n]=1;}); Object.keys(byDate[d].a).forEach(function(n){all[n]=1;}); });
+   var set={};
+   Object.keys(all).forEach(function(n){
+     var st=0;
+     for(var i=dates.length-1;i>=0;i--){ var d=dates[i]; var ip=byDate[d].p[n], ia=byDate[d].a[n];
+       if(!ip && !ia) continue;          // 그 주 기록에 없으면 건너뜀
+       if(ia && !ip) st++; else break;    // 결석이면 연속 +1, 출석이면 중단
+     }
+     if(st>=TH) set[n]=1;
+   });
+   return set;
+ }
+ function load(){
+   if(fetching) return;
+   if(autoSet && (Date.now()-lastFetch)<60000) return;
+   fetching=true;
+   fetch(LOG+"&cb="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
+     .then(function(t){ autoSet=compute(parseCSV(t)); lastFetch=Date.now(); fetching=false; })
+     .catch(function(){ fetching=false; });
+ }
+ function cardName(c){ var anm=c.querySelector(".anm"); if(!anm) return ""; var fc=anm.firstChild; return norm(fc&&fc.nodeType===3?fc.textContent:anm.textContent); }
+ function badgeOf(c){ var b=null; c.querySelectorAll(".atag").forEach(function(x){ if((x.textContent||"").trim()==="장기결석") b=x; }); return b; }
+ function apply(){
+   if(!autoSet) return;
+   var s=document.getElementById("s-attend"); if(!(s&&s.classList.contains("on"))) return;
+   document.querySelectorAll("#attList .attCard").forEach(function(c){
+     var nm=cardName(c); if(!nm) return;
+     if(autoSet[nm]){
+       if(!c.classList.contains("longabs")) c.classList.add("longabs");
+       if(!badgeOf(c)){ var anm=c.querySelector(".anm"); if(anm && anm.parentNode){ var sp=document.createElement("span"); sp.className="atag"; sp.textContent="장기결석"; anm.parentNode.insertBefore(sp, anm.nextSibling); } }
+     } else {
+       if(c.classList.contains("longabs")) c.classList.remove("longabs");
+       var b=badgeOf(c); if(b) b.remove();
+     }
+   });
+ }
+ function tick(){ load(); apply(); }
+ setInterval(tick, 900);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick, 900); });
+})();
+</script>
 </body>
 </html>
