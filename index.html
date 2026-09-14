@@ -2411,7 +2411,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
   +'<div class="lgTit">교사 로그인</div>'
   +'<div class="lgSub">송탄영광교회 중고등부 · 교사용</div>'
   +'<label>교사 이름</label>'
-  +'<select id="lgName"><option value="">이름을 선택하세요</option>'+TEACHERS.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('')+'</select>'
+  +'<input id="lgName" type="text" autocomplete="off" placeholder="이름을 입력하세요">'
   +'<label>비밀번호</label>'
   +'<input id="lgPw" type="password" inputmode="numeric" placeholder="초기 비밀번호는 1234" autocomplete="current-password">'
   +'<div class="lgErr" id="lgErr"></div>'
@@ -2449,7 +2449,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
    var name=document.getElementById("lgName").value;
    var pw=document.getElementById("lgPw").value;
    var err=document.getElementById("lgErr");
-   if(!name){ err.textContent="교사 이름을 선택하세요."; return; }
+   if(!name){ err.textContent="교사 이름을 입력하세요."; return; }
    if(!pw){ err.textContent="비밀번호를 입력하세요."; return; }
    var btn=document.getElementById("lgBtn"); btn.disabled=true; btn.textContent="확인 중...";
    post({action:"login",name:name,pw:pw}).then(function(r){
@@ -2603,6 +2603,33 @@ nav{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
  }
  document.addEventListener("click", function(){ var m=menuEl(), t=document.getElementById("accTab30"); if(m) m.classList.remove("on"); if(t) t.classList.remove("on"); });
  window.addEventListener("resize", function(){ var m=menuEl(); if(m && m.classList.contains("on")) place(); });
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ ensure(); setInterval(ensure, 900); });
+})();
+</script>
+
+
+<style>
+/* enh_v31: 하단 탭바에 중고등부(학생) 앱 이동 탭 추가 (공유 링크와 계정 사이) */
+nav{grid-template-columns:repeat(4,1fr)!important}
+#stuTab31{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;color:#c0a88f;padding:0;text-decoration:none}
+#stuTab31 i{font-size:22px;line-height:1}
+</style>
+<script>
+/* enh_v31: 교사앱 → 중고등부(학생) 앱 이동 탭 */
+(function(){
+ var STU="https://visionspeaker.github.io/sgy/";
+ function ensure(){
+   var n=document.querySelector("nav"); if(!n) return;
+   var st=document.getElementById("stuTab31");
+   if(!st){
+     st=document.createElement("a"); st.id="stuTab31"; st.setAttribute("href", STU);
+     st.innerHTML='<i class="ti ti-school" aria-hidden="true"></i><span>중고등부앱</span>';
+   }
+   var acc=document.getElementById("accTab30");
+   if(acc){ if(st.nextElementSibling!==acc || st.parentNode!==n) n.insertBefore(st, acc); }
+   else if(st.parentNode!==n){ n.appendChild(st); }
+ }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ ensure(); setInterval(ensure, 900); });
 })();
