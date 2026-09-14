@@ -2653,5 +2653,37 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  ready(function(){ setInterval(fix, 1000); });
 })();
 </script>
+
+<script>
+/* enh_v33: 홈 '문의하기'를 아카이브로 이동 + 그 자리에 '영광 커넥트' 바로가기(실제 앱 로고) 추가 */
+(function(){
+ var STGC="https://visionspeaker.github.io/stgc/";
+ var LOGO="https://visionspeaker.github.io/stgc/icon-192.png";
+ function homeFix(){
+   var home=document.getElementById("s-home"); if(!home) return;
+   if(document.getElementById("stgcTile33")) return;
+   var tiles=[].slice.call(home.querySelectorAll(".tile"));
+   var inq=null;
+   for(var i=0;i<tiles.length;i++){ var oc=tiles[i].getAttribute("onclick")||""; if(/contact/.test(oc) && /문의/.test(tiles[i].textContent||"")){ inq=tiles[i]; break; } }
+   if(!inq) return;
+   var t=document.createElement("div"); t.className="tile"; t.id="stgcTile33";
+   t.setAttribute("onclick","window.open('"+STGC+"','_blank')");
+   t.innerHTML='<div class="ic" style="width:38px;height:38px;padding:0;overflow:hidden;border-radius:11px"><img src="'+LOGO+'" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;display:block"></div><div class="nm">영광 커넥트</div><div class="ds">영광 커넥트 바로가기</div>';
+   inq.parentNode.insertBefore(t, inq);
+   inq.parentNode.removeChild(inq);
+ }
+ function archiveFix(){
+   var list=document.getElementById("archiveList"); if(!list) return;
+   if(document.getElementById("inqAr33")) return;
+   var a=document.createElement("a"); a.className="arItem"; a.id="inqAr33"; a.style.cursor="pointer";
+   a.setAttribute("onclick","go('contact')");
+   a.innerHTML='<div class="ci"><i class="ti ti-mail"></i></div><div class="ct"><div class="t1">문의하기</div><div class="t2">피드백·문의 남기기</div></div><i class="ti ti-chevron-right ar"></i>';
+   list.appendChild(a);
+ }
+ function tick(){ homeFix(); archiveFix(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ tick(); setInterval(tick, 1200); });
+})();
+</script>
 </body>
 </html>
