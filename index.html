@@ -955,7 +955,7 @@ function go(s, keepScroll, skipHash){
 })();
 
 // ── 헌금 현황: 항목별 금액·명단을 시트(헌금명단 탭)에 저장 ──
-const OFFERING_API = "https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
+const OFFERING_API = "https://script.google.com/macros/s/AKfycby3OATQqQteBwRcVpITrIo5Yz1Si17eZ4LEMLUIem4QxXV_d-OANC82vT2pQopY1zNS/exec";
 (function(){
   const ITEMS = [
     { key:'십일조',    ic:'10',                 cls:'am', txt:'#e8590c', bg:'#fff0e2' },
@@ -1608,7 +1608,7 @@ body.offAuthed #s-offering #offWho{display:block;}
 </style>
 <script>
 (function(){
- var OFF_API="https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
+ var OFF_API="https://script.google.com/macros/s/AKfycby3OATQqQteBwRcVpITrIo5Yz1Si17eZ4LEMLUIem4QxXV_d-OANC82vT2pQopY1zNS/exec";
  var LSK="sgyOffAuth";
  var _f=window.fetch.bind(window);
  function getAuth(){ try{ var s=localStorage.getItem(LSK)||sessionStorage.getItem(LSK); return s?JSON.parse(s):null; }catch(e){ return null; } }
@@ -1694,7 +1694,7 @@ body.offAuthed #s-offering #offWho{display:block;}
 </style>
 <script>
 (function(){
- var OFF_API="https://script.google.com/macros/s/AKfycbyP1NjsBUsBZ3X3Umub21E7K1M1OclolGbs7TrJCoMdIv4htO6D-eaxuFivKK_ncyTD/exec";
+ var OFF_API="https://script.google.com/macros/s/AKfycby3OATQqQteBwRcVpITrIo5Yz1Si17eZ4LEMLUIem4QxXV_d-OANC82vT2pQopY1zNS/exec";
  var LSK="sgyOffAuth";
  var _f=window.fetch.bind(window);
  function getAuth(){ try{ var s=localStorage.getItem(LSK)||sessionStorage.getItem(LSK); return s?JSON.parse(s):null; }catch(e){ return null; } }
@@ -2496,6 +2496,71 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 
  function boot(){ mount(); wire(); var s=getSess(); if(s){ hideGate(s.name); } else { showGate(); } }
  if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+
+
+<style>
+/* enh_v29: 헌금 별도 로그인 제거(로그인한 전체 교사 열람) + 입력은 최영미만 */
+#offWho,#offLg,#offLock{display:none!important}
+#offRO{margin:12px 0 4px;padding:12px 14px;border-radius:12px;background:#fff5ec;border:1px solid #f2d9c0;color:#9a5a2a;font-size:13px;font-weight:700;text-align:center;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+#s-offering.viewonly #ofSave{display:none!important}
+#s-offering.viewonly .ofDate,#s-offering.viewonly #ofList{opacity:.75}
+</style>
+<script>
+/* enh_v29: 헌금 게이트 해제 + 저장 권한 최영미 전용 (앱 로그인 세션 기준) */
+(function(){
+ var NEWOFF="AKfycby3OATQqQteBwRcVpITrIo5Yz1Si17eZ4LEMLUIem4QxXV_d-OANC82vT2pQopY1zNS";
+ var ADMIN=String.fromCharCode(52572,50689,48120); // 최영미
+ var SKEY="sgy_teacher_auth_v1";
+ function teacher(){ try{ var s=JSON.parse(localStorage.getItem(SKEY)||"null"); return (s&&s.name)?s.name:""; }catch(e){ return ""; } }
+
+ // OFF_API 저장 요청에 앱 로그인 교사 이름(user)을 주입 (서버가 최영미만 허용)
+ var _f=window.fetch;
+ window.fetch=function(url,opts){
+   try{
+     if(typeof url==="string" && url.indexOf(NEWOFF)>=0 && opts && opts.body && String(opts.method||"").toUpperCase()==="POST"){
+       var b=JSON.parse(opts.body);
+       if(b && b.action!=="login" && b.action!=="changepass"){ b.user=teacher(); opts=Object.assign({},opts,{body:JSON.stringify(b)}); }
+     }
+   }catch(e){}
+   return _f.call(this,url,opts);
+ };
+
+ function apply(){
+   var sec=document.getElementById("s-offering"); if(!sec) return;
+   var me=teacher(); if(!me) return; // 앱 로그인 전에는 관여하지 않음(로그인 게이트가 우선)
+   // 헌금 자체 인증 우회: 로그인한 교사면 항상 열람 가능
+   try{
+     var cur=JSON.parse(localStorage.getItem("sgyOffAuth")||"null");
+     if(!cur || cur.token!=="app" || cur.user!==me){ localStorage.setItem("sgyOffAuth", JSON.stringify({user:me, token:"app"})); }
+   }catch(e){ try{ localStorage.setItem("sgyOffAuth", JSON.stringify({user:me, token:"app"})); }catch(_){} }
+   document.body.classList.add("offAuthed");
+   var lock=document.getElementById("offLock"); if(lock) lock.style.display="none";
+   var who=document.getElementById("offWho"); if(who) who.style.display="none";
+
+   var isAdmin = (me===ADMIN);
+   var save=document.getElementById("ofSave");
+   if(isAdmin){
+     sec.classList.remove("viewonly");
+     var ro=document.getElementById("offRO"); if(ro) ro.remove();
+     sec.querySelectorAll("#ofDate, #ofList input, #ofList textarea, #ofList select").forEach(function(el){ el.disabled=false; });
+     if(save){ save.disabled=false; save.style.display=""; }
+   } else {
+     sec.classList.add("viewonly");
+     sec.querySelectorAll("#ofDate, #ofList input, #ofList textarea, #ofList select").forEach(function(el){ el.disabled=true; });
+     if(save){ save.disabled=true; save.style.display="none"; }
+     if(!document.getElementById("offRO")){
+       var n=document.createElement("div"); n.id="offRO";
+       n.textContent="헌금 입력은 최영미 교사만 가능합니다. (열람 전용)";
+       var anchor=sec.querySelector(".ofSum")||save||sec.querySelector("#ofList");
+       if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(n, anchor.nextSibling);
+       else sec.appendChild(n);
+     }
+   }
+ }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ apply(); setInterval(apply, 800); });
 })();
 </script>
 
