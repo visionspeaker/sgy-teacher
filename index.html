@@ -2550,13 +2550,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
      sec.classList.add("viewonly");
      sec.querySelectorAll("#ofDate, #ofList input, #ofList textarea, #ofList select").forEach(function(el){ el.disabled=true; });
      if(save){ save.disabled=true; save.style.display="none"; }
-     if(!document.getElementById("offRO")){
-       var n=document.createElement("div"); n.id="offRO";
-       n.textContent="헌금 입력은 최영미 교사만 가능합니다. (열람 전용)";
-       var anchor=sec.querySelector(".ofSum")||save||sec.querySelector("#ofList");
-       if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(n, anchor.nextSibling);
-       else sec.appendChild(n);
-     }
+     var n=document.getElementById("offRO"); if(!n){ n=document.createElement("div"); n.id="offRO"; } n.textContent="헌금 입력은 회계 교사만 가능합니다."; var cp=sec.querySelector(".copyr"); if(cp){ if(n.nextElementSibling!==cp) sec.insertBefore(n, cp); } else if(n.parentNode!==sec){ sec.appendChild(n); }
    }
  }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
