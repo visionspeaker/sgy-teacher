@@ -2356,5 +2356,148 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  ready(function(){ setTimeout(tick, 900); });
 })();
 </script>
+
+<style>
+/* enh_v28: 교사 로그인 게이트 + 세션 유지 + 로그아웃 + 비밀번호 변경 (서버 인증) */
+#lg28{position:fixed;inset:0;z-index:100000;background:#fbf4ec;display:flex;align-items:center;justify-content:center;padding:20px;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+#lg28 .lgCard{width:100%;max-width:360px;background:#fff;border:1px solid #f0e3d2;border-radius:18px;padding:26px 22px;box-shadow:0 10px 30px rgba(0,0,0,.08);box-sizing:border-box}
+#lg28 .lgTit{font-size:21px;font-weight:800;color:#3a2f26;text-align:center;margin:2px 0 4px}
+#lg28 .lgSub{font-size:13px;color:#9b8b78;text-align:center;margin-bottom:18px}
+#lg28 label{display:block;font-size:13px;font-weight:700;color:#5b4c3d;margin:14px 2px 6px}
+#lg28 select,#lg28 input{width:100%;box-sizing:border-box;padding:13px 14px;font-size:16px;border:1.5px solid #ecdcc8;border-radius:12px;background:#fdfaf5;color:#2f2820;outline:none;-webkit-appearance:none;appearance:none}
+#lg28 select:focus,#lg28 input:focus{border-color:#e8590c}
+#lg28 .lgBtn{width:100%;margin-top:20px;padding:14px;font-size:16px;font-weight:800;color:#fff;background:#e8590c;border:0;border-radius:12px;cursor:pointer}
+#lg28 .lgBtn:disabled{opacity:.6}
+#lg28 .lgErr{min-height:18px;margin-top:12px;font-size:13px;color:#d92d20;text-align:center;font-weight:600}
+/* 계정 버튼 (헤더 우상단) */
+#acc28{position:absolute;top:14px;right:14px;z-index:50;display:none;align-items:center;gap:5px;padding:7px 11px;font-size:13px;font-weight:700;color:#7a5c3a;background:rgba(255,255,255,.72);border:1px solid #ecdcc8;border-radius:999px;cursor:pointer;backdrop-filter:blur(4px)}
+#acc28 i{font-size:15px;line-height:1}
+#accMenu28{position:absolute;top:50px;right:14px;z-index:60;min-width:158px;background:#fff;border:1px solid #ecdcc8;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.14);overflow:hidden;display:none}
+#accMenu28.on{display:block}
+#accMenu28 button{display:flex;align-items:center;gap:9px;width:100%;padding:13px 14px;font-size:14px;color:#4a3d30;background:#fff;border:0;border-bottom:1px solid #f4ecdf;cursor:pointer;text-align:left;font-weight:600}
+#accMenu28 button:last-child{border-bottom:0}
+#accMenu28 button:active{background:#faf3ea}
+#accMenu28 .logout{color:#d92d20;font-weight:700}
+#accMenu28 i{font-size:16px}
+/* 비밀번호 변경 모달 */
+#pw28{position:fixed;inset:0;z-index:100001;background:rgba(30,22,14,.45);display:none;align-items:center;justify-content:center;padding:20px;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+#pw28.on{display:flex}
+#pw28 .pwCard{width:100%;max-width:340px;background:#fff;border-radius:18px;padding:22px 20px;box-sizing:border-box}
+#pw28 .pwTit{font-size:17px;font-weight:800;color:#3a2f26;margin-bottom:4px}
+#pw28 .pwWho{font-size:13px;color:#9b8b78;margin-bottom:8px}
+#pw28 label{display:block;font-size:13px;font-weight:700;color:#5b4c3d;margin:12px 2px 6px}
+#pw28 input{width:100%;box-sizing:border-box;padding:12px 13px;font-size:16px;border:1.5px solid #ecdcc8;border-radius:11px;background:#fdfaf5;color:#2f2820;outline:none}
+#pw28 input:focus{border-color:#e8590c}
+#pw28 .pwErr{min-height:16px;margin-top:10px;font-size:13px;color:#d92d20;font-weight:600}
+#pw28 .pwRow{display:flex;gap:10px;margin-top:16px}
+#pw28 .pwRow button{flex:1;padding:12px;font-size:15px;font-weight:800;border-radius:11px;cursor:pointer}
+#pw28 .pwCancel{background:#f2ece2;color:#6b5a48;border:0}
+#pw28 .pwOk{background:#e8590c;color:#fff;border:0}
+#pw28 .pwOk:disabled{opacity:.6}
+</style>
+<script>
+/* enh_v28: 교사 로그인 게이트 (서버 세션 인증) */
+(function(){
+ var API="https://script.google.com/macros/s/AKfycbymI5fsnKgt1IrLIINhX73RfQNYGARjbbFrNbMdmPH58z9XAJvyWDSmYz748ILm4eh0/exec";
+ var KEY="sgy_teacher_auth_v1";
+ var TEACHERS=["장요한","최영세","조현태","최시혁","나선인","이윤아","황윤정","서예진","이다은","이은규","박션","강유석","홍윤기","최영미","김수진"];
+ function post(payload){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}).then(function(r){return r.text();}).then(function(t){ try{return JSON.parse(t);}catch(e){ return {ok:false,error:"neterr"}; } }).catch(function(){ return {ok:false,error:"neterr"}; }); }
+ function getSess(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&s.name&&TEACHERS.indexOf(s.name)>=0) return s; }catch(e){} return null; }
+ function setSess(name){ try{ localStorage.setItem(KEY, JSON.stringify({name:name, ts:Date.now()})); }catch(e){} }
+ function clearSess(){ try{ localStorage.removeItem(KEY); }catch(e){} }
+
+ var gate=document.createElement("div"); gate.id="lg28";
+ gate.innerHTML='<div class="lgCard">'
+  +'<div class="lgTit">교사 로그인</div>'
+  +'<div class="lgSub">송탄영광교회 중고등부 · 교사용</div>'
+  +'<label>교사 이름</label>'
+  +'<select id="lgName"><option value="">이름을 선택하세요</option>'+TEACHERS.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('')+'</select>'
+  +'<label>비밀번호</label>'
+  +'<input id="lgPw" type="password" inputmode="numeric" placeholder="초기 비밀번호는 1234" autocomplete="current-password">'
+  +'<div class="lgErr" id="lgErr"></div>'
+  +'<button class="lgBtn" id="lgBtn">로그인</button>'
+  +'</div>';
+
+ var acc=document.createElement("button"); acc.id="acc28"; acc.type="button";
+ acc.innerHTML='<i class="ti ti-user-circle"></i><span id="accNm"></span><i class="ti ti-chevron-down" style="font-size:13px"></i>';
+ var menu=document.createElement("div"); menu.id="accMenu28";
+ menu.innerHTML='<button id="accPw" type="button"><i class="ti ti-key"></i>비밀번호 변경</button>'
+  +'<button id="accOut" type="button" class="logout"><i class="ti ti-logout"></i>로그아웃</button>';
+
+ var pm=document.createElement("div"); pm.id="pw28";
+ pm.innerHTML='<div class="pwCard">'
+  +'<div class="pwTit">비밀번호 변경</div>'
+  +'<div class="pwWho" id="pwWho"></div>'
+  +'<label>현재 비밀번호</label><input id="pwOld" type="password" inputmode="numeric" autocomplete="current-password">'
+  +'<label>새 비밀번호 (4자 이상)</label><input id="pwNew" type="password" inputmode="numeric" autocomplete="new-password">'
+  +'<label>새 비밀번호 확인</label><input id="pwNew2" type="password" inputmode="numeric" autocomplete="new-password">'
+  +'<div class="pwErr" id="pwErr"></div>'
+  +'<div class="pwRow"><button class="pwCancel" id="pwCancel" type="button">취소</button><button class="pwOk" id="pwOk" type="button">변경</button></div>'
+  +'</div>';
+
+ function mount(){
+   document.body.appendChild(gate);
+   var h=document.querySelector("header");
+   if(h){ if(getComputedStyle(h).position==="static") h.style.position="relative"; h.appendChild(acc); h.appendChild(menu); }
+   else { document.body.appendChild(acc); document.body.appendChild(menu); }
+   document.body.appendChild(pm);
+ }
+ function showGate(){ gate.style.display="flex"; acc.style.display="none"; menu.classList.remove("on"); document.body.style.overflow="hidden"; var e=document.getElementById("lgErr"); if(e)e.textContent=""; var p=document.getElementById("lgPw"); if(p)p.value=""; }
+ function hideGate(name){ gate.style.display="none"; document.body.style.overflow=""; acc.style.display="flex"; var nm=document.getElementById("accNm"); if(nm)nm.textContent=name; }
+
+ function doLogin(){
+   var name=document.getElementById("lgName").value;
+   var pw=document.getElementById("lgPw").value;
+   var err=document.getElementById("lgErr");
+   if(!name){ err.textContent="교사 이름을 선택하세요."; return; }
+   if(!pw){ err.textContent="비밀번호를 입력하세요."; return; }
+   var btn=document.getElementById("lgBtn"); btn.disabled=true; btn.textContent="확인 중...";
+   post({action:"login",name:name,pw:pw}).then(function(r){
+     btn.disabled=false; btn.textContent="로그인";
+     if(r&&r.ok){ setSess(name); hideGate(name); if(r.isDefault){ setTimeout(function(){ if(confirm("초기 비밀번호(1234)를 사용 중입니다.\n지금 비밀번호를 변경하시겠어요?")) openPw(); },300); } }
+     else if(r&&r.error==="notallowed"){ err.textContent="등록되지 않은 교사입니다."; }
+     else if(r&&r.error==="neterr"){ err.textContent="네트워크 오류입니다. 잠시 후 다시 시도하세요."; }
+     else { err.textContent="비밀번호가 올바르지 않습니다."; }
+   });
+ }
+ function openPw(){ var s=getSess(); if(!s)return; document.getElementById("pwWho").textContent=s.name+" 교사"; document.getElementById("pwOld").value=""; document.getElementById("pwNew").value=""; document.getElementById("pwNew2").value=""; document.getElementById("pwErr").textContent=""; pm.classList.add("on"); menu.classList.remove("on"); }
+ function closePw(){ pm.classList.remove("on"); }
+ function doChange(){
+   var s=getSess(); if(!s)return;
+   var o=document.getElementById("pwOld").value, n=document.getElementById("pwNew").value, n2=document.getElementById("pwNew2").value;
+   var err=document.getElementById("pwErr");
+   if(!o){ err.textContent="현재 비밀번호를 입력하세요."; return; }
+   if(n.length<4){ err.textContent="새 비밀번호는 4자 이상이어야 합니다."; return; }
+   if(n!==n2){ err.textContent="새 비밀번호가 일치하지 않습니다."; return; }
+   var btn=document.getElementById("pwOk"); btn.disabled=true; btn.textContent="변경 중...";
+   post({action:"changepw",name:s.name,oldpw:o,newpw:n}).then(function(r){
+     btn.disabled=false; btn.textContent="변경";
+     if(r&&r.ok){ closePw(); alert("비밀번호가 변경되었습니다."); }
+     else if(r&&r.error==="oldbad"){ err.textContent="현재 비밀번호가 올바르지 않습니다."; }
+     else if(r&&r.error==="short"){ err.textContent="새 비밀번호는 4자 이상이어야 합니다."; }
+     else if(r&&r.error==="neterr"){ err.textContent="네트워크 오류입니다. 잠시 후 다시 시도하세요."; }
+     else { err.textContent="변경에 실패했습니다."; }
+   });
+ }
+ function logout(){ clearSess(); showGate(); }
+
+ function wire(){
+   document.getElementById("lgBtn").addEventListener("click", doLogin);
+   document.getElementById("lgPw").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+   acc.addEventListener("click", function(e){ e.stopPropagation(); menu.classList.toggle("on"); });
+   document.addEventListener("click", function(){ menu.classList.remove("on"); });
+   menu.addEventListener("click", function(e){ e.stopPropagation(); });
+   document.getElementById("accPw").addEventListener("click", openPw);
+   document.getElementById("accOut").addEventListener("click", logout);
+   document.getElementById("pwCancel").addEventListener("click", closePw);
+   document.getElementById("pwOk").addEventListener("click", doChange);
+   pm.addEventListener("click", function(e){ if(e.target===pm) closePw(); });
+ }
+
+ function boot(){ mount(); wire(); var s=getSess(); if(s){ hideGate(s.name); } else { showGate(); } }
+ if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+
 </body>
 </html>
