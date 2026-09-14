@@ -2616,16 +2616,18 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #stuTab31 img{width:23px;height:23px;border-radius:6px;display:block;object-fit:cover}
 </style>
 <script>
-/* enh_v31: 교사앱 → 중고등부(학생) 앱 이동 탭 (실제 앱 로고 아이콘) */
+/* enh_v31: 교사앱 → 중고등부(학생) 앱 이동 탭 (실제 앱 로고 + window.open 방식, 학생앱과 동일하게 홈화면 앱으로 열림) */
 (function(){
  var STU="https://visionspeaker.github.io/sgy/";
  var LOGO="https://visionspeaker.github.io/sgy/icon-192.png";
+ function goStudent(e){ if(e){ e.preventDefault(); } window.open(STU, "_blank"); }
  function ensure(){
    var n=document.querySelector("nav"); if(!n) return;
    var st=document.getElementById("stuTab31");
    if(!st){
      st=document.createElement("a"); st.id="stuTab31"; st.setAttribute("href", STU);
      st.innerHTML='<img src="'+LOGO+'" alt="" aria-hidden="true"><span>중고등부앱</span>';
+     st.addEventListener("click", goStudent);
    }
    var acc=document.getElementById("accTab30");
    if(acc){ if(st.nextElementSibling!==acc || st.parentNode!==n) n.insertBefore(st, acc); }
