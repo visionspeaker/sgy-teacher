@@ -673,7 +673,7 @@ function go(s, keepScroll, skipHash){
 
 // ── 앱 내 출석체크: 명단은 시트에서 읽고, 저장은 Apps Script로 기록 ──
 (function(){
-  const ATTEND_API = "https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec"; // Apps Script 웹앱(교회 계정)
+  const ATTEND_API = "https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec"; // Apps Script 웹앱(교회 계정)
   const ATT_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=1874453017";
   const ATT_LOG_CSV = "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent("출석기록"); // 저장 내역(누적 로그) 탭
   const WEEK_CSV = n => "https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&sheet=" + n;   // 주차별 탭(YYMMDD) — 1월~ 과거 기록
@@ -1849,7 +1849,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
 <script>
 /* enh_v18: 빈 새친구 반 표시 + 특이사항 메모(수정하기 토글·내용 따라 자동 높이) + 영어반 학년 표기 */
 (function(){
- var API="https://script.google.com/macros/s/AKfycbyDMdjtv45PNaxJD0asypqM4J3ugal0o3MIxTefkJCQi_fgpnF_f6OWXtymfAdt2oNH/exec";
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
  var LOG="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=993744121";
  var EMPTY="새친구", TEACHER="이은규", MCLS="특이사항";
  var ENG="영어반", GRADES={"앨런":"중2","반잭키":"고2","반레이첼":"중3"};
@@ -2683,6 +2683,117 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function tick(){ homeFix(); archiveFix(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ tick(); setInterval(tick, 1200); });
+})();
+</script>
+
+<style>
+/* enh_v34: 반별 최종 수정 입력자 표시 + 새친구 명단 삭제 */
+.le34{font-size:11px;color:#9b8b78;margin:-2px 2px 10px;display:flex;align-items:center;gap:4px;line-height:1.3}
+.le34 i{font-size:13px;line-height:1}
+.le34 b{color:#6b5a48;font-weight:700}
+#s-attend .attCard{position:relative}
+.nfDel34{position:absolute;top:6px;right:6px;z-index:6;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#d92d20;background:#fdecec;border:1px solid #f3c4c4;border-radius:8px;padding:3px 7px;cursor:pointer;font-family:inherit}
+.attCard.pendDel34{opacity:.5}
+.attCard.pendDel34 .nfDel34{color:#fff;background:#d92d20;border-color:#d92d20}
+</style>
+<script>
+/* enh_v34: 출석 반별 최종 수정 입력자 + 새친구 삭제(저장 시 반영) */
+(function(){
+ var ATT="AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5";
+ var API="https://script.google.com/macros/s/"+ATT+"/exec";
+ var LOG="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/gviz/tq?tqx=out:csv&gid=993744121";
+ var SKEY="sgy_teacher_auth_v1";
+ var SCG=String.fromCharCode(49352,52828,44396); // 새친구
+ function teacher(){ try{ var s=JSON.parse(localStorage.getItem(SKEY)||"null"); return (s&&s.name)?s.name:""; }catch(e){ return ""; } }
+ function esc(s){ return String(s||"").replace(/[<>&]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c];}); }
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ function normDate(s){ var m=String(s||"").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/); if(!m) return String(s||"").trim(); return m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2); }
+ function fmtTs(ts){ if(!ts) return ""; var s=String(ts).replace(/오전/,"AM").replace(/오후/,"PM"); var d=new Date(s); if(!isNaN(d.getTime())){ var hm=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2); var md=(d.getMonth()+1)+"/"+d.getDate(); return hm==="00:00"? md : (md+" "+hm); } return String(ts).slice(0,16); }
+
+ /* A. 저장 요청에 by(로그인 교사) 주입 */
+ var _f=window.fetch;
+ window.fetch=function(url,opts){
+   try{
+     if(typeof url==="string" && url.indexOf(ATT)>=0 && opts && opts.body){
+       var b=JSON.parse(opts.body);
+       if(b && b.records && !b.action){ b.by=teacher(); opts=Object.assign({},opts,{body:JSON.stringify(b)}); }
+     }
+   }catch(e){}
+   return _f.call(this,url,opts);
+ };
+
+ /* A. 출석기록에서 (날짜|반)->저장자·시각 맵 */
+ var editorMap=null, lastFetch=0, fetching=false;
+ function loadEditors(force){
+   if(fetching) return;
+   if(!force && editorMap && (Date.now()-lastFetch)<30000) return;
+   fetching=true;
+   fetch(LOG+"&cb="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();}).then(function(t){
+     var rows=parseCSV(t), m={};
+     for(var i=1;i<rows.length;i++){ var d=(rows[i][0]||"").trim(), cls=(rows[i][1]||"").trim(); if(!d||!cls) continue; m[normDate(d)+"|"+cls]={by:(rows[i][7]||"").trim(), ts:(rows[i][6]||"").trim()}; }
+     editorMap=m; lastFetch=Date.now(); fetching=false;
+   }).catch(function(){ fetching=false; });
+ }
+ function selDate(){ var e=document.getElementById("adDateT"); return e?normDate(e.textContent):""; }
+ function applyEditors(){
+   var sec=document.getElementById("s-attend"); if(!(sec&&sec.classList.contains("on"))) return;
+   if(!editorMap) return;
+   var date=selDate();
+   sec.querySelectorAll(".attGrp").forEach(function(g){
+     var btn=g.querySelector(".attSaveCls"); if(!btn) return; var cls=btn.getAttribute("data-cls"); if(!cls) return;
+     var line=(g.nextElementSibling && g.nextElementSibling.classList && g.nextElementSibling.classList.contains("le34"))?g.nextElementSibling:null;
+     if(!line){ line=document.createElement("div"); line.className="le34"; g.parentNode.insertBefore(line, g.nextSibling); }
+     var info=editorMap[date+"|"+cls];
+     if(info && info.by){ line.innerHTML='<i class="ti ti-user-edit"></i><span>최종 수정 : <b>'+esc(info.by)+' 교사</b> · '+esc(fmtTs(info.ts))+'</span>'; }
+     else if(info && info.ts){ line.innerHTML='<i class="ti ti-clock"></i><span>저장 : '+esc(fmtTs(info.ts))+' <span style="color:#c0a88f">(입력자 미기록)</span></span>'; }
+     else { line.innerHTML='<i class="ti ti-user-edit" style="color:#c0a88f"></i><span style="color:#c0a88f">아직 저장 기록 없음</span>'; }
+   });
+ }
+
+ /* B. 새친구 삭제 */
+ var pend={}; /* name -> true */
+ function nfGrid(){
+   var grps=document.querySelectorAll("#s-attend .attGrp");
+   for(var i=0;i<grps.length;i++){ var b=grps[i].querySelector(".attSaveCls"); if(b && b.getAttribute("data-cls")===SCG){ var el=grps[i].nextElementSibling; while(el && !(el.classList&&el.classList.contains("attGrid"))) el=el.nextElementSibling; return {grid:el, saveBtn:b}; } }
+   return null;
+ }
+ function cardName(c){ var a=c.querySelector(".anm"); if(!a) return ""; var fc=a.firstChild; var n=(fc&&fc.nodeType===3?fc.textContent:a.textContent)||""; return n.replace(/\([^)]*\)\s*$/,"").trim()===""?n.trim():n.trim(); }
+ function ensureDelBtns(){
+   var g=nfGrid(); if(!g||!g.grid) return;
+   g.grid.querySelectorAll(".attCard").forEach(function(c){
+     if(c.querySelector(".nfDel34")) return;
+     var b=document.createElement("button"); b.type="button"; b.className="nfDel34"; b.innerHTML='<i class="ti ti-trash"></i>삭제';
+     b.addEventListener("click", function(e){ e.stopPropagation(); e.preventDefault();
+       var nm=cardName(c);
+       if(c.classList.contains("pendDel34")){ c.classList.remove("pendDel34"); delete pend[nm]; b.innerHTML='<i class="ti ti-trash"></i>삭제'; }
+       else { c.classList.add("pendDel34"); pend[nm]=true; b.innerHTML='<i class="ti ti-arrow-back-up"></i>삭제 예정'; }
+     });
+     c.appendChild(b);
+   });
+ }
+ function delFriend(nm){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"delfriend",name:nm,by:teacher()})}).then(function(r){return r.json();}).catch(function(){return {ok:false};}); }
+ document.addEventListener("click", function(e){
+   var sb=e.target && e.target.closest && e.target.closest(".attSaveCls");
+   if(!sb || sb.getAttribute("data-cls")!==SCG) return;
+   var names=Object.keys(pend); if(!names.length) return;
+   setTimeout(function(){
+     if(!Object.keys(pend).length) return;
+     var list=Object.keys(pend);
+     if(!confirm("새친구 "+list.length+"명을 명단에서 삭제할까요?\n\n"+list.join(", ")+"\n\n삭제하면 다음 주 명단에서 사라집니다.")) return;
+     Promise.all(list.map(function(nm){ return delFriend(nm).then(function(r){ return {nm:nm, ok:r&&r.ok}; }); })).then(function(res){
+       var g=nfGrid();
+       res.forEach(function(x){ if(x.ok){ delete pend[x.nm];
+         if(g&&g.grid){ g.grid.querySelectorAll(".attCard").forEach(function(c){ if(cardName(c)===x.nm) c.remove(); }); }
+       }});
+       var fail=res.filter(function(x){return !x.ok;}).map(function(x){return x.nm;});
+       alert(fail.length? ("삭제 실패: "+fail.join(", ")) : "명단에서 삭제되었습니다.");
+     });
+   }, 1600);
+ }, true);
+
+ function tick(){ loadEditors(false); applyEditors(); ensureDelBtns(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,700); setInterval(tick, 1000); });
 })();
 </script>
 </body>
