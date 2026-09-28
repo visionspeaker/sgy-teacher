@@ -2744,7 +2744,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      var line=(g.nextElementSibling && g.nextElementSibling.classList && g.nextElementSibling.classList.contains("le34"))?g.nextElementSibling:null;
      if(!line){ line=document.createElement("div"); line.className="le34"; g.parentNode.insertBefore(line, g.nextSibling); }
      var info=editorMap[date+"|"+cls];
-     if(info && info.by){ line.innerHTML='<i class="ti ti-user-edit"></i><span>최종 수정 : <b>'+esc(info.by)+' 교사</b> · '+esc(fmtTs(info.ts))+'</span>'; }
+     if(info && info.by){ line.innerHTML='<i class="ti ti-user-edit"></i><span>최종 수정 : <b>'+esc(info.by)+(info.by===String.fromCharCode(44053,50976,49437)?String.fromCharCode(32,51204,46020,49324):String.fromCharCode(32,44368,49324))+'</b> · '+esc(fmtTs(info.ts))+'</span>'; }
      else if(info && info.ts){ line.innerHTML='<i class="ti ti-clock"></i><span>저장 : '+esc(fmtTs(info.ts))+' <span style="color:#c0a88f">(입력자 미기록)</span></span>'; }
      else { line.innerHTML='<i class="ti ti-user-edit" style="color:#c0a88f"></i><span style="color:#c0a88f">아직 저장 기록 없음</span>'; }
    });
