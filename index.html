@@ -2796,5 +2796,34 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  ready(function(){ setTimeout(tick,700); setInterval(tick, 1000); });
 })();
 </script>
+<script>
+/* enh_v35: 주간(sheet=YYMMDD) 출석 시트가 없을 때 gviz가 '출석기록' 로그로 폴백되어
+   반 목록이 숫자/타임스탬프로 깨지는 문제 방지. 주간 gviz 요청이 로그(출석기록) 형식을
+   반환하면 명단(roster, gid=1874453017)으로 자동 대체한다. 시트 순서와 무관하게 항상 동작. */
+(function(){
+ var SID="1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo";
+ var ROSTER="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:csv&gid=1874453017";
+ var LOGSIG=["저장시각","출석명단","결석명단"];
+ var _f=window.fetch;
+ function isLog(t){ var h=String(t||"").slice(0,500); for(var i=0;i<LOGSIG.length;i++){ if(h.indexOf(LOGSIG[i])>=0) return true; } return false; }
+ var WEEKRE=/[?&]sheet=\d{6}(?:&|$)/;
+ window.fetch=function(url,opts){
+   try{
+     if(typeof url==="string" && url.indexOf(SID)>=0 && WEEKRE.test(url) && url.indexOf("gid=")<0){
+       return _f.call(this,url,opts).then(function(r){
+         return r.clone().text().then(function(t){
+           if(isLog(t)){
+             return _f.call(window, ROSTER+"&cb="+Date.now(), {cache:"no-store"});
+           }
+           return new Response(t,{status:r.status,statusText:r.statusText,headers:r.headers});
+         }).catch(function(){ return r; });
+       });
+     }
+   }catch(e){}
+   return _f.call(this,url,opts);
+ };
+})();
+</script>
+
 </body>
 </html>
