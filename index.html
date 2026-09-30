@@ -2825,5 +2825,56 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
+<style>
+/* enh_v36: 출석체크 반 헤더의 담임/부담임 이름 탭 → 안내문자 바로 발송 */
+.smsT36{color:#c2410c;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:800;white-space:nowrap}
+.smsT36 .ti{font-size:12px;vertical-align:-1px;margin-right:1px}
+</style>
+<script>
+/* enh_v36: 담임/부담임 이름을 누르면 그 교사 번호로 문자앱 열림(문구 자동 입력).
+   번호는 명단(gid 1874453017) K열(교사명)·L열(휴대폰)에서 읽는다. 모든 반 담임+부담임 대상. */
+(function(){
+ var SID="1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo";
+ var ROSTER="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:csv&gid=1874453017";
+ var MSG="선생님, 안녕하세요. 수고와 헌신에 감사드립니다. 출석 체크 부탁드립니다.";
+ var HEADNAME="교사명";
+ var phone={}, loaded=0, loading=false;
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ function loadDir(){
+   if(loading) return; if(loaded && (Date.now()-loaded)<300000) return; loading=true;
+   fetch(ROSTER+"&cb="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();}).then(function(t){
+     var R=parseCSV(t), m={};
+     for(var i=0;i<R.length;i++){ var nm=(R[i][10]||"").trim(); var ph=(R[i][11]||"").replace(/[^0-9+]/g,""); if(nm && nm!==HEADNAME && ph) m[nm]=ph; }
+     phone=m; loaded=Date.now(); loading=false;
+   }).catch(function(){ loading=false; });
+ }
+ function wrapNames(){
+   var els=document.querySelectorAll("#s-attend .attGrp .agL");
+   for(var i=0;i<els.length;i++){
+     var a=els[i];
+     if(a.getAttribute("data-sms36")==="1" && a.querySelector(".smsT36")) continue;
+     if(!/담임\s[가-힣]/.test(a.textContent)) continue;
+     a.innerHTML=a.innerHTML.replace(/(담임\s)([가-힣]{2,4})/g,'$1<a class="smsT36" data-nm="$2"><i class="ti ti-message-2"></i>$2</a>');
+     a.setAttribute("data-sms36","1");
+   }
+ }
+ function openSms(nm){
+   var ph=phone[nm];
+   if(!ph){ loadDir(); alert(nm+" 선생님 번호가 아직 없어요.\n\n명단 시트의 '교사 연락처'(K·L열)에서\n"+nm+" 님 옆 휴대폰 칸에 번호를 입력해 주세요."); return; }
+   var ua=navigator.userAgent||"";
+   var sep=/iPhone|iPad|iPod|Macintosh/.test(ua)?"&":"?";
+   window.location.href="sms:"+ph+sep+"body="+encodeURIComponent(MSG);
+ }
+ document.addEventListener("click",function(e){
+   var a=e.target && e.target.closest && e.target.closest(".smsT36"); if(!a) return;
+   e.preventDefault(); e.stopPropagation();
+   openSms(a.getAttribute("data-nm"));
+ }, true);
+ function tick(){ loadDir(); wrapNames(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,800); setInterval(tick,1200); });
+})();
+</script>
+
 </body>
 </html>
