@@ -2836,7 +2836,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var SID="1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo";
  var DIR="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:csv&gid=1864425594";
- var MSG="선생님, 안녕하세요. 수고와 헌신에 감사드립니다. 출석 체크 부탁드립니다.";
+ var MSG="선생님, 안녕하세요. 수고와 헌신에 감사드립니다. 출석 체크 부탁드립니다.\nhttps://visionspeaker.github.io/sgy-teacher/#attend";
  var HEADNAME="교사명";
  var phone={}, loaded=0, loading=false;
  function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
