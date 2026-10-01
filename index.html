@@ -2877,8 +2877,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 </script>
 
 <style>
-/* enh_v37: 교사앱 릴리스노트 (헤더 버전칩 V37 → 전체화면 오버레이). 학생앱 디자인 참고. */
-.verChip37{display:inline-block;background:#fdeee3;color:var(--primary);font-size:9.5px;font-weight:800;border-radius:999px;padding:1.5px 6px;margin-left:5px;vertical-align:1px;letter-spacing:.3px;cursor:pointer;white-space:nowrap}
+/* enh_v37: 교사앱 릴리스노트 — 주황 배너(교사 전용 앱) 탭 → 전체화면 오버레이. 학생앱 디자인 참고. */
+.hero[data-rel37]{cursor:pointer}
+.verChip37{display:inline-block;background:rgba(255,255,255,.28);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:2px 9px;margin-left:8px;vertical-align:2px;letter-spacing:.3px;white-space:nowrap}
 .relWrap37{position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .relInner37{max-width:520px;margin:0 auto;padding:6px 16px 48px}
 .relWrap37 .dlBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
@@ -2901,11 +2902,11 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 .relWrap37 .rlTxt{font-size:12.5px;color:var(--tx2);line-height:1.75;margin-top:3px}
 </style>
 <script>
-/* enh_v37: 교사앱 릴리스노트 — 버전칩(V37) 이스터에그 */
+/* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
   {h:"릴리스노트(업데이트 기록) 추가", bd:"신규",cls:"bdN", v:"V37", d:"2026/10/01",
-   secs:[["[신규]","- 상단 버전( V37 ) 칩을 누르면 그동안의 업데이트 기록을 볼 수 있어요"]]},
+   secs:[["[신규]","- 주황 배너( 교사 전용 앱 )를 누르면 그동안의 업데이트 기록을 볼 수 있어요"]]},
   {h:"교사 안내문자 보내기", bd:"신규",cls:"bdN", v:"V36", d:"2026/10/01",
    secs:[["[신규]","- 출석체크에서 담임·부담임 이름을 누르면 안내 문자가 바로 작성됩니다<br>- 번호는 명단 스프레드시트 '교사명단' 탭에서 관리해요"]]},
   {h:"출석 화면 오류 복구", bd:"수정",cls:"bdF", v:"V35", d:"2026/09/30",
@@ -2970,19 +2971,18 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function openRel(e){ if(e){e.preventDefault();e.stopPropagation();} ensureOverlay(); var w=document.getElementById("relWrap37"); w.style.display="block"; w.scrollTop=0; document.body.style.overflow="hidden"; }
  function closeRel(){ var w=document.getElementById("relWrap37"); if(w) w.style.display="none"; document.body.style.overflow=""; }
- function subtitleEl(){
-   var ps=document.querySelectorAll("header p, header .sub, header div");
-   for(var i=0;i<ps.length;i++){ if(/TEACHER|교사 전용/.test(ps[i].textContent)&&ps[i].children.length<=2) return ps[i]; }
-   return document.querySelector("header h1");
+ function ensureHero(){
+   var hero=null, cands=document.querySelectorAll(".hero");
+   for(var i=0;i<cands.length;i++){ if(/교사 전용 앱/.test(cands[i].textContent)){ hero=cands[i]; break; } }
+   if(!hero) return;
+   if(!hero.getAttribute("data-rel37")){ hero.setAttribute("data-rel37","1"); hero.addEventListener("click", openRel); }
+   if(!document.getElementById("verChip37")){
+     var big=hero.querySelector(".big")||hero;
+     var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V37";
+     big.appendChild(c);
+   }
  }
- function ensureChip(){
-   if(document.getElementById("verChip37")) return;
-   var host=subtitleEl(); if(!host) return;
-   var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V37";
-   c.addEventListener("click", openRel);
-   host.appendChild(c);
- }
- function tick(){ ensureChip(); }
+ function tick(){ ensureHero(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ ensureOverlay(); setTimeout(tick,600); setInterval(tick,1500); });
 })();
