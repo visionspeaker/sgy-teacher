@@ -2877,8 +2877,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 </script>
 
 <style>
-/* enh_v37: 교사앱 릴리스노트 (헤더 버전칩 → 전체화면 오버레이). 학생앱 디자인 참고. */
-.verChip37{display:inline-block;background:#fdeee3;color:var(--primary);font-size:10px;font-weight:800;border-radius:999px;padding:2px 8px;margin-left:7px;vertical-align:3px;letter-spacing:.2px;cursor:pointer;white-space:nowrap}
+/* enh_v37: 교사앱 릴리스노트 (헤더 버전칩 V37 → 전체화면 오버레이). 학생앱 디자인 참고. */
+.verChip37{display:inline-block;background:#fdeee3;color:var(--primary);font-size:9.5px;font-weight:800;border-radius:999px;padding:1.5px 6px;margin-left:5px;vertical-align:1px;letter-spacing:.3px;cursor:pointer;white-space:nowrap}
 .relWrap37{position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .relInner37{max-width:520px;margin:0 auto;padding:6px 16px 48px}
 .relWrap37 .dlBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
@@ -2892,28 +2892,60 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 .relWrap37 .rlCard .h{font-size:15.5px;font-weight:800;color:var(--tx)}
 .relWrap37 .rlTag{display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap}
 .relWrap37 .rlTag .bd{font-size:10px;font-weight:800;border-radius:6px;padding:2.5px 7px}
-.relWrap37 .rlTag .bdF{background:#e6f6f4;color:#0d9488}
+.relWrap37 .rlTag .bdN{background:#e6f7ee;color:#16a34a}
 .relWrap37 .rlTag .bdI{background:#fdeee3;color:var(--primary)}
-.relWrap37 .rlTag .bdX{background:#fff0f0;color:#e2574c}
-.relWrap37 .rlTag .v{font-size:11.5px;color:var(--tx2);font-weight:700}
+.relWrap37 .rlTag .bdF{background:#e6f6f4;color:#0d9488}
+.relWrap37 .rlTag .v{font-size:11.5px;color:var(--tx2);font-weight:800}
 .relWrap37 .rlTag .d{font-size:11.5px;color:var(--tx3)}
 .relWrap37 .rlSec{font-size:11px;font-weight:800;color:#f59e0b;margin-top:11px}
 .relWrap37 .rlTxt{font-size:12.5px;color:var(--tx2);line-height:1.75;margin-top:3px}
 </style>
 <script>
-/* enh_v37: 교사앱 릴리스노트 */
+/* enh_v37: 교사앱 릴리스노트 — 버전칩(V37) 이스터에그 */
 (function(){
  var CARDS=[
-  {h:"교사 안내문자 보내기", bd:"신규", cls:"bdI", v:"v2.3", d:"2026/10/01",
-   secs:[["[신규]","- 출석체크 화면에서 담임·부담임 이름을 누르면 안내 문자가 바로 작성됩니다<br>- 번호는 명단 스프레드시트 '교사명단' 탭에서 관리해요"]]},
-  {h:"출석 화면 오류 복구", bd:"수정", cls:"bdF", v:"v2.2", d:"2026/09/30",
-   secs:[["[수정]","- 반 목록이 숫자·날짜로 깨지던 문제를 고쳤습니다<br>- 이제 시트 탭 순서가 바뀌어도 출석 화면이 정상 동작합니다"]]},
-  {h:"새친구 관리 · 최종 수정 교사 표시", bd:"신규", cls:"bdI", v:"v2.1", d:"2026/09/29",
-   secs:[["[신규]","- 새친구 출석카드에 삭제 버튼이 생겼어요 (저장 시 명단에서 제거)"],["[개선]","- 반별로 '최종 수정 교사'와 수정 시각이 표시됩니다"]]},
-  {h:"교사 로그인 · 계정", bd:"신규", cls:"bdI", v:"v2.0", d:"2026/09/28",
-   secs:[["[신규]","- 교사 로그인(이름+비밀번호)과 자동 로그인, 비밀번호 변경"],["[개선]","- 하단에 '계정' 탭, '중고등부앱' 바로가기 탭을 추가했어요"]]},
-  {h:"헌금 현황 열람", bd:"개선", cls:"bdI", v:"v1.9", d:"2026/09/27",
-   secs:[["[개선]","- 헌금 현황은 모든 교사가 열람할 수 있어요<br>- 입력·저장은 담당 교사만 가능합니다"]]}
+  {h:"릴리스노트(업데이트 기록) 추가", bd:"신규",cls:"bdN", v:"V37", d:"2026/10/01",
+   secs:[["[신규]","- 상단 버전( V37 ) 칩을 누르면 그동안의 업데이트 기록을 볼 수 있어요"]]},
+  {h:"교사 안내문자 보내기", bd:"신규",cls:"bdN", v:"V36", d:"2026/10/01",
+   secs:[["[신규]","- 출석체크에서 담임·부담임 이름을 누르면 안내 문자가 바로 작성됩니다<br>- 번호는 명단 스프레드시트 '교사명단' 탭에서 관리해요"]]},
+  {h:"출석 화면 오류 복구", bd:"수정",cls:"bdF", v:"V35", d:"2026/09/30",
+   secs:[["[수정]","- 반 목록이 숫자·날짜로 깨지던 문제를 고쳤습니다<br>- 시트 탭 순서가 바뀌어도 출석 화면이 정상 동작합니다"]]},
+  {h:"최종 수정 교사 표시 · 새친구 삭제", bd:"신규",cls:"bdN", v:"V34", d:"2026/09/29",
+   secs:[["[신규]","- 새친구 출석카드에 삭제 버튼 추가 (저장 시 명단에서 제거)"],["[개선]","- 반별로 '최종 수정 교사'와 수정 시각이 표시됩니다"]]},
+  {h:"홈 화면 정리", bd:"개선",cls:"bdI", v:"V33", d:"2026/09/29",
+   secs:[["[개선]","- '문의하기'를 아카이브로 옮기고, 그 자리에 '영광 커넥트' 바로가기를 추가했어요"]]},
+  {h:"헌금 총액 자동 보정", bd:"수정",cls:"bdF", v:"V32", d:"2026/09/29",
+   secs:[["[수정]","- 금액을 입력했는데 총액이 0원으로 남던 문제를 고쳤습니다"]]},
+  {h:"중고등부앱 바로가기 탭", bd:"신규",cls:"bdN", v:"V31", d:"2026/09/28",
+   secs:[["[신규]","- 하단 탭에 '중고등부앱'(학생앱) 바로가기를 추가했어요"]]},
+  {h:"계정 탭 이동", bd:"개선",cls:"bdI", v:"V30", d:"2026/09/28",
+   secs:[["[개선]","- 상단 계정 배지를 없애고 하단 '계정' 탭으로 옮겼어요"]]},
+  {h:"헌금 열람·입력 권한 정리", bd:"개선",cls:"bdI", v:"V29", d:"2026/09/27",
+   secs:[["[개선]","- 헌금 현황은 모든 교사가 열람할 수 있어요<br>- 입력·저장은 담당 교사만 가능합니다"]]},
+  {h:"교사 로그인 · 계정", bd:"신규",cls:"bdN", v:"V28", d:"2026/09/27",
+   secs:[["[신규]","- 교사 로그인(이름+비밀번호)·자동 로그인·비밀번호 변경"]]},
+  {h:"장기결석 자동 판정", bd:"신규",cls:"bdN", v:"V27", d:"2026/09/20",
+   secs:[["[신규]","- 출석기록 기준 최근 5주 연속 결석이면 자동으로 '장기결석'을 표시합니다"]]},
+  {h:"딥링크 모음 최신화", bd:"개선",cls:"bdI", v:"V26", d:"2026/09/20",
+   secs:[["[개선]","- 홈 메뉴(외부 도구·입회원서 등)를 바로가기 목록에 자동으로 반영"]]},
+  {h:"장기결석 배지 자동 정리", bd:"개선",cls:"bdI", v:"V25", d:"2026/09/13",
+   secs:[["[개선]","- 장기결석 학생이 '출석'으로 바뀌면 배지를 자동으로 숨깁니다"]]},
+  {h:"출석 요약 4단 확장", bd:"개선",cls:"bdI", v:"V24", d:"2026/09/13",
+   secs:[["[개선]","- 출석 요약을 출석·결석·새친구·출석률 4칸으로 확장했어요"]]},
+  {h:"아카이브 카드 정리", bd:"개선",cls:"bdI", v:"V23", d:"2026/09/06",
+   secs:[["[개선]","- '온라인 출석체크' 카드를 수련회 결과와 온라인 주보 사이로 이동"]]},
+  {h:"신급 교육 결과 앱 내 표시", bd:"신규",cls:"bdN", v:"V22", d:"2026/08/30",
+   secs:[["[신규]","- 신급 교육 신청 결과를 앱 안에서 바로 확인할 수 있어요"]]},
+  {h:"영어반 카드 유지", bd:"개선",cls:"bdI", v:"V21", d:"2026/08/30",
+   secs:[["[개선]","- 인원이 없어도 영어반(담임 박션) 카드를 유지합니다"]]},
+  {h:"새친구 추가 기능", bd:"신규",cls:"bdN", v:"V20", d:"2026/08/30",
+   secs:[["[신규]","- 출석체크에서 새친구(이름·학교·연락처)를 바로 추가 → 명단에 반영"]]},
+  {h:"신급 교육 신청 안내", bd:"신규",cls:"bdN", v:"V19", d:"2026/08/23",
+   secs:[["[신규]","- 신급 교육 신청 결과 카드 + 홈 배너(신청 기간 노출)"]]},
+  {h:"특이사항 메모 · 영어반 학년 표기", bd:"개선",cls:"bdI", v:"V18", d:"2026/08/16",
+   secs:[["[개선]","- 특이사항 메모(수정·자동 높이)와 영어반 학년 표기를 추가"]]},
+  {h:"결석자 명단 즉시 반영", bd:"개선",cls:"bdI", v:"V16", d:"2026/08/16",
+   secs:[["[개선]","- 결석 사유를 입력·저장하면 '결석자 명단·사유'에 바로 반영됩니다"]]}
  ];
  function esc(s){return String(s||"");}
  function buildCards(){
@@ -2938,12 +2970,17 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function openRel(e){ if(e){e.preventDefault();e.stopPropagation();} ensureOverlay(); var w=document.getElementById("relWrap37"); w.style.display="block"; w.scrollTop=0; document.body.style.overflow="hidden"; }
  function closeRel(){ var w=document.getElementById("relWrap37"); if(w) w.style.display="none"; document.body.style.overflow=""; }
+ function subtitleEl(){
+   var ps=document.querySelectorAll("header p, header .sub, header div");
+   for(var i=0;i<ps.length;i++){ if(/TEACHER|교사 전용/.test(ps[i].textContent)&&ps[i].children.length<=2) return ps[i]; }
+   return document.querySelector("header h1");
+ }
  function ensureChip(){
-   var h1=document.querySelector("header h1"); if(!h1) return;
    if(document.getElementById("verChip37")) return;
-   var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="릴리스노트";
+   var host=subtitleEl(); if(!host) return;
+   var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V37";
    c.addEventListener("click", openRel);
-   h1.appendChild(c);
+   host.appendChild(c);
  }
  function tick(){ ensureChip(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
