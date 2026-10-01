@@ -2883,7 +2883,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 .relWrap37{position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .relInner37{max-width:520px;margin:0 auto;padding:6px 16px 48px}
 .relWrap37 .dlBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
-.relWrap37 .rlHero{background:linear-gradient(120deg,#f59248,#e8590c);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(232,89,12,.24)}
+.relWrap37 .rlHero{cursor:pointer;background:linear-gradient(120deg,#f59248,#e8590c);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(232,89,12,.24)}
 .relWrap37 .rlHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
 .relWrap37 .rlHero .t{font-size:20px;font-weight:800;margin-top:5px}
 .relWrap37 .rlHero .s{font-size:12.5px;opacity:.92;margin-top:3px}
@@ -2967,7 +2967,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      +'<div class="rlHero"><div class="k">RELEASE NOTES</div><div class="t">교사앱 업데이트 기록</div><div class="s">앱이 어떻게 바뀌어 왔는지 모아뒀어요</div><div class="em">📝</div></div>'
      +'<div id="rlList37">'+buildCards()+'</div></div>';
    document.body.appendChild(w);
-   w.querySelector("#relBack37").addEventListener("click", closeRel);
+   w.querySelector("#relBack37").addEventListener("click", closeRel); w.querySelector(".rlHero").addEventListener("click", closeRel);
  }
  function openRel(e){ if(e){e.preventDefault();e.stopPropagation();} ensureOverlay(); var w=document.getElementById("relWrap37"); w.style.display="block"; w.scrollTop=0; document.body.style.overflow="hidden"; }
  function closeRel(){ var w=document.getElementById("relWrap37"); if(w) w.style.display="none"; document.body.style.overflow=""; }
