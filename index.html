@@ -2876,5 +2876,80 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
+<style>
+/* enh_v37: 교사앱 릴리스노트 (헤더 버전칩 → 전체화면 오버레이). 학생앱 디자인 참고. */
+.verChip37{display:inline-block;background:#fdeee3;color:var(--primary);font-size:10px;font-weight:800;border-radius:999px;padding:2px 8px;margin-left:7px;vertical-align:3px;letter-spacing:.2px;cursor:pointer;white-space:nowrap}
+.relWrap37{position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.relInner37{max-width:520px;margin:0 auto;padding:6px 16px 48px}
+.relWrap37 .dlBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
+.relWrap37 .rlHero{background:linear-gradient(120deg,#f59248,#e8590c);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(232,89,12,.24)}
+.relWrap37 .rlHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
+.relWrap37 .rlHero .t{font-size:20px;font-weight:800;margin-top:5px}
+.relWrap37 .rlHero .s{font-size:12.5px;opacity:.92;margin-top:3px}
+.relWrap37 .rlHero .em{position:absolute;right:-6px;bottom:-16px;font-size:74px;opacity:.18;line-height:1}
+.relWrap37 .rlCard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 15px;margin-top:10px}
+.relWrap37 .rlCard:first-child{margin-top:11px}
+.relWrap37 .rlCard .h{font-size:15.5px;font-weight:800;color:var(--tx)}
+.relWrap37 .rlTag{display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap}
+.relWrap37 .rlTag .bd{font-size:10px;font-weight:800;border-radius:6px;padding:2.5px 7px}
+.relWrap37 .rlTag .bdF{background:#e6f6f4;color:#0d9488}
+.relWrap37 .rlTag .bdI{background:#fdeee3;color:var(--primary)}
+.relWrap37 .rlTag .bdX{background:#fff0f0;color:#e2574c}
+.relWrap37 .rlTag .v{font-size:11.5px;color:var(--tx2);font-weight:700}
+.relWrap37 .rlTag .d{font-size:11.5px;color:var(--tx3)}
+.relWrap37 .rlSec{font-size:11px;font-weight:800;color:#f59e0b;margin-top:11px}
+.relWrap37 .rlTxt{font-size:12.5px;color:var(--tx2);line-height:1.75;margin-top:3px}
+</style>
+<script>
+/* enh_v37: 교사앱 릴리스노트 */
+(function(){
+ var CARDS=[
+  {h:"교사 안내문자 보내기", bd:"신규", cls:"bdI", v:"v2.3", d:"2026/10/01",
+   secs:[["[신규]","- 출석체크 화면에서 담임·부담임 이름을 누르면 안내 문자가 바로 작성됩니다<br>- 번호는 명단 스프레드시트 '교사명단' 탭에서 관리해요"]]},
+  {h:"출석 화면 오류 복구", bd:"수정", cls:"bdF", v:"v2.2", d:"2026/09/30",
+   secs:[["[수정]","- 반 목록이 숫자·날짜로 깨지던 문제를 고쳤습니다<br>- 이제 시트 탭 순서가 바뀌어도 출석 화면이 정상 동작합니다"]]},
+  {h:"새친구 관리 · 최종 수정 교사 표시", bd:"신규", cls:"bdI", v:"v2.1", d:"2026/09/29",
+   secs:[["[신규]","- 새친구 출석카드에 삭제 버튼이 생겼어요 (저장 시 명단에서 제거)"],["[개선]","- 반별로 '최종 수정 교사'와 수정 시각이 표시됩니다"]]},
+  {h:"교사 로그인 · 계정", bd:"신규", cls:"bdI", v:"v2.0", d:"2026/09/28",
+   secs:[["[신규]","- 교사 로그인(이름+비밀번호)과 자동 로그인, 비밀번호 변경"],["[개선]","- 하단에 '계정' 탭, '중고등부앱' 바로가기 탭을 추가했어요"]]},
+  {h:"헌금 현황 열람", bd:"개선", cls:"bdI", v:"v1.9", d:"2026/09/27",
+   secs:[["[개선]","- 헌금 현황은 모든 교사가 열람할 수 있어요<br>- 입력·저장은 담당 교사만 가능합니다"]]}
+ ];
+ function esc(s){return String(s||"");}
+ function buildCards(){
+   var h="";
+   for(var i=0;i<CARDS.length;i++){var c=CARDS[i];
+     h+='<div class="rlCard"><div class="h">'+esc(c.h)+'</div>';
+     h+='<div class="rlTag"><span class="bd '+c.cls+'">'+esc(c.bd)+'</span><span class="v">'+esc(c.v)+'</span><span class="d">'+esc(c.d)+'</span></div>';
+     for(var j=0;j<c.secs.length;j++){ h+='<div class="rlSec">'+esc(c.secs[j][0])+'</div><div class="rlTxt">'+c.secs[j][1]+'</div>'; }
+     h+='</div>';
+   }
+   return h;
+ }
+ function ensureOverlay(){
+   if(document.getElementById("relWrap37")) return;
+   var w=document.createElement("div"); w.id="relWrap37"; w.className="relWrap37"; w.style.display="none";
+   w.innerHTML='<div class="relInner37">'
+     +'<div class="dlBack" id="relBack37"><i class="ti ti-arrow-left"></i> 닫기</div>'
+     +'<div class="rlHero"><div class="k">RELEASE NOTES</div><div class="t">교사앱 업데이트 기록</div><div class="s">앱이 어떻게 바뀌어 왔는지 모아뒀어요</div><div class="em">📝</div></div>'
+     +'<div id="rlList37">'+buildCards()+'</div></div>';
+   document.body.appendChild(w);
+   w.querySelector("#relBack37").addEventListener("click", closeRel);
+ }
+ function openRel(e){ if(e){e.preventDefault();e.stopPropagation();} ensureOverlay(); var w=document.getElementById("relWrap37"); w.style.display="block"; w.scrollTop=0; document.body.style.overflow="hidden"; }
+ function closeRel(){ var w=document.getElementById("relWrap37"); if(w) w.style.display="none"; document.body.style.overflow=""; }
+ function ensureChip(){
+   var h1=document.querySelector("header h1"); if(!h1) return;
+   if(document.getElementById("verChip37")) return;
+   var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="릴리스노트";
+   c.addEventListener("click", openRel);
+   h1.appendChild(c);
+ }
+ function tick(){ ensureChip(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ ensureOverlay(); setTimeout(tick,600); setInterval(tick,1500); });
+})();
+</script>
+
 </body>
 </html>
