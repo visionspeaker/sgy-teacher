@@ -2975,7 +2975,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var hero=null, cands=document.querySelectorAll(".hero");
    for(var i=0;i<cands.length;i++){ if(/교사 전용 앱/.test(cands[i].textContent)){ hero=cands[i]; break; } }
    if(!hero) return;
-   if(!hero.getAttribute("data-rel37")){ hero.setAttribute("data-rel37","1"); hero.addEventListener("click", openRel); }
+   if(!hero.getAttribute("data-rel37")){ hero.setAttribute("data-rel37","1"); }
    if(!document.getElementById("verChip37")){
      var big=hero.querySelector(".big")||hero;
      var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V37";
@@ -2984,7 +2984,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function tick(){ ensureHero(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ ensureOverlay(); setTimeout(tick,600); setInterval(tick,1500); });
+ document.addEventListener("click",function(e){ var h=e.target&&e.target.closest&&e.target.closest(".hero[data-rel37]"); if(h){ var ov=document.getElementById("relWrap37"); if(ov&&ov.style.display==="block") return; openRel(e); } }, true); ready(function(){ ensureOverlay(); setTimeout(tick,600); setInterval(tick,1500); });
 })();
 </script>
 
