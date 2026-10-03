@@ -3013,7 +3013,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      phone=m; loaded=Date.now(); loading=false;
    }).catch(function(){ loading=false; });
  }
- function cardName(card){ var a=card.querySelector(".anm"); if(!a) return ""; var fc=a.firstChild; var t=(fc&&fc.nodeType===3)?fc.textContent:a.textContent; return String(t||"").replace(/\([^)]*\)/g,"").trim(); }
+ function cardName(card){ var a=card.querySelector(".anm"); if(!a) return ""; var fc=a.firstChild; var t=(fc&&fc.nodeType===3)?fc.textContent:a.textContent; return String(t||"").replace(/\([^)]*\)/g,"").replace(/\s+/g,"").trim(); }
  function josa(nm){ if(!nm) return null; var c=nm.charCodeAt(nm.length-1); if(c>=0xAC00&&c<=0xD7A3){ return ((c-0xAC00)%28)!==0 ? "아":"야"; } return null; }
  function greeting(nm){ var j=josa(nm); var voc=j?(nm+j+","):(nm+","); return voc+MSGTAIL; }
  function addBtns(){
