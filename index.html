@@ -3015,7 +3015,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function cardName(card){ var a=card.querySelector(".anm"); if(!a) return ""; var fc=a.firstChild; var t=(fc&&fc.nodeType===3)?fc.textContent:a.textContent; return String(t||"").replace(/\([^)]*\)/g,"").replace(/\s+/g,"").trim(); }
  function josa(nm){ if(!nm) return null; var c=nm.charCodeAt(nm.length-1); if(c>=0xAC00&&c<=0xD7A3){ return ((c-0xAC00)%28)!==0 ? "아":"야"; } return null; }
- function greeting(nm){ var g=(/^[가-힣]{2,}$/.test(nm))?nm.slice(1):nm; var j=josa(g); var voc=j?(g+j+","):(g+","); return voc+MSGTAIL; }
+ function greeting(nm){ var ex={"일라이":1,"리암":1,"앨런":1}; var g=(!ex[nm]&&/^[가-힣]{2,}$/.test(nm))?nm.slice(1):nm; var j=josa(g); var voc=j?(g+j+","):(g+","); return voc+MSGTAIL; }
  function addBtns(){
    var cards=document.querySelectorAll("#s-attend .attCard");
    for(var i=0;i<cards.length;i++){ var card=cards[i];
