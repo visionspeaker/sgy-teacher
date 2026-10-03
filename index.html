@@ -2988,5 +2988,61 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
+<style>
+/* enh_v38: 출석카드에 학생 전화·문자 아이콘 버튼 (탭 시 확인창 → tel/sms). 번호는 '학생연락처' 탭. */
+.stuCT38{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.stuBtn38{width:31px;height:31px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;border:1px solid;cursor:pointer;flex:0 0 auto}
+.stuBtn38 i{font-size:16px;line-height:1}
+.stuCall38{background:#eaf7ef;color:#16a34a;border-color:#bfe6cd}
+.stuSms38{background:#eaf1fd;color:#2563eb;border-color:#c3d6f7}
+.stuBtn38:active{transform:scale(.94)}
+</style>
+<script>
+/* enh_v38: 학생 출석카드 전화·문자 버튼 */
+(function(){
+ var SID="1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo";
+ var DIR="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:csv&gid=351068692";
+ var MSGTAIL=" 안녕! 송탄영광교회 중고등부 교사야 😊";
+ var phone={}, loaded=0, loading=false;
+ function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
+ function loadDir(){
+   if(loading) return; if(loaded && (Date.now()-loaded)<300000) return; loading=true;
+   fetch(DIR+"&cb="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();}).then(function(t){
+     var R=parseCSV(t), m={};
+     for(var i=0;i<R.length;i++){ var nm=(R[i][0]||"").trim(); var ph=(R[i][1]||"").replace(/[^0-9+]/g,""); if(nm && nm!=="이름" && ph){ m[nm]=ph; var b=nm.replace(/\([^)]*\)/g,"").trim(); if(b&&!m[b]) m[b]=ph; } }
+     phone=m; loaded=Date.now(); loading=false;
+   }).catch(function(){ loading=false; });
+ }
+ function cardName(card){ var a=card.querySelector(".anm"); if(!a) return ""; var fc=a.firstChild; var t=(fc&&fc.nodeType===3)?fc.textContent:a.textContent; return String(t||"").replace(/\([^)]*\)/g,"").trim(); }
+ function josa(nm){ if(!nm) return null; var c=nm.charCodeAt(nm.length-1); if(c>=0xAC00&&c<=0xD7A3){ return ((c-0xAC00)%28)!==0 ? "아":"야"; } return null; }
+ function greeting(nm){ var j=josa(nm); var voc=j?(nm+j+","):(nm+","); return voc+MSGTAIL; }
+ function addBtns(){
+   var cards=document.querySelectorAll("#s-attend .attCard");
+   for(var i=0;i<cards.length;i++){ var card=cards[i];
+     if(card.getAttribute("data-stu38")==="1" && (card.querySelector(".stuCT38")||!phone[cardName(card)])) continue;
+     var nm=cardName(card); var ph=phone[nm];
+     card.setAttribute("data-stu38","1");
+     if(!ph) continue;
+     if(card.querySelector(".stuCT38")) continue;
+     var row=document.createElement("div"); row.className="stuCT38";
+     row.innerHTML='<span class="stuBtn38 stuCall38" data-act="call" data-nm="'+nm+'" data-ph="'+ph+'" title="전화"><i class="ti ti-phone"></i></span>'
+                  +'<span class="stuBtn38 stuSms38" data-act="sms" data-nm="'+nm+'" data-ph="'+ph+'" title="문자"><i class="ti ti-message"></i></span>';
+     card.appendChild(row);
+   }
+ }
+ document.addEventListener("click",function(e){
+   var b=e.target && e.target.closest && e.target.closest(".stuBtn38"); if(!b) return;
+   e.preventDefault(); e.stopPropagation();
+   var nm=b.getAttribute("data-nm"), ph=b.getAttribute("data-ph"), act=b.getAttribute("data-act");
+   var ua=navigator.userAgent||""; var sep=/iPhone|iPad|iPod|Macintosh/.test(ua)?"&":"?";
+   if(act==="call"){ if(confirm(nm+" 학생에게 전화를 연결할까요?")) window.location.href="tel:"+ph; }
+   else { if(confirm(nm+" 학생에게 문자를 보낼까요?")) window.location.href="sms:"+ph+sep+"body="+encodeURIComponent(greeting(nm)); }
+ }, true);
+ function tick(){ loadDir(); addBtns(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,800); setInterval(tick,1200); });
+})();
+</script>
+
 </body>
 </html>
