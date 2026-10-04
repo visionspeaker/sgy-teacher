@@ -3038,9 +3038,54 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(act==="call"){ if(confirm(nm+" 학생에게 전화를 연결할까요?")) window.location.href="tel:"+ph; }
    else { if(confirm(nm+" 학생에게 문자를 보낼까요?")) window.location.href="sms:"+ph+sep+"body="+encodeURIComponent(greeting(nm)); }
  }, true);
- function tick(){ loadDir(); addBtns(); }
+ function tick(){ loadDir(); addBtns(); } window.__sgyStu={add:addBtns,load:loadDir};
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ setTimeout(tick,800); setInterval(tick,1200); });
+})();
+</script>
+
+<style>
+/* enh_v39: (1) 새친구 카드 삭제버튼·상태알약 겹침 해소  (2) 이름 탭 시 화면 점프 방지 */
+#s-attend .attCard.nfFix39 .acTop{padding-right:58px}
+</style>
+<script>
+/* enh_v39: 새친구 카드 겹침 수정 + 출석 토글 후 목록 재생성 시 스크롤 점프 방지 */
+(function(){
+ function sec(){ return document.getElementById("s-attend"); }
+ function list(){ return document.getElementById("attList"); }
+ function markNf(){
+   var cards=document.querySelectorAll("#s-attend .attCard");
+   for(var i=0;i<cards.length;i++){ var c=cards[i];
+     if(c.querySelector(".nfDel34")) c.classList.add("nfFix39"); else c.classList.remove("nfFix39");
+   }
+ }
+ var armed=false, savedTop=0, armUntil=0;
+ document.addEventListener("pointerdown", function(e){
+   var t=e.target; if(!t||!t.closest) return;
+   if(!t.closest("#s-attend .attCard")) return;
+   if(t.closest(".attReason,.stuBtn38,.nfDel34,.attSaveCls,.absToggle,.absCopy,a,button,input,textarea,select")) return;
+   var s=sec(); if(!s) return;
+   savedTop=s.scrollTop; armed=true; armUntil=Date.now()+1800;
+ }, true);
+ function restore(){
+   var s=sec(); if(!s) return;
+   if(window.__sgyStu){ try{ window.__sgyStu.add(); }catch(_){} }
+   markNf();
+   var max=s.scrollHeight - s.clientHeight; if(max<0) max=0;
+   s.scrollTop = savedTop>max ? max : savedTop;
+ }
+ var hooked=false;
+ function hook(){
+   var l=list(); if(!l||hooked) return; hooked=true;
+   var obs=new MutationObserver(function(){
+     markNf();
+     if(armed && Date.now()<armUntil) restore();
+   });
+   obs.observe(l,{childList:true});
+ }
+ function tick(){ hook(); markNf(); if(armed && Date.now()>=armUntil) armed=false; }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,700); setInterval(tick,900); });
 })();
 </script>
 
