@@ -814,7 +814,7 @@ function go(s, keepScroll, skipHash){
         h+='<div class="attCard'+(s.present?' on':'')+(s.longAbs?' longabs':'')+'" data-i="'+i+'" style="background:'+c[0]+';border:1px solid '+c[1]+';border-left:4px solid '+c[2]+'">'+
            '<div class="acTop"><span class="anm">'+esc(s.name)+(s.tag?'<span class="atag" style="color:'+c[3]+'">'+esc(s.tag)+'</span>':'')+'</span>'+
            '<span class="apill">'+(s.present?'출석':'결석')+'</span></div>'+
-           (s.present?'':(readonly?(s.reason?'<div class="attReason ro">'+esc(s.reason)+'</div>':''):'<input class="attReason" placeholder="결석 사유" value="'+escA(s.reason)+'">'))+
+           (s.present?'':(readonly?(s.reason?'<div class="attReason ro">'+esc(s.reason)+'</div>':''):'<textarea class="attReason" rows="1" placeholder="결석 사유">'+escA(s.reason)+'</textarea>'))+
            '</div>';
       });
       h+='</div>';
@@ -876,7 +876,7 @@ function go(s, keepScroll, skipHash){
       const grade=(rows[i][4]||'').trim(), note=(rows[i][5]||'').trim(), t=(rows[i][6]||'').trim();
       if(t && t!==cls && t.indexOf('%')===-1 && !teacherByClass[cls]) teacherByClass[cls]=t;
       const longAbs = /장기결석/.test(note);
-      const tag = (cls==='새친구') ? '새친구' : (longAbs ? '장기결석' : '');
+      const tag = (cls==='새친구') ? '' : (longAbs ? '장기결석' : '');
       const present = useCheck ? (chk==='TRUE') : false;
       const reason  = (useCheck && !present && !longAbs) ? note : '';
       out.push({name, cls, grade, note, longAbs, tag, present, reason, teacher:''});
@@ -3086,6 +3086,33 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function tick(){ hook(); markNf(); if(armed && Date.now()>=armUntil) armed=false; }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ setTimeout(tick,700); setInterval(tick,900); });
+})();
+</script>
+
+<style>
+/* enh_v40: (1) 요약에 재적 표시(출석/재적)  (2) 결석사유 입력칸 자동 높이 */
+#s-attend .asc.pres .jeokSuf40{font-size:14px;font-weight:800;color:#c0a88f;margin-left:1px}
+#s-attend textarea.attReason{display:block;width:100%;box-sizing:border-box;resize:none;overflow:hidden;line-height:1.55;min-height:30px;white-space:pre-wrap;word-break:break-word;font-family:inherit}
+</style>
+<script>
+/* enh_v40: 재적 표시 + 결석사유 자동높이 */
+(function(){
+ function grow(ta){ if(!ta) return; ta.style.height="auto"; ta.style.height=(ta.scrollHeight)+"px"; }
+ function growAll(){ var ts=document.querySelectorAll("#s-attend textarea.attReason"); for(var i=0;i<ts.length;i++) grow(ts[i]); }
+ document.addEventListener("input", function(e){ var t=e.target; if(t && t.closest && t.closest("textarea.attReason")) grow(t); }, true);
+ function ensureJeok(){
+   var p=document.getElementById("asPres"); if(!p) return;
+   var card=p.closest(".asc"); if(!card) return;
+   var lbl=card.querySelector(".l");
+   if(lbl && lbl.getAttribute("data-j40")!=="1"){ lbl.textContent="출석/재적"; lbl.setAttribute("data-j40","1"); }
+   var suf=card.querySelector(".jeokSuf40");
+   if(!suf){ suf=document.createElement("span"); suf.className="jeokSuf40"; p.insertAdjacentElement("afterend", suf); p.style.display="inline"; }
+   var jeok=document.querySelectorAll("#s-attend .attCard").length;
+   suf.textContent="/"+jeok;
+ }
+ function tick(){ ensureJeok(); growAll(); }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(tick,700); setInterval(tick,1000); });
 })();
 </script>
 
