@@ -3107,7 +3107,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(lbl && lbl.getAttribute("data-j40")!=="1"){ lbl.textContent="출석/재적"; lbl.setAttribute("data-j40","1"); }
    var suf=card.querySelector(".jeokSuf40");
    if(!suf){ suf=document.createElement("span"); suf.className="jeokSuf40"; p.insertAdjacentElement("afterend", suf); p.style.display="inline"; }
-   var jeok=document.querySelectorAll("#s-attend .attCard").length;
+   var jeok=document.querySelectorAll("#s-attend .attCard").length; var L40=document.getElementById("attList"); if(L40){ L40.querySelectorAll(".attGrp").forEach(function(h){ if(h.textContent.indexOf("새친구")>=0){ var sib=h.nextElementSibling; while(sib && !(sib.classList&&sib.classList.contains("attGrid"))) sib=sib.nextElementSibling; if(sib) jeok-=sib.querySelectorAll(".attCard").length; } }); }
    suf.textContent="/"+jeok;
  }
  function tick(){ ensureJeok(); growAll(); }
