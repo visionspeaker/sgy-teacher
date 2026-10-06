@@ -15,10 +15,6 @@
 -->
 <html lang="ko">
 <head>
-<style>/* enh_v46: 홈 메뉴 조립 완료까지 숨김→완성 시 한번에 표시(단계 깜빡임 제거) */
-#s-home .grid.grid-top{opacity:0;animation:rdy46fb 0s linear 1.6s forwards}
-#s-home .grid.grid-top.rdy46{opacity:1;transition:opacity .16s ease}
-@keyframes rdy46fb{to{opacity:1}}</style>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover, user-scalable=yes">
@@ -3238,18 +3234,6 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
-<script>
-/* enh_v46: 홈 메뉴가 12개 완성되면 즉시 표시(없으면 1.5s 뒤 표시) */
-(function(){
- function g(){ return document.querySelector("#s-home .grid.grid-top"); }
- function ready(gr){ return gr && gr.querySelector('[data-ws41]') && gr.querySelector('[data-sgy44]') && gr.querySelectorAll('.tile').length>=12; }
- function reveal(){ var gr=g(); if(gr) gr.classList.add("rdy46"); }
- function tick(){ var gr=g(); if(gr && ready(gr)) reveal(); }
- var n=0, iv=setInterval(function(){ tick(); if(++n>=30){ clearInterval(iv); reveal(); } }, 50);
- setTimeout(reveal, 1500);
- tick();
-})();
-</script>
 
 </body>
 </html>
