@@ -3224,7 +3224,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(navA){
      var nav=navA.closest("nav")||navA.parentElement;
      navA.style.display="none";
-     if(nav) nav.style.gridTemplateColumns="repeat(3,1fr)";
+     if(nav) nav.style.setProperty("grid-template-columns","repeat(3,1fr)","important");
    }
  }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
