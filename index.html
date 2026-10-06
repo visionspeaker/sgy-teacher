@@ -305,6 +305,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 </head>
 <body>
+<!-- enh_v45: 로드 직후 단계적 최신화 깜빡임을 가리는 짧은 스플래시(순수 CSS 자동 소멸) -->
+<style>
+#sgySplash45{position:fixed;inset:0;z-index:99999;background:#fbf4ec;display:flex;align-items:center;justify-content:center;animation:sgySp45Out .32s ease .85s forwards}
+#sgySplash45 .in{display:flex;flex-direction:column;align-items:center;gap:8px;animation:sgySp45Pulse 1s ease-in-out infinite alternate}
+#sgySplash45 img{width:84px;height:84px;border-radius:22px;box-shadow:0 8px 22px rgba(232,89,12,.18)}
+#sgySplash45 .t{font-size:15px;font-weight:800;color:#3a2a1d;margin-top:6px}
+#sgySplash45 .s{font-size:12px;font-weight:700;color:#e8590c}
+@keyframes sgySp45Out{to{opacity:0;visibility:hidden}}
+@keyframes sgySp45Pulse{to{transform:scale(1.04);opacity:.86}}
+</style>
+<div id="sgySplash45"><div class="in"><img src="icon-192.png" alt=""><div class="t">송탄영광교회 중고등부</div><div class="s">교사 전용 앱</div></div></div>
+
 <div id="app">
   <header>
     <img class="logo" src="https://visionspeaker.github.io/sgy/sgy_logo.png" alt="SGY 로고"
