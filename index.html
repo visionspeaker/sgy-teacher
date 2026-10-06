@@ -3132,7 +3132,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    for(var i=0;i<gs.length;i++){ if(gs[i].querySelector('a.tile[href="#attend"]')) return gs[i]; }
    return gs[0]||null;
  }
- function tileByNm(grid,nm){ var ts=grid.querySelectorAll("a.tile"); for(var i=0;i<ts.length;i++){ var e=ts[i].querySelector(".nm"); if(e && e.textContent.trim()===nm) return ts[i]; } return null; }
+ function tileByNm(grid,nm){ var ts=grid.querySelectorAll(".tile"); for(var i=0;i<ts.length;i++){ var e=ts[i].querySelector(".nm"); if(e && e.textContent.trim()===nm) return ts[i]; } return null; }
  function makeWorship(){
    var a=document.createElement("a");
    a.className="tile"; a.setAttribute("href",BAND); a.setAttribute("target","_blank"); a.setAttribute("rel","noopener"); a.setAttribute("data-ws41","1");
