@@ -2905,6 +2905,17 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"홈 메뉴 디자인 개편", bd:"개선",cls:"bdI", v:"V42", d:"2026/10/06",
+   secs:[["[개선]","- 홈 메뉴를 큰 아이콘 + 제목 형태로 정리(설명문 제거)해 더 보기 쉽게 바꿨어요"]]},
+  {h:"홈 3단 · 예배출석부 추가", bd:"신규",cls:"bdN", v:"V41", d:"2026/10/06",
+   secs:[["[신규]","- 홈 카드를 3단으로 넓히고 '예배출석부'(밴드) 메뉴를 추가했어요<br>- 교사 밴드·헌금 현황 위치를 조정했습니다"]]},
+  {h:"재적 표시 · 결석사유 전체보기", bd:"신규",cls:"bdN", v:"V40", d:"2026/10/05",
+   secs:[["[신규]","- 출석 요약에 '재적'(새친구 제외) 인원을 표시합니다"],["[개선]","- 결석 사유 칸이 입력 내용만큼 늘어나 전체가 보입니다"]]},
+  {h:"새친구 카드 · 화면 튐 수정", bd:"수정",cls:"bdF", v:"V39", d:"2026/10/04",
+   secs:[["[수정]","- 새친구 카드에서 삭제 버튼과 상태 표시가 겹치던 문제를 고쳤어요<br>- 이름을 눌러 출석/결석할 때 화면이 위로 튀던 현상을 고쳤습니다"]]},
+  {h:"학생 전화·문자 버튼", bd:"신규",cls:"bdN", v:"V38", d:"2026/10/04",
+   secs:[["[신규]","- 출석체크 학생카드에서 전화·문자 버튼으로 바로 연락할 수 있어요"]]},
+
   {h:"릴리스노트(업데이트 기록) 추가", bd:"신규",cls:"bdN", v:"V37", d:"2026/10/01",
    secs:[["[신규]","- 주황 배너( 교사 전용 앱 )를 누르면 그동안의 업데이트 기록을 볼 수 있어요"]]},
   {h:"교사 안내문자 보내기", bd:"신규",cls:"bdN", v:"V36", d:"2026/10/01",
@@ -2978,7 +2989,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(!hero.getAttribute("data-rel37")){ hero.setAttribute("data-rel37","1"); }
    if(!document.getElementById("verChip37")){
      var big=hero.querySelector(".big")||hero;
-     var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V37";
+     var c=document.createElement("span"); c.id="verChip37"; c.className="verChip37"; c.textContent="V42";
      big.appendChild(c);
    }
  }
@@ -3155,6 +3166,28 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  ready(function(){ setTimeout(apply,500); setInterval(apply,1200); });
 })();
 </script>
+
+<style>
+/* enh_v42: 홈 메뉴를 아이콘형(큰 컬러 아이콘 + 제목, 설명문 제거) 스마트폰 메뉴 스타일로 */
+#s-home .grid.grid-top{gap:18px 8px}
+#s-home .grid.grid-top .tile{background:transparent;border:0;box-shadow:none;padding:4px 2px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#s-home .grid.grid-top .tile:active{transform:scale(.96)}
+#s-home .grid.grid-top .tile .ic{width:72px;height:72px;border-radius:20px;font-size:32px;margin:0;box-shadow:0 6px 14px rgba(58,42,29,.14)}
+#s-home .grid.grid-top .tile .ic i{color:#fff}
+#s-home .grid.grid-top .tile .nm{font-size:13px;font-weight:700;margin-top:9px;line-height:1.25}
+#s-home .grid.grid-top .tile .ds{display:none}
+#s-home .grid.grid-top .ic.rd{background:linear-gradient(135deg,#ff7a7a,#ef4444)}
+#s-home .grid.grid-top .ic.ws41{background:linear-gradient(135deg,#2dd4bf,#0d9488)}
+#s-home .grid.grid-top .ic.dsh{background:linear-gradient(135deg,#ff8a65,#e23b2c)}
+#s-home .grid.grid-top .ic.ai{background:linear-gradient(135deg,#a78bfa,#6c5ce7)}
+#s-home .grid.grid-top .ic.bl{background:linear-gradient(135deg,#60a5fa,#2f80ed)}
+#s-home .grid.grid-top .ic.am{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+#s-home .grid.grid-top .ic.bd{background:linear-gradient(135deg,#4ade80,#16a34a)}
+#s-home .grid.grid-top .ic.tl{background:linear-gradient(135deg,#34d399,#14b8a6)}
+#s-home .grid.grid-top .ic.pk{background:linear-gradient(135deg,#f472b6,#db2777)}
+#s-home .grid.grid-top .ic.gc{background:linear-gradient(135deg,#4ade80,#2e9e5b)}
+#s-home .grid.grid-top .ic.ar{background:linear-gradient(135deg,#9aa4b2,#6b7684)}
+</style>
 
 </body>
 </html>
