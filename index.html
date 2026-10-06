@@ -1340,7 +1340,7 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 <script>
 (function(){
  function ready(fn){if(document.readyState!=="loading")fn();else document.addEventListener("DOMContentLoaded",fn);}
- ready(function(){ setTimeout(run,300); });
+ ready(function(){ (run()); });
 
  function run(){
    rearrangeHome();
@@ -1603,7 +1603,7 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
  document.addEventListener("click",function(e){ if(e.target&&e.target.closest&&e.target.closest("#s-offering .ofSave")){ var dd=curDate(); setTimeout(function(){load(dd,true);},1800); } },true);
  setInterval(tick,800);
  function ready(fn){if(document.readyState!=="loading")fn();else document.addEventListener("DOMContentLoaded",fn);}
- ready(function(){setTimeout(tick,500);});
+ ready(function(){(tick());});
 })();
 </script>
 
@@ -1974,7 +1974,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(tick,900);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,900); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2015,7 +2015,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  function tick(){ ensureArchive(); ensureHome(); }
  setInterval(tick, 1500);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick, 600); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2084,7 +2084,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(ensureBtn, 1000);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(ensureBtn,800); });
+ ready(function(){ (ensureBtn()); });
 })();
 </script>
 
@@ -2121,7 +2121,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(tick,900);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,900); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2218,7 +2218,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(tick, 900);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick, 900); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2269,7 +2269,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(tick,700);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,700); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2321,7 +2321,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  }
  setInterval(tick, 700);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick, 700); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2381,7 +2381,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
  function tick(){ load(); apply(); }
  setInterval(tick, 900);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick, 900); });
+ ready(function(){ (tick()); });
 })();
 </script>
 
@@ -2821,7 +2821,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  function tick(){ loadEditors(false); applyEditors(); ensureDelBtns(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,700); setInterval(tick, 1000); });
+ ready(function(){ (tick()); setInterval(tick, 1000); });
 })();
 </script>
 <script>
@@ -2900,7 +2900,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }, true);
  function tick(){ loadDir(); wrapNames(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,800); setInterval(tick,1200); });
+ ready(function(){ (tick()); setInterval(tick,1200); });
 })();
 </script>
 
@@ -3023,7 +3023,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function tick(){ ensureHero(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- document.addEventListener("click",function(e){ var h=e.target&&e.target.closest&&e.target.closest(".hero[data-rel37]"); if(h){ var ov=document.getElementById("relWrap37"); if(ov&&ov.style.display==="block") return; openRel(e); } }, true); ready(function(){ ensureOverlay(); setTimeout(tick,600); setInterval(tick,1500); });
+ document.addEventListener("click",function(e){ var h=e.target&&e.target.closest&&e.target.closest(".hero[data-rel37]"); if(h){ var ov=document.getElementById("relWrap37"); if(ov&&ov.style.display==="block") return; openRel(e); } }, true); ready(function(){ ensureOverlay(); (tick()); setInterval(tick,1500); });
 })();
 </script>
 
@@ -3079,7 +3079,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }, true);
  function tick(){ loadDir(); addBtns(); } window.__sgyStu={add:addBtns,load:loadDir};
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,800); setInterval(tick,1200); });
+ ready(function(){ (tick()); setInterval(tick,1200); });
 })();
 </script>
 
@@ -3124,7 +3124,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function tick(){ hook(); markNf(); if(armed && Date.now()>=armUntil) armed=false; }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,700); setInterval(tick,900); });
+ ready(function(){ (tick()); setInterval(tick,900); });
 })();
 </script>
 
@@ -3151,7 +3151,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function tick(){ ensureJeok(); growAll(); }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ setTimeout(tick,700); setInterval(tick,1000); });
+ ready(function(){ (tick()); setInterval(tick,1000); });
 })();
 </script>
 
