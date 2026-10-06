@@ -15,6 +15,32 @@
 -->
 <html lang="ko">
 <head>
+<style>
+/* enh_v47(head): 홈 디자인 CSS를 head로 올려 첫 화면부터 3단·아이콘형으로 표시(모바일 깜빡임 제거 1단계) */
+.grid.grid-top{grid-template-columns:1fr 1fr 1fr !important}
+#s-home .grid.grid-top{gap:18px 8px}
+#s-home .grid.grid-top .tile{background:transparent;border:0;box-shadow:none;padding:4px 2px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#s-home .grid.grid-top .tile:active{transform:scale(.96)}
+#s-home .grid.grid-top .tile .ic{width:72px!important;height:72px!important;border-radius:20px;font-size:32px;margin:0;box-shadow:0 6px 14px rgba(58,42,29,.14)}
+#s-home .grid.grid-top .tile .ic i{color:#fff}
+#s-home .grid.grid-top .tile .ic img{width:100%!important;height:100%!important;object-fit:cover;border-radius:20px}
+#s-home .grid.grid-top .tile .nm{font-size:13px;font-weight:700;margin-top:9px;line-height:1.25}
+#s-home .grid.grid-top .tile .ds{display:none}
+#s-home .grid.grid-top .ic.rd{background:linear-gradient(135deg,#ff7a7a,#ef4444)}
+#s-home .grid.grid-top .ic.ws41{background:linear-gradient(135deg,#2dd4bf,#0d9488)}
+#s-home .grid.grid-top .ic.dsh{background:linear-gradient(135deg,#ff8a65,#e23b2c)}
+#s-home .grid.grid-top .ic.ai{background:linear-gradient(135deg,#a78bfa,#6c5ce7)}
+#s-home .grid.grid-top .ic.bl{background:linear-gradient(135deg,#60a5fa,#2f80ed)}
+#s-home .grid.grid-top .ic.am{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+#s-home .grid.grid-top .ic.bd{background:linear-gradient(135deg,#4ade80,#16a34a)}
+#s-home .grid.grid-top .ic.tl{background:linear-gradient(135deg,#34d399,#14b8a6)}
+#s-home .grid.grid-top .ic.pk{background:linear-gradient(135deg,#f472b6,#db2777)}
+#s-home .grid.grid-top .ic.gc{background:linear-gradient(135deg,#4ade80,#2e9e5b)}
+#s-home .grid.grid-top .ic.ar{background:linear-gradient(135deg,#9aa4b2,#6b7684)}
+#s-home .grid.grid-top .ic.no{background:linear-gradient(135deg,#8b97a8,#5b6775)!important}
+#s-home .grid.grid-top .ic.no i{color:#fff}
+</style>
+
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover, user-scalable=yes">
