@@ -3116,5 +3116,45 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 })();
 </script>
 
+<style>
+/* enh_v41: 홈 카드 2단→3단 + 예배출석부 메뉴(출석체크 뒤) + 교사밴드/헌금현황 위치 교체 */
+.grid.grid-top{grid-template-columns:1fr 1fr 1fr !important}
+.grid.grid-top .tile{padding:12px 9px}
+.grid.grid-top .tile .ds{font-size:10.5px}
+.ic.ws41{background:#e6f6f4;color:#0d9488}
+</style>
+<script>
+/* enh_v41: 홈 3단 + 예배출석부 + 교사밴드/헌금현황 swap */
+(function(){
+ var BAND="https://band.us/band/99538939/post/237";
+ function homeGrid(){
+   var gs=document.querySelectorAll(".grid.grid-top");
+   for(var i=0;i<gs.length;i++){ if(gs[i].querySelector('a.tile[href="#attend"]')) return gs[i]; }
+   return gs[0]||null;
+ }
+ function tileByNm(grid,nm){ var ts=grid.querySelectorAll("a.tile"); for(var i=0;i<ts.length;i++){ var e=ts[i].querySelector(".nm"); if(e && e.textContent.trim()===nm) return ts[i]; } return null; }
+ function makeWorship(){
+   var a=document.createElement("a");
+   a.className="tile"; a.setAttribute("href",BAND); a.setAttribute("target","_blank"); a.setAttribute("rel","noopener"); a.setAttribute("data-ws41","1");
+   a.innerHTML='<div class="ic ws41"><i class="ti ti-book-2"></i></div><div class="nm">예배출석부</div><div class="ds">예배 출석부(밴드)</div>';
+   return a;
+ }
+ function apply(){
+   var grid=homeGrid(); if(!grid) return;
+   if(!grid.querySelector('[data-ws41]')){
+     var atd=grid.querySelector('a.tile[href="#attend"]') || tileByNm(grid,"출석체크");
+     if(atd) atd.insertAdjacentElement("afterend", makeWorship());
+   }
+   var band=tileByNm(grid,"교사 밴드"), heon=tileByNm(grid,"헌금 현황");
+   if(band && heon){
+     var pos=band.compareDocumentPosition(heon);
+     if(pos & Node.DOCUMENT_POSITION_FOLLOWING){ band.parentNode.insertBefore(heon, band); }
+   }
+ }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(apply,500); setInterval(apply,1200); });
+})();
+</script>
+
 </body>
 </html>
