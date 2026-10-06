@@ -3197,5 +3197,40 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #s-home .grid.grid-top .ic.no i{color:#fff}
 </style>
 
+<style>
+/* enh_v44: 중고등부앱을 하단탭→홈(영광커넥트 옆)으로 이동, 하단탭 3개로 축소 */
+#s-home .grid.grid-top .tile[data-sgy44] .ic{background:#fff;border:1px solid #eadfce}
+</style>
+<script>
+/* enh_v44: 중고등부앱 홈 이동 + 하단 탭 제거 */
+(function(){
+ function homeGrid(){ var gs=document.querySelectorAll(".grid.grid-top"); for(var i=0;i<gs.length;i++){ if(gs[i].querySelector('a.tile[href="#attend"]')) return gs[i]; } return gs[0]||null; }
+ function tileByNm(grid,nm){ var ts=grid.querySelectorAll(".tile"); for(var i=0;i<ts.length;i++){ var e=ts[i].querySelector(".nm"); if(e&&e.textContent.trim()===nm) return ts[i]; } return null; }
+ function navItem(){ return [...document.querySelectorAll("nav a, nav button")].find(function(e){ return /중고등부앱/.test(e.textContent); }); }
+ function apply(){
+   var grid=homeGrid(); if(!grid) return;
+   var navA=navItem();
+   if(!grid.querySelector('[data-sgy44]')){
+     var gc=tileByNm(grid,"영광 커넥트");
+     if(gc){
+       var href="https://visionspeaker.github.io/sgy/", imgHtml="";
+       if(navA){ var h=navA.getAttribute("href"); if(h) href=h; var im=navA.querySelector("img"); if(im){ imgHtml='<img src="'+im.getAttribute("src")+'" alt="">'; } }
+       var a=document.createElement("a");
+       a.className="tile"; a.setAttribute("data-sgy44","1"); a.setAttribute("href",href); a.setAttribute("target","_blank"); a.setAttribute("rel","noopener");
+       a.innerHTML='<div class="ic">'+(imgHtml||'<i class="ti ti-device-mobile"></i>')+'</div><div class="nm">중고등부앱</div><div class="ds"></div>';
+       gc.insertAdjacentElement("afterend", a);
+     }
+   }
+   if(navA){
+     var nav=navA.closest("nav")||navA.parentElement;
+     navA.style.display="none";
+     if(nav) nav.style.gridTemplateColumns="repeat(3,1fr)";
+   }
+ }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ setTimeout(apply,500); setInterval(apply,1200); });
+})();
+</script>
+
 </body>
 </html>
