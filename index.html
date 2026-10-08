@@ -3294,15 +3294,32 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v48: 2027 사역 신청 결과 — 아카이브 맨 위 카드 → 앱 안에서 명단 확인 (사람별 / 사역별) */
 (function(){
  var CSV="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/gviz/tq?tqx=out:csv&sheet="+encodeURIComponent("사역신청");
- var PRAISE=["싱어","리더","율동","신디","드럼","베이스","일렉","기타"], OFFICER=["임원"], ETC=["방송팀","SNS 기자","헬퍼"];
+ var PRAISE=["싱어","리더","율동","신디","드럼","베이스","일렉","기타"], OFFICER=["회장","부회장","총무","서기"], ETC=["방송팀","SNS 기자","헬퍼"];
  var recs=[], view="person";
  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
  function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
  function split(s){ return String(s||"").split(",").map(function(x){return x.trim();}).filter(Boolean); }
  function fmtWhen(s){ var m=String(s||"").match(/(\d{1,2})\.\s*(\d{1,2})\s*(오전|오후)?\s*(\d{1,2}):(\d{2})/); if(!m) return String(s||"").trim(); return m[1]+"/"+m[2]+(m[3]?" "+m[3]:"")+" "+m[4]+":"+m[5]; }
 
+ /* 10/11 0:00 ~ 11/29 23:59 홈 상단 노출(아카이브 카드는 숨김), 그 밖엔 아카이브 */
+ function live(){ var n=new Date(); return n>=new Date(2026,9,11,0,0,0) && n<new Date(2026,10,30,0,0,0); }
+ function ensureHome(){
+   var ex=document.getElementById("sgyMinHome");
+   if(!live()){ if(ex) ex.remove(); return; }
+   var panel=document.getElementById("s-home"); if(ex || !panel) return;
+   var grid=panel.querySelector(".grid");
+   var a=document.createElement("a"); a.id="sgyMinHome"; a.className="campBtn"; a.href="#";
+   a.style.cssText="background:#fff1e6;border-color:#f7d3b5";
+   a.innerHTML='<div class="ci" style="background:#fde2cc;color:#c2410c"><i class="ti ti-heart-handshake"></i></div>'+
+     '<div class="ct"><div class="t1" style="color:#c2410c">2027 사역 신청 결과 <span class="sgyBadge">신청중</span></div>'+
+     '<div class="t2" style="color:#b5896b">신청 명단 확인 · 10/11~11/29</div></div><i class="ti ti-chevron-right" style="color:#c2410c"></i>';
+   if(grid) panel.insertBefore(a, grid); else panel.appendChild(a);
+ }
  function ensureArchive(){
-   var list=document.getElementById("archiveList"); if(!list || document.getElementById("sgyMinAr")) return;
+   var list=document.getElementById("archiveList"); if(!list) return;
+   var ar=document.getElementById("sgyMinAr");
+   if(live()){ if(ar) ar.remove(); return; }
+   if(ar) return;
    var a=document.createElement("a"); a.id="sgyMinAr"; a.className="arItem"; a.href="#";
    a.innerHTML='<div class="ci"><i class="ti ti-heart-handshake"></i></div><div class="ct"><div class="t1">2027 사역 신청 결과</div><div class="t2">찬양팀·임원·방송팀 등 · 10/11~11/29</div></div>';
    list.insertBefore(a, list.firstChild);
@@ -3332,7 +3349,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var h="";
    if(view==="person"){
      recs.forEach(function(r){
-       var t=r.p.map(function(x){return '<span class="tg p">찬양 '+esc(x)+'</span>';}).join("")+r.o.map(function(x){return '<span class="tg o">'+esc(x)+'</span>';}).join("")+r.e.map(function(x){return '<span class="tg e">'+esc(x)+'</span>';}).join("");
+       var t=r.p.map(function(x){return '<span class="tg p">찬양 '+esc(x)+'</span>';}).join("")+r.o.map(function(x){return '<span class="tg o">임원 '+esc(x)+'</span>';}).join("")+r.e.map(function(x){return '<span class="tg e">'+esc(x)+'</span>';}).join("");
        h+='<div class="row"><div class="top"><div class="nm">'+esc(r.name)+'</div><div class="wh">'+esc(fmtWhen(r.when))+'</div></div><div class="tags">'+t+'</div></div>';
      });
    } else {
@@ -3340,7 +3357,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
        h+='<div class="grp">'+title+'</div>';
        keys.forEach(function(k){ var ns=recs.filter(function(r){return r[field].indexOf(k)>=0;}).map(function(r){return esc(r.name);}); h+='<div class="rr"><div class="k">'+esc(k)+'</div><div class="c">'+ns.length+'명</div><div class="ns">'+(ns.join(", ")||"-")+'</div></div>'; });
      }
-     grp("찬양팀",PRAISE,"p"); grp("임원 · 방송팀 · SNS 기자 · 헬퍼",OFFICER,"o"); ETC.forEach(function(k){ var ns=recs.filter(function(r){return r.e.indexOf(k)>=0;}).map(function(r){return esc(r.name);}); h+='<div class="rr"><div class="k">'+esc(k)+'</div><div class="c">'+ns.length+'명</div><div class="ns">'+(ns.join(", ")||"-")+'</div></div>'; });
+     grp("찬양팀",PRAISE,"p"); grp("임원",OFFICER,"o"); grp("방송팀 · SNS 기자 · 헬퍼",ETC,"e");
    }
    list.innerHTML=h;
  }
@@ -3357,11 +3374,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    }).catch(function(){ if(st) st.textContent="불러오기 실패 · 새로고침"; var l=document.getElementById("minList"); if(l&&!l.children.length) l.innerHTML='<div class="empty">불러오지 못했습니다. 새로고침을 눌러 주세요.</div>'; });
  }
  document.addEventListener("click",function(e){
-   var t=e.target.closest && e.target.closest("#sgyMinAr");
+   var t=e.target.closest && e.target.closest("#sgyMinAr, #sgyMinHome");
    if(t){ e.preventDefault(); e.stopPropagation(); buildModal(); document.getElementById("minModal").classList.add("on"); load(); }
  }, true);
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ ensureArchive(); setInterval(ensureArchive,1500); });
+ function tick(){ ensureArchive(); ensureHome(); }
+ ready(function(){ tick(); setInterval(tick,1500); });
 })();
 </script>
 
