@@ -3304,14 +3304,14 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function ensureArchive(){
    var list=document.getElementById("archiveList"); if(!list || document.getElementById("sgyMinAr")) return;
    var a=document.createElement("a"); a.id="sgyMinAr"; a.className="arItem"; a.href="#";
-   a.innerHTML='<div class="ci"><i class="ti ti-hand-love-you"></i></div><div class="ct"><div class="t1">2027 사역 신청 결과</div><div class="t2">찬양팀·임원·방송팀 등 · 10/11~11/29</div></div>';
+   a.innerHTML='<div class="ci"><i class="ti ti-heart-handshake"></i></div><div class="ct"><div class="t1">2027 사역 신청 결과</div><div class="t2">찬양팀·임원·방송팀 등 · 10/11~11/29</div></div>';
    list.insertBefore(a, list.firstChild);
  }
  function buildModal(){
    if(document.getElementById("minModal")) return;
    var m=document.createElement("div"); m.id="minModal";
    m.innerHTML='<div class="card">'+
-     '<div class="hd"><div><div class="t1"><i class="ti ti-hand-love-you"></i> 2027 사역 신청 결과</div><div class="t2">학생앱 신청 명단 · 신청기간 10/11~11/29</div></div><button class="x" id="minX" type="button" aria-label="닫기">&times;</button></div>'+
+     '<div class="hd"><div><div class="t1"><i class="ti ti-heart-handshake"></i> 2027 사역 신청 결과</div><div class="t2">학생앱 신청 명단 · 신청기간 10/11~11/29</div></div><button class="x" id="minX" type="button" aria-label="닫기">&times;</button></div>'+
      '<div id="minSum"></div>'+
      '<div id="minTabs"><button type="button" data-v="person" class="on">사람별</button><button type="button" data-v="role">사역별</button></div>'+
      '<div id="minList"></div>'+
