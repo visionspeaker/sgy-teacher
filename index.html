@@ -3301,8 +3301,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function split(s){ return String(s||"").split(",").map(function(x){return x.trim();}).filter(Boolean); }
  function fmtWhen(s){ var m=String(s||"").match(/(\d{1,2})\.\s*(\d{1,2})\s*(오전|오후)?\s*(\d{1,2}):(\d{2})/); if(!m) return String(s||"").trim(); return m[1]+"/"+m[2]+(m[3]?" "+m[3]:"")+" "+m[4]+":"+m[5]; }
 
- /* 10/11 0:00 ~ 11/29 23:59 홈 상단 노출(아카이브 카드는 숨김), 그 밖엔 아카이브 */
- function live(){ var n=new Date(); return n>=new Date(2026,9,11,0,0,0) && n<new Date(2026,10,30,0,0,0); }
+ /* 10/10부터 ~ 11/29 23:59 홈 상단 노출(신청은 10/11부터)(아카이브 카드는 숨김), 그 밖엔 아카이브 */
+ function live(){ var n=new Date(); return n<new Date(2026,10,30,0,0,0); }
  function ensureHome(){
    var ex=document.getElementById("sgyMinHome");
    if(!live()){ if(ex) ex.remove(); return; }
@@ -3311,7 +3311,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var a=document.createElement("a"); a.id="sgyMinHome"; a.className="campBtn"; a.href="#";
    a.style.cssText="background:#fff1e6;border-color:#f7d3b5";
    a.innerHTML='<div class="ci" style="background:#fde2cc;color:#c2410c"><i class="ti ti-heart-handshake"></i></div>'+
-     '<div class="ct"><div class="t1" style="color:#c2410c">2027 사역 신청 결과 <span class="sgyBadge">신청중</span></div>'+
+     '<div class="ct"><div class="t1" style="color:#c2410c">2027 사역 신청 결과 <span class="sgyBadge">'+(new Date()<new Date(2026,9,11,0,0,0)?'10/11 오픈':'신청중')+'</span></div>'+
      '<div class="t2" style="color:#b5896b">신청 명단 확인 · 10/11~11/29</div></div><i class="ti ti-chevron-right" style="color:#c2410c"></i>';
    if(grid) panel.insertBefore(a, grid); else panel.appendChild(a);
  }
