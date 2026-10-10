@@ -3294,7 +3294,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v48: 2027 사역 신청 결과 — 아카이브 맨 위 카드 → 앱 안에서 명단 확인 (사람별 / 사역별) */
 (function(){
  var CSV="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/gviz/tq?tqx=out:csv&sheet="+encodeURIComponent("사역신청");
- var PRAISE=["싱어","리더","율동","신디","드럼","베이스","일렉","기타"], OFFICER=["회장","부회장","총무","서기"], ETC=["방송팀","SNS 기자","성가대","헬퍼"];
+ var PRAISE=["싱어","리더","율동","신디","드럼","베이스","기타","일렉"], OFFICER=["회장","부회장","총무","서기"], ETC=["방송팀","SNS 기자","성가대","헬퍼"];
  var recs=[], view="person";
  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
  function parseCSV(t){var rows=[],row=[],cur="",q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur="";}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c=='\r'){}else cur+=c;}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows;}
