@@ -330,7 +330,21 @@
   .ic.dsh{background:#fde7e4;color:#e23b2c}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
-<style>header#hdr37{cursor:pointer;-webkit-tap-highlight-color:transparent}header#hdr37:active{opacity:.75}</style></head>
+<style>header#hdr37{cursor:pointer;-webkit-tap-highlight-color:transparent}header#hdr37:active{opacity:.75}</style><style>
+/* enh_v49: 홈 하단 '데이터 관리' 카드 — 강유석 전도사 로그인 시에만 표시 */
+#dataMgr49{display:none;margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 14px;box-shadow:0 4px 12px rgba(58,42,29,.06)}
+#dataMgr49.on{display:block}
+#dataMgr49 .dmH{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;color:var(--tx);padding:10px 0 8px}
+#dataMgr49 .dmH i{font-size:17px;color:#475569}
+#dataMgr49 .dmH .dmTag{margin-left:auto;font-size:10.5px;font-weight:700;color:var(--tx3)}
+#dataMgr49 a{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+#dataMgr49 .dmI{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff}
+#dataMgr49 .dmT{flex:1;min-width:0}
+#dataMgr49 .dmT b{display:block;font-size:14px;font-weight:700;color:var(--tx)}
+#dataMgr49 .dmT span{display:block;font-size:11.5px;color:var(--tx2);margin-top:2px}
+#dataMgr49 .ar{font-size:19px;color:var(--tx3);flex:none}
+</style>
+</head>
 <body>
 
 <div id="app">
@@ -398,6 +412,21 @@
           <div class="nm">아카이브</div><div class="ds">지난 안내·자료 모음</div>
         </div>
       </div>
+      <div id="dataMgr49">
+        <div class="dmH"><i class="ti ti-database"></i>데이터 관리<span class="dmTag">관리자 전용</span></div>
+        <a href="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?gid=1070930694#gid=1070930694" target="_blank" rel="noopener">
+          <div class="dmI" style="background:linear-gradient(135deg,#f59e0b,#e8590c)"><i class="ti ti-speakerphone"></i></div>
+          <div class="dmT"><b>홈공지 수정</b><span>사역신청 · 입회원서 · 신급교육 결과</span></div><i class="ti ti-chevron-right ar"></i></a>
+        <a href="https://docs.google.com/spreadsheets/d/1-moFQc8npkYh3ARL4SIpIB-Yft60d9srv7YBrmWpXXo/edit?gid=993744121#gid=993744121" target="_blank" rel="noopener">
+          <div class="dmI" style="background:linear-gradient(135deg,#34d399,#059669)"><i class="ti ti-table"></i></div>
+          <div class="dmT"><b>교사앱 DB</b><span>출석 · 명단 · 교사명단</span></div><i class="ti ti-chevron-right ar"></i></a>
+        <a href="https://docs.google.com/spreadsheets/d/11SZH8_LNVe_OHRblprrCa_q06liQh1EkOIx86v_o8do/edit?gid=1944378657#gid=1944378657" target="_blank" rel="noopener">
+          <div class="dmI" style="background:linear-gradient(135deg,#60a5fa,#2563eb)"><i class="ti ti-building-church"></i></div>
+          <div class="dmT"><b>영광 커넥트 DB</b><span>영광 커넥트 앱 데이터</span></div><i class="ti ti-chevron-right ar"></i></a>
+      </div>
+      <script>/* enh_v49: 로그인 이름이 강유석일 때만 표시 (화면 표시만 제어 — 시트 권한은 구글 공유 설정이 지킴) */
+      (function(){var el=document.getElementById("dataMgr49");function chk(){var n="";try{var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null");n=(a&&a.name)||"";}catch(e){}el.classList.toggle("on",n==="강유석");}chk();setInterval(chk,1500);})();
+      </script>
       <div class="copyr">© 2026 visionspeaker. All rights reserved.<br>무단 복제·배포 금지</div>
     </section>
 
