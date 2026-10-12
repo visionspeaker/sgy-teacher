@@ -944,6 +944,34 @@ function go(s, keepScroll, skipHash){
     return txt(ATT_CSV).then(csv=>{ baseCsv=csv.trim(); baseRoster=parseRoster(csv, false); });
   }
 
+  // 지난 주일: 현재 명단이 아니라 그날 '출석기록'에 저장된 반별 명단으로 화면을 만든다.
+  // → 이후 등반·반 이동·새친구 삭제가 있어도 지난 출석부는 저장 당시 그대로 보인다.
+  //   그날 기록이 없는 반만 현재 명단으로 채운다(예전과 동일). 새친구 반에서 삭제된 사람은 지난 주에도 표시하지 않는다.
+  const FROZEN_T={'새친구':'이은규','영어반':'박션'};
+  function frozenFromLog(csv){
+    const day=curISO(), byCls={};
+    parseCSV(csv).slice(1).forEach(r=>{ if(r.length<6||(r[0]||'').trim()!==day) return; const c=(r[1]||'').trim(); if(c&&c!=='특이사항') byCls[c]=r; });
+    const logged=Object.keys(byCls); if(!logged.length) return null;
+    const idx={}, tBy={}; baseRoster.forEach((s,i)=>{ if(!(s.name in idx)) idx[s.name]=i; if(s.teacher&&!tBy[s.cls]) tBy[s.cls]=s.teacher; });
+    const out=[];
+    logged.forEach(c=>{ const r=byCls[c], names=[];
+      (r[4]||'').split(/,\s*/).map(x=>x.trim()).filter(Boolean).forEach(n=>names.push(n));
+      (r[5]||'').split(/,\s*/).map(x=>x.trim()).filter(Boolean).forEach(it=>{ const m=it.match(/^(.+?)\((.*)\)$/); names.push(m?m[1].trim():it); });
+      names.forEach(n=>{ if(out.some(s=>s.name===n&&s.cls===c)) return; if(c==='새친구' && !(n in idx)) return; /* 새친구에서 삭제된 방문자는 지난 주에도 숨김 */ const b=(n in idx)?baseRoster[idx[n]]:null, same=!!(b&&b.cls===c);
+        out.push({name:n, cls:c, grade:b?b.grade:'', note:same?b.note:'', longAbs:same?b.longAbs:false, tag:same?b.tag:'', present:false, reason:'', teacher:tBy[c]||FROZEN_T[c]||'', _o:(n in idx)?idx[n]:9999+out.length});
+      });
+    });
+    baseRoster.forEach(s=>{ if(logged.indexOf(s.cls)===-1) out.push(Object.assign({}, s, {_o:idx[s.name]})); });
+    out.sort((a,b)=>a._o-b._o); out.forEach(s=>{ delete s._o; });
+    return out;
+  }
+  function loadFrozen(token){
+    fetch(ATT_LOG_CSV+'&_cb='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(csv=>{
+      if(token!==loadSeq) return;
+      students=frozenFromLog(csv)||clone(baseRoster); loaded=true; applyLog(csv); render();
+    }).catch(()=>{ if(token!==loadSeq) return; students=clone(baseRoster); loaded=true; render(); loadSaved(); });
+  }
+
   // 선택한 주일 로드: 주차별 탭(YYMMDD) 스냅샷이 있으면 그대로, 없으면 명단+출석기록 복원
   function loadForDate(){
     const tab=yymmdd(curDate), token=++loadSeq;
@@ -958,6 +986,7 @@ function go(s, keepScroll, skipHash){
         classOrder().forEach(c=>{ saved[c]=students.some(s=>s.cls===c && s.present); });
         render(); return;
       }
+      if(ATTEND_API && curDate < new Date(new Date().setHours(0,0,0,0))){ loadFrozen(token); return; }   // 이미 지난 주일 = 그날 저장 기록으로 고정
       students=clone(baseRoster); loaded=true; render(); loadSaved();
     }).catch(()=>{
       if(token!==loadSeq) return;
