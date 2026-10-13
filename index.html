@@ -3570,6 +3570,42 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #planSh50 .cmIn textarea{margin-top:0;min-height:44px;height:44px;flex:1;min-width:0;font-size:14px}
 #planSh50 .cmIn button{flex:none;border:0;background:#3f6f52;color:#fff;border-radius:10px;height:44px;padding:0 14px;font-size:14px;font-weight:800;cursor:pointer}
 #planSh50 .vWho b{color:#b45309;font-weight:700}
+#plan50 .pDet .dW{background:#eef5f0;border-radius:11px;padding:10px 12px;margin-top:12px;font-size:13.5px;color:var(--tx);line-height:1.6}
+#plan50 .pDet .dW i{color:#3f6f52;margin-right:4px}
+#plan50 .pDet .dB{font-size:14px;color:var(--tx);line-height:1.7;margin-top:12px;white-space:pre-wrap;word-break:break-all}
+#plan50 .pDet .vOpt{display:block;width:100%;text-align:left;position:relative;overflow:hidden;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px;margin-top:7px;cursor:pointer;font-size:14px;color:var(--tx)}
+#plan50 .pDet .vOpt .bar{position:absolute;left:0;top:0;bottom:0;background:#ece6f5;z-index:0;transition:width .3s}
+#plan50 .pDet .vOpt .lb{position:relative;z-index:1;display:flex;align-items:center;gap:7px}
+#plan50 .pDet .vOpt .lb .c{margin-left:auto;font-size:12px;font-weight:800;color:#6b4fa0}
+#plan50 .pDet .vOpt.mine{border-color:#6b4fa0}
+#plan50 .pDet .vOpt.mine .lb i{color:#6b4fa0}
+#plan50 .pDet .vOpt[disabled]{cursor:default}
+#plan50 .pDet .vWho{font-size:11.5px;color:var(--tx2);margin-top:8px;line-height:1.6}
+#plan50 .pDet .dL{display:flex;align-items:center;gap:8px;margin-top:12px;background:#e0f2fe;color:#0369a1;border-radius:11px;padding:11px 12px;font-size:14px;font-weight:700;text-decoration:none}
+#plan50 .pDet .dL .ar{margin-left:auto}
+#plan50 .pDet .cmH{font-size:12.5px;font-weight:800;color:var(--tx2);margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+#plan50 .pDet .cmI{padding:9px 0;border-bottom:1px dashed var(--line)}
+#plan50 .pDet .cmI .cw{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--tx3)}
+#plan50 .pDet .cmI .cw b{color:var(--tx);font-size:12.5px}
+#plan50 .pDet .cmI .cw button{margin-left:auto;border:0;background:transparent;color:var(--tx3);font-size:15px;cursor:pointer;padding:2px}
+#plan50 .pDet .cmI .ct{font-size:13.5px;color:var(--tx);margin-top:3px;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+#plan50 .pDet .cmIn{display:flex;gap:6px;margin-top:10px;align-items:flex-end}
+#plan50 .pDet .cmIn textarea{margin-top:0;min-height:44px;height:44px;flex:1;min-width:0;font-size:14px}
+#plan50 .pDet .cmIn button{flex:none;border:0;background:#3f6f52;color:#fff;border-radius:10px;height:44px;padding:0 14px;font-size:14px;font-weight:800;cursor:pointer}
+#plan50 .pDet .vWho b{color:#b45309;font-weight:700}
+#plan50 .post .chev{flex:none;align-self:center;font-size:18px;color:var(--tx3);transition:transform .2s;margin-left:2px}
+#plan50 .post.open{background:#f3f8f4}
+#plan50 .post.open .chev{transform:rotate(180deg)}
+#plan50 .pDet{padding:2px 14px 14px;background:#f3f8f4;border-top:1px dashed #cfe3d5}
+#plan50 .pDet .dW,#plan50 .pDet .dL{margin-top:10px}
+#plan50 .pDet .cmH{margin-top:14px}
+#plan50 .pDet .cmIn textarea{background:var(--surface)}
+#plan50 .pDet .dM{font-size:11.5px;color:var(--tx3);margin-top:12px}
+#plan50 .pDet .cmIn textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:10px;padding:10px 11px;font-size:14px;font-family:inherit;color:var(--tx);resize:none}
+#plan50 .pDet .dAct{display:flex;justify-content:flex-end;gap:6px;margin-top:12px}
+#plan50 .pDet .dAct button{border:0;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+#plan50 .pDet .dAct .ed{background:#e3efe6;color:#3f6f52}
+#plan50 .pDet .dAct .del{background:#fee2e2;color:#b91c1c}
 </style>
 <script>
 /* enh_v51: 기획팀 게시판 — 데이터는 교사앱 서버(출석 API) plan* 액션, kind 'post' → 교사앱 DB '기획팀' 탭. 서버가 기획팀 여부·작성자 권한 검사 */
@@ -3641,12 +3677,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function closePlan(){ wrap.classList.remove("on"); sh.classList.remove("on"); document.body.style.overflow=""; cardInfo(); }
  function render(){
    if(!wrap.parentNode) return;
+   var kc=document.getElementById("f_cm"), kv=kc?kc.value:"", kf=!!(kc&&document.activeElement===kc);   // 작성 중인 의견 보존
    var h='<div class="pIn"><div class="pBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
      '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.filter(function(n){return n!=="강유석";}).join(" · "))+'</div><i class="ti ti-presentation em"></i></div>';
    if(!db){ wrap.innerHTML=h+'<div class="pEmpty">불러오는 중…</div></div>'; return; }
    var nt=notices();
    if(nt.length){ h+='<div class="ntc"><div class="ntcH"><i class="ti ti-speakerphone"></i>다가오는 일정 · 주요사항</div>';
-     nt.forEach(function(x){ h+='<div class="ntcI" data-a="view" data-id="'+x.p.id+'"><span class="dd'+(x.pin?' pin':'')+'">'+esc(x.dd)+'</span><span class="tx"><b>'+esc(x.p.title)+'</b>'+(x.w?' <span>'+esc(x.w)+'</span>':'')+'</span></div>'; });
+     nt.forEach(function(x){ h+='<div class="ntcI" data-a="go" data-id="'+x.p.id+'"><span class="dd'+(x.pin?' pin':'')+'">'+esc(x.dd)+'</span><span class="tx"><b>'+esc(x.p.title)+'</b>'+(x.w?' <span>'+esc(x.w)+'</span>':'')+'</span></div>'; });
      h+='</div>'; }
    var cnt=CATS.map(function(_,i){ return posts().filter(function(p){return p.cat===i;}).length; });
    h+='<div class="pills"><button class="pill'+(filt<0?' on':'')+'" data-a="filt" data-i="-1">전체<i>'+posts().length+'</i></button>'+
@@ -3658,22 +3695,22 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var rc=[]; list.forEach(function(p){ (p.cm||[]).forEach(function(c){ rc.push({p:p,c:c}); }); });
    rc.sort(function(a,b){ return (b.c.ts||0)-(a.c.ts||0); });   // 등록 시각(서버 ts) 최신순
    if(rc.length){ h+='<div class="rcH"><i class="ti ti-message-circle"></i>최근 의견</div><div class="board">';
-     rc.slice(0,5).forEach(function(x){ h+='<div class="rc" data-a="view" data-id="'+x.p.id+'"><div class="rt"><span class="cat c'+x.p.cat+'">'+CATS[x.p.cat]+'</span><b>'+esc(x.p.title)+'</b> · '+esc(x.c.at||'')+'</div><div class="rx"><span>'+esc(x.c.by)+'</span>'+esc(x.c.tx)+'</div></div>'; });
+     rc.slice(0,5).forEach(function(x){ h+='<div class="rc" data-a="go" data-id="'+x.p.id+'"><div class="rt"><span class="cat c'+x.p.cat+'">'+CATS[x.p.cat]+'</span><b>'+esc(x.p.title)+'</b> · '+esc(x.c.at||'')+'</div><div class="rx"><span>'+esc(x.c.by)+'</span>'+esc(x.c.tx)+'</div></div>'; });
      h+='</div>'; }
    wrap.innerHTML=h+'</div>';
+   var nc=document.getElementById("f_cm"); if(nc&&kv){ nc.value=kv; if(kf) nc.focus(); }
  }
  function row(p){
    var side='';
    if(p.cat===3){ var v=Object.keys(p.votes||{}).filter(function(k){return p.votes[k]&&p.votes[k].length;}).length;
      side=voteOpen(p)?'<div class="side v">투표중<br>'+v+'/'+TEAM.length+'</div>':'<div class="side">마감</div>'; }
-   return '<div class="post" data-a="view" data-id="'+p.id+'"><div class="pm"><div class="pt"><span class="cat c'+p.cat+'">'+CATS[p.cat]+'</span>'+(p.pin?'<i class="ti ti-pin pinI"></i>':'')+'<span class="ttl">'+esc(p.title)+'</span></div>'+
-     '<div class="ps">'+(p.date?'<span class="wh"><i class="ti ti-calendar-event"></i> '+fmtD(p.date)+(p.time?' '+esc(p.time):'')+'</span>':'')+(p.cat===3&&p.due?'<span class="wh" style="color:#6b4fa0">'+fmtD(p.due)+' 마감</span>':'')+'<span>'+esc(p.by)+' · '+esc(p.at||'')+'</span>'+((p.cm&&p.cm.length)?'<span class="cmN"><i class="ti ti-message-circle"></i> '+p.cm.length+'</span>':'')+'</div></div>'+side+'</div>';
+   return '<div class="post'+(openId===p.id?' open':'')+'" data-a="view" data-id="'+p.id+'"><div class="pm"><div class="pt"><span class="cat c'+p.cat+'">'+CATS[p.cat]+'</span>'+(p.pin?'<i class="ti ti-pin pinI"></i>':'')+'<span class="ttl">'+esc(p.title)+'</span></div>'+
+     '<div class="ps">'+(p.date?'<span class="wh"><i class="ti ti-calendar-event"></i> '+fmtD(p.date)+(p.time?' '+esc(p.time):'')+'</span>':'')+(p.cat===3&&p.due?'<span class="wh" style="color:#6b4fa0">'+fmtD(p.due)+' 마감</span>':'')+'<span>'+esc(p.by)+' · '+esc(p.at||'')+'</span>'+((p.cm&&p.cm.length)?'<span class="cmN"><i class="ti ti-message-circle"></i> '+p.cm.length+'</span>':'')+'</div></div>'+side+'<i class="ti ti-chevron-down chev"></i></div>'+(openId===p.id?'<div class="pDet" data-pid="'+p.id+'">'+detail(p)+'</div>':'');
  }
 
  /* ── 글 보기 ── */
- function view(p){
-   if(!p) return; var my=me(), h='<div class="shIn"><span class="cat c'+p.cat+'">'+CATS[p.cat]+'</span>'+(p.pin?' <span class="cat c5"><i class="ti ti-pin"></i> 공지</span>':'')+
-     '<div class="dT">'+esc(p.title)+'</div><div class="dM">'+esc(p.by)+' · '+esc(p.at||'')+'</div>';
+ function detail(p){
+   var my=me(), h='';
    if(p.date||p.place) h+='<div class="dW">'+(p.date?'<div><i class="ti ti-calendar-event"></i>'+fmtD(p.date)+(p.time?' '+esc(p.time):'')+' <b style="color:#b45309">'+(p.date>=todayISO()?dday(p.date):'')+'</b></div>':'')+(p.place?'<div><i class="ti ti-map-pin"></i>'+esc(p.place)+'</div>':'')+'</div>';
    if(p.body) h+='<div class="dB">'+esc(p.body)+'</div>';
    if(p.link) h+='<a class="dL" href="'+esc(p.link)+'" target="_blank" rel="noopener"><i class="ti ti-notes"></i>회의록 열기<i class="ti ti-external-link ar"></i></a>';
@@ -3683,22 +3720,24 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      var mx=Math.max.apply(null,cnt.concat([1])), mine=votes[my]||[], open=voteOpen(p);
      h+='<div class="dM" style="margin-top:14px">'+(open?'투표중':'마감')+(p.multi?' · 복수 선택':'')+(p.due?' · '+fmtD(p.due)+'까지':'')+'</div>';
      p.opts.forEach(function(o,i){ var on=mine.indexOf(i)!==-1;
-       h+='<button class="vOpt'+(on?' mine':'')+'" data-s="vote" data-i="'+i+'"'+(open?'':' disabled')+'><span class="bar" style="width:'+(voters.length?Math.round(cnt[i]/mx*100):0)+'%"></span><span class="lb"><i class="ti ti-'+(on?(p.multi?'square-check':'circle-check'):(p.multi?'square':'circle'))+'"></i>'+esc(o)+'<span class="c">'+cnt[i]+'</span></span></button>'; });
+       h+='<button class="vOpt'+(on?' mine':'')+'" data-a="vote" data-id="'+p.id+'" data-i="'+i+'"'+(open?'':' disabled')+'><span class="bar" style="width:'+(voters.length?Math.round(cnt[i]/mx*100):0)+'%"></span><span class="lb"><i class="ti ti-'+(on?(p.multi?'square-check':'circle-check'):(p.multi?'square':'circle'))+'"></i>'+esc(o)+'<span class="c">'+cnt[i]+'</span></span></button>'; });
      var not=TEAM.filter(function(n){ return voters.indexOf(n)===-1; });
      h+='<div class="vWho">참여 '+voters.length+'/'+TEAM.length+'명'+(voters.length?' · '+esc(voters.join(", ")):'')+(not.length&&open?'<br>미참여: <b>'+esc(not.join(", "))+'</b>':'')+'</div>';
    }
    var cm=p.cm||[];
    h+='<div class="cmH">의견 '+cm.length+'</div>';
-   cm.forEach(function(c){ h+='<div class="cmI"><div class="cw"><b>'+esc(c.by)+'</b>'+esc(c.at||'')+(c.by===my?'<button data-s="cdel" data-c="'+c.id+'" aria-label="의견 삭제"><i class="ti ti-x"></i></button>':'')+'</div><div class="ct">'+esc(c.tx)+'</div></div>'; });
-   h+='<div class="cmIn"><textarea id="f_cm" placeholder="의견을 남겨 주세요" rows="1"></textarea><button data-s="cadd">등록</button></div>';
-   h+='<div class="shB">'+(p.by===my?'<button class="del" data-s="del"><i class="ti ti-trash"></i></button><button class="ed" data-s="edit"><i class="ti ti-pencil"></i> 수정</button>':'')+'<button class="no" data-s="no">닫기</button></div></div>';
-   sh.innerHTML=h; sh.classList.add("on"); cur=p;
+   cm.forEach(function(c){ h+='<div class="cmI"><div class="cw"><b>'+esc(c.by)+'</b>'+esc(c.at||'')+(c.by===my?'<button data-a="cdel" data-id="'+p.id+'" data-c="'+c.id+'" aria-label="의견 삭제"><i class="ti ti-x"></i></button>':'')+'</div><div class="ct">'+esc(c.tx)+'</div></div>'; });
+   h+='<div class="cmIn"><textarea id="f_cm" placeholder="의견을 남겨 주세요" rows="1"></textarea><button data-a="cadd" data-id="'+p.id+'">등록</button></div>';
+   if(p.by===my) h+='<div class="dAct"><button class="ed" data-a="edit" data-id="'+p.id+'"><i class="ti ti-pencil"></i>수정</button><button class="del" data-a="del" data-id="'+p.id+'"><i class="ti ti-trash"></i>삭제</button></div>';
+   return h;
  }
- var cur=null, mode="";
+ var cur=null, mode="", openId=null;
+ function scrollToPost(id){ setTimeout(function(){ var el=wrap.querySelector('.post[data-id="'+id+'"]'); if(!el) return; var r=el.getBoundingClientRect(); if(r.top<70||r.top>wrap.clientHeight*0.55) wrap.scrollTop+=r.top-80; },0); }
+ function goPost(id){ var p=find(id); if(!p) return; if(filt>=0&&p.cat!==filt) filt=-1; openId=id; render(); scrollToPost(id); }
  function vote(p,i){
    var my=me(); p.votes=p.votes||{}; var c=(p.votes[my]||[]).slice();
    if(p.multi){ var k=c.indexOf(i); if(k===-1) c.push(i); else c.splice(k,1); } else c=(c.length===1&&c[0]===i)?[]:[i];
-   p.votes[my]=c; view(p); send({action:"planVote",id:p.id,sel:c}).then(function(){ var np=find(p.id); if(np&&sh.classList.contains("on")&&mode==="view") view(np); });
+   p.votes[my]=c; render(); send({action:"planVote",id:p.id,sel:c});
  }
 
  /* ── 글쓰기·수정 ── */
@@ -3740,24 +3779,24 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(e.target===sh){ sh.classList.remove("on"); return; }
    var b=e.target.closest("[data-s]"); if(!b) return; var a=b.getAttribute("data-s");
    if(a==="no") sh.classList.remove("on");
-   if(a==="vote"&&cur) vote(cur,+b.getAttribute("data-i"));
-   if(a==="edit"&&cur) form(cur);
-   if(a==="del"&&cur){ if(!confirm("이 글을 삭제할까요?")) return; b.disabled=true; send({action:"planDel",kind:"post",id:cur.id}).then(function(ok){ if(ok) sh.classList.remove("on"); else b.disabled=false; }); }
    if(a==="cat"){ sh._cat=+b.getAttribute("data-i"); [].forEach.call(sh.querySelectorAll(".catPick button"),function(x){ x.classList.toggle("on",x===b); }); showFields(); }
    if(a==="addopt"){ var ol=document.getElementById("f_ol"), r=document.createElement("div"); r.className="optRow"; r.innerHTML='<input class="f_opt" placeholder="선택지 '+(ol.children.length+1)+'"><button type="button" data-s="rmopt" aria-label="삭제">&times;</button>'; ol.appendChild(r); r.querySelector("input").focus(); }
    if(a==="rmopt"){ var ol2=document.getElementById("f_ol"); if(ol2.children.length>2) b.parentNode.remove(); else b.parentNode.querySelector("input").value=""; }
    if(a==="save") save(b);
-   if(a==="cadd"&&cur){ var t=v("f_cm"); if(!t) return; b.disabled=true; var pid=cur.id;
-     send({action:"planComment",id:pid,text:t}).then(function(ok){ b.disabled=false; if(ok){ var np=find(pid); if(np) view(np); } }); }
-   if(a==="cdel"&&cur){ if(!confirm("의견을 삭제할까요?")) return; var pid2=cur.id;
-     send({action:"planComment",id:pid2,del:b.getAttribute("data-c")}).then(function(ok){ if(ok){ var np2=find(pid2); if(np2) view(np2); } }); }
  });
  wrap.addEventListener("click",function(e){
    var b=e.target.closest("[data-a]"); if(!b) return; var a=b.getAttribute("data-a");
    if(a==="close") closePlan();
    if(a==="filt"){ filt=+b.getAttribute("data-i"); render(); }
    if(a==="write") form(null);
-   if(a==="view"){ mode="view"; view(find(b.getAttribute("data-id"))); }
+   var id=b.getAttribute("data-id");
+   if(a==="view"){ openId=(openId===id)?null:id; render(); if(openId) scrollToPost(id); }
+   if(a==="go") goPost(id);
+   if(a==="vote"){ var vp=find(id); if(vp) vote(vp,+b.getAttribute("data-i")); }
+   if(a==="edit") form(find(id));
+   if(a==="del"){ if(!confirm("이 글을 삭제할까요?")) return; b.disabled=true; send({action:"planDel",kind:"post",id:id}).then(function(ok){ if(ok) openId=null; else b.disabled=false; render(); }); }
+   if(a==="cadd"){ var t=v("f_cm"); if(!t) return; b.disabled=true; send({action:"planComment",id:id,text:t}).then(function(ok){ var c=document.getElementById("f_cm"); if(ok&&c) c.value=""; else render(); }); }
+   if(a==="cdel"){ if(!confirm("의견을 삭제할까요?")) return; send({action:"planComment",id:id,del:b.getAttribute("data-c")}); }
  });
 
  function tick(){ mountCard(); var on=isTeam(); card.classList.toggle("on",on); if(on){ load(); cardInfo(); } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
