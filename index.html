@@ -548,7 +548,7 @@
   <div class="visitBar" id="visitCount"><i class="ti ti-users"></i> 방문자 · Today <b id="vToday">-</b> · Total <b id="vTotal">-</b><button class="refreshBtn" id="refreshBtn" aria-label="새로고침"><i class="ti ti-refresh"></i>새로고침</button></div>
 
   <nav>
-    <button class="on" data-s="home" onclick="go('home')"><i class="ti ti-layout-grid"></i>홈</button>
+    <button class="on" data-s="home" onclick="go('home')"><i class="ti ti-home"></i>홈</button>
     <button data-s="share" onclick="go('share')"><i class="ti ti-share-2"></i>공유 링크</button>
   </nav>
 
@@ -2049,7 +2049,7 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
    if(inWindow()){ var ex=document.getElementById("sgySingeupAr"); if(ex) ex.remove(); return; }
    if(document.getElementById("sgySingeupAr")) return;
    var a=document.createElement("a"); a.id="sgySingeupAr"; a.className="arItem"; a.href=SHEET; a.target="_blank"; a.rel="noopener";
-   a.innerHTML='<div class="ci"><i class="ti ti-clipboard-check"></i></div><div class="ct"><div class="t1">신급 교육 신청 결과</div><div class="t2">신청 명단·결과 확인</div></div>';
+   a.innerHTML='<div class="ci"><i class="ti ti-clipboard-check"></i></div><div class="ct"><div class="t1">신급 교육 신청 결과<span class="rTag" style="color:#6b7280;background:#f1f3f5;border-color:#e2e5e9">신청 종료</span></div><div class="t2">신청 명단·결과 확인</div></div>';
    list.insertBefore(a, list.firstChild);
  }
 
