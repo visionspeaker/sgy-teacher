@@ -3515,7 +3515,14 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #planSh50 input,#planSh50 textarea,#planSh50 select{width:100%;box-sizing:border-box;margin-top:5px;border:1.5px solid var(--line);border-radius:10px;padding:10px 11px;font-size:15px;font-family:inherit;color:var(--tx);background:var(--bg)}
 #planSh50 textarea{min-height:76px;resize:vertical}
 #planSh50 .two{display:flex;gap:8px}
-#planSh50 .two>div{flex:1}
+#planSh50 .two>div{flex:1;min-width:0}
+#planSh50 input[type=date],#planSh50 input[type=time]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;height:44px;line-height:22px;text-align:left}
+#planSh50 input::-webkit-date-and-time-value{text-align:left}
+#planSh50 .optRow{display:flex;gap:6px;align-items:center;margin-top:6px}
+#planSh50 .optRow input{margin-top:0;flex:1;min-width:0}
+#planSh50 .optRow button{flex:none;width:36px;height:40px;border:0;border-radius:10px;background:var(--bg);color:var(--tx3);font-size:18px;cursor:pointer}
+#planSh50 .optAdd{display:block;width:100%;margin-top:7px;border:1.5px dashed var(--line);background:transparent;border-radius:10px;padding:9px;font-size:13.5px;font-weight:700;color:var(--tx2);cursor:pointer}
+#plan50 .st.s3{background:#e0f2fe;color:#0369a1}
 #planSh50 .chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--tx);margin-top:12px}
 #planSh50 .chk input{width:auto;margin:0}
 #planSh50 .shB{display:flex;gap:8px;margin-top:18px}
@@ -3596,9 +3603,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(past.length){ h+='<div class="pMeta" style="margin-top:10px">지난 회의</div>'; past.forEach(function(s){ h+=itemS(s,true); }); }
    h+='</div>';
    // 2) 주요 논의 사항
-   var SN=["논의중","결정","보류"];
+   var SN=["논의중","결정","보류","논의 예정"], RANK={0:0,3:1,1:2,2:3};
    h+='<div class="pSec"><div class="pSH"><i class="ti ti-message-2" style="color:#0d9488"></i>주요 논의 사항<button class="pAdd" data-a="addD">+ 추가</button></div>';
-   var ds=db.disc.slice().sort(function(a,b){ return (a.status===0?0:1)-(b.status===0?0:1); });
+   var ds=db.disc.slice().sort(function(a,b){ return (RANK[a.status]||0)-(RANK[b.status]||0); });
    if(!ds.length) h+='<div class="pEmpty">등록된 논의 사항이 없습니다.</div>';
    ds.forEach(function(d){
      h+='<div class="pItem"><div class="pRow"><div class="pMain"><div class="pTitle"><span class="st s'+d.status+'">'+SN[d.status]+'</span>'+esc(d.title)+'</div>'+
@@ -3607,7 +3614,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    });
    h+='</div>';
    // 3) 의사결정 투표
-   h+='<div class="pSec"><div class="pSH"><i class="ti ti-checkbox" style="color:#e8590c"></i>의사결정 투표<button class="pAdd" data-a="addP">+ 투표 만들기</button></div>';
+   h+='<div class="pSec"><div class="pSH"><i class="ti ti-checkbox" style="color:#e8590c"></i>의사결정 투표<button class="pAdd" data-a="addP">+ 의사결정</button></div>';
    var ps=db.poll.slice().sort(function(a,b){ return (a.closed?1:0)-(b.closed?1:0); });
    if(!ps.length) h+='<div class="pEmpty">진행 중인 투표가 없습니다.</div>';
    ps.forEach(function(p){
@@ -3627,7 +3634,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    h+='</div>';
    // 4) 회의록
    h+='<a class="pLink" href="'+MINUTES+'" target="_blank" rel="noopener"><div class="li"><i class="ti ti-notes"></i></div><div><b>회의록 보기</b><span>다글로 공유 회의록</span></div><i class="ti ti-chevron-right ar"></i></a>';
-   h+='<div class="pNote">기획팀('+TEAM.length+'명)에게만 보이는 메뉴입니다.</div></div>';
+   h+='</div>';
    wrap.innerHTML=h;
  }
  function itemS(s,past){
@@ -3643,6 +3650,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    sh.onclick=function(e){ var b=e.target.closest("[data-s]"); if(e.target===sh){ sh.classList.remove("on"); return; } if(!b) return;
      var a=b.getAttribute("data-s");
      if(a==="no") sh.classList.remove("on");
+     if(a==="addopt"){ var ol=document.getElementById("f_ol"), n=ol.children.length+1, r=document.createElement("div"); r.className="optRow"; r.innerHTML='<input class="f_opt" placeholder="선택지 '+n+'"><button type="button" data-s="rmopt" aria-label="삭제">&times;</button>'; ol.appendChild(r); r.querySelector("input").focus(); }
+     if(a==="rmopt"){ var ol2=document.getElementById("f_ol"); if(ol2.children.length>2) b.parentNode.remove(); else b.parentNode.querySelector("input").value=""; }
      if(a==="ok"||a==="del"){
        if(a==="del"&&!confirm("삭제할까요?")) return;
        var r=(a==="ok")?onOk():onDel(); if(r===false) return;
@@ -3664,11 +3673,11 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      s?function(){ return send({action:"planDel",kind:"sched",id:s.id}); }:null);
  }
  function sheetD(d){
-   var e=d||{title:"",body:"",status:0};
+   var e=d||{title:"",body:"",status:3};
    openSheet(d?"논의 사항 수정":"논의 사항 추가",
      '<label>제목</label><input id="f_t2" value="'+esc(e.title)+'" placeholder="논의할 주제">'+
      '<label>내용</label><textarea id="f_b" placeholder="배경, 선택지, 메모">'+esc(e.body)+'</textarea>'+
-     '<label>상태</label><select id="f_s"><option value="0"'+(e.status==0?' selected':'')+'>논의중</option><option value="1"'+(e.status==1?' selected':'')+'>결정</option><option value="2"'+(e.status==2?' selected':'')+'>보류</option></select>',
+     '<label>상태</label><select id="f_s"><option value="3"'+(e.status==3?' selected':'')+'>논의 예정</option><option value="0"'+(e.status==0?' selected':'')+'>논의중</option><option value="1"'+(e.status==1?' selected':'')+'>결정</option><option value="2"'+(e.status==2?' selected':'')+'>보류</option></select>',
      function(){ if(!v("f_t2")){ alert("제목을 입력하세요."); return false; }
        var o={title:v("f_t2"),body:v("f_b"),status:+v("f_s")}; if(d) o.id=d.id;
        return send({action:"planSave",kind:"disc",item:o}); },
@@ -3676,14 +3685,15 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function sheetP(p){
    var e=p||{q:"",opts:[],due:"",multi:false,closed:false};
-   openSheet(p?"투표 수정":"투표 만들기",
+   var ol=(e.opts.length?e.opts:["",""]).map(function(o,i){ return '<div class="optRow"><input class="f_opt" value="'+esc(o)+'" placeholder="선택지 '+(i+1)+'"><button type="button" data-s="rmopt" aria-label="삭제">&times;</button></div>'; }).join("");
+   openSheet(p?"의사결정 수정":"의사결정 추가",
      '<label>질문</label><input id="f_q" value="'+esc(e.q)+'" placeholder="결정할 내용">'+
-     '<label>선택지 (한 줄에 하나)</label><textarea id="f_o" placeholder="선택지1&#10;선택지2">'+esc(e.opts.join("\n"))+'</textarea>'+
+     '<label>선택지</label><div id="f_ol">'+ol+'</div><button type="button" class="optAdd" data-s="addopt">+ 선택지 추가</button>'+
      '<label>마감일</label><input type="date" id="f_due" value="'+esc(e.due)+'">'+
      '<div class="chk"><input type="checkbox" id="f_mu"'+(e.multi?' checked':'')+'><span>복수 선택 허용</span></div>'+
      (p?'<div class="chk"><input type="checkbox" id="f_cl"'+(e.closed?' checked':'')+'><span>투표 마감하기</span></div>':'')+
      (p&&Object.keys(p.votes).length?'<div class="pMeta" style="font-size:11px;color:#b45309;margin-top:10px">선택지를 바꾸면 이미 한 투표가 초기화됩니다.</div>':''),
-     function(){ var opts=v("f_o").split("\n").map(function(x){return x.trim();}).filter(Boolean);
+     function(){ var opts=[].map.call(document.querySelectorAll("#f_ol .f_opt"),function(x){return x.value.trim();}).filter(Boolean);
        if(!v("f_q")||opts.length<2){ alert("질문과 선택지 2개 이상을 입력하세요."); return false; }
        var mu=document.getElementById("f_mu").checked, cl=p?document.getElementById("f_cl").checked:false;
        var o={q:v("f_q"),opts:opts,due:v("f_due"),multi:mu,closed:cl}; if(p) o.id=p.id;
