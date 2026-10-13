@@ -3462,7 +3462,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #planCard50 .pcN{font-size:10.5px;font-weight:800;background:#3f6f52;color:#fff;border-radius:999px;padding:3px 8px;flex:none}
 #planCard50 .ar{font-size:20px;color:#3f6f52;flex:none}
 
-#plan50{display:none;position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#plan50{display:none;position:fixed;top:0;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #plan50.on{display:block}
 #plan50 .pIn{max-width:520px;margin:0 auto;padding:6px 16px 90px}
 #plan50 .pBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
@@ -3832,6 +3832,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(a==="rmopt"){ var ol2=document.getElementById("f_ol"); if(ol2.children.length>2) b.parentNode.remove(); else b.parentNode.querySelector("input").value=""; }
    if(a==="save") save(b);
  });
+ /* 하단 탭(홈·공유 링크) 누르면 기획팀 화면 닫고 이동 — 계정 탭은 메뉴만 열림 */
+ document.addEventListener("click",function(e){ var nb=e.target.closest&&e.target.closest("nav button"); if(nb&&nb.id!=="accTab30"&&wrap.classList.contains("on")) closePlan(); },true);
  wrap.addEventListener("click",function(e){
    var b=e.target.closest("[data-a]"); if(!b) return; var a=b.getAttribute("data-a");
    if(a==="close") closePlan();
