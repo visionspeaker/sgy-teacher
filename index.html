@@ -353,7 +353,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V44</span>
+    <span class="badge">V45</span>
   </header>
 
   <main id="main">
@@ -2984,6 +2984,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"기획팀 메뉴", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
+   secs:[["[신규]","- 기획팀 선생님께 홈 화면에 '기획팀' 카드가 보여요<br>- 회의 일정·주요 논의 사항을 앱에서 바로 등록하고, 의사결정 투표와 회의록도 한 곳에서 확인합니다"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
    secs:[["[개선]","- 지난 주일 출석부는 그날 저장한 명단 그대로 보여요<br>- 이후 등반·반 이동이 있어도 지난 기록은 바뀌지 않습니다"]]},
   {h:"2027 사역 신청 결과", bd:"신규",cls:"bdN", v:"V43", d:"2026/10/08",
@@ -3442,6 +3444,269 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  function tick(){ ensureArchive(); ensureHome(); }
  ready(function(){ tick(); setInterval(tick,1500); });
+})();
+</script>
+
+<style>
+/* enh_v50: 기획팀 메뉴 — 기획팀 교사 로그인 시에만 홈에 표시. 회의 일정·주요 논의 사항·의사결정 투표·회의록 */
+#planCard50{display:none;margin-top:22px;align-items:center;gap:12px;background:linear-gradient(120deg,#4f46e5,#7c3aed);border-radius:16px;padding:14px 15px;color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(79,70,229,.25);-webkit-tap-highlight-color:transparent}
+#planCard50.on{display:flex}
+#planCard50:active{opacity:.85}
+#planCard50 .pcI{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+#planCard50 .pcT{flex:1;min-width:0}
+#planCard50 .pcT b{display:block;font-size:15px;font-weight:800}
+#planCard50 .pcT span{display:block;font-size:11.5px;opacity:.9;margin-top:2px}
+#planCard50 .pcN{font-size:11px;font-weight:800;background:#fff;color:#4f46e5;border-radius:999px;padding:3px 9px;flex:none}
+#planCard50 .ar{font-size:20px;opacity:.85;flex:none}
+
+#plan50{display:none;position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#plan50.on{display:block}
+#plan50 .pIn{max-width:520px;margin:0 auto;padding:6px 16px 60px}
+#plan50 .pBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
+#plan50 .pHero{background:linear-gradient(120deg,#4f46e5,#7c3aed);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden}
+#plan50 .pHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
+#plan50 .pHero .t{font-size:20px;font-weight:800;margin-top:5px}
+#plan50 .pHero .s{font-size:12px;opacity:.9;margin-top:4px;line-height:1.5}
+#plan50 .pHero .em{position:absolute;right:-6px;bottom:-18px;font-size:80px;opacity:.16}
+#plan50 .pSec{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 15px 12px;margin-top:12px}
+#plan50 .pSH{display:flex;align-items:center;gap:7px;padding:12px 0 8px;font-size:14.5px;font-weight:800;color:var(--tx)}
+#plan50 .pSH i{font-size:18px}
+#plan50 .pAdd{margin-left:auto;font-size:12px;font-weight:700;color:#4f46e5;background:#eef2ff;border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
+#plan50 .pEmpty{font-size:12.5px;color:var(--tx3);padding:10px 0 4px}
+#plan50 .pItem{border-top:1px solid var(--line);padding:11px 0}
+#plan50 .pItem:first-of-type{border-top:0}
+#plan50 .pRow{display:flex;align-items:flex-start;gap:8px}
+#plan50 .pMain{flex:1;min-width:0}
+#plan50 .pTitle{font-size:14px;font-weight:700;color:var(--tx);line-height:1.4}
+#plan50 .pSub{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+#plan50 .pMeta{font-size:11px;color:var(--tx3);margin-top:5px}
+#plan50 .pAct{display:flex;gap:2px;flex:none}
+#plan50 .pAct button{border:0;background:transparent;color:var(--tx3);font-size:17px;padding:4px;cursor:pointer}
+#plan50 .pNext{background:#eef2ff;border-radius:12px;padding:12px 13px;margin:4px 0 8px}
+#plan50 .pNext .d{font-size:11px;font-weight:800;color:#4f46e5}
+#plan50 .pNext .w{font-size:17px;font-weight:800;color:var(--tx);margin-top:3px}
+#plan50 .pNext .p{font-size:12.5px;color:var(--tx2);margin-top:3px}
+#plan50 .dday{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 6px;margin-left:6px;background:#4f46e5;color:#fff;vertical-align:1px}
+#plan50 .st{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 7px;margin-right:6px;vertical-align:1px}
+#plan50 .st.s0{background:#fef3c7;color:#b45309}
+#plan50 .st.s1{background:#dcfce7;color:#15803d}
+#plan50 .st.s2{background:#f1f5f9;color:#64748b}
+#plan50 .vOpt{display:block;width:100%;text-align:left;position:relative;overflow:hidden;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px;margin-top:7px;cursor:pointer;font-size:13.5px;color:var(--tx)}
+#plan50 .vOpt .bar{position:absolute;left:0;top:0;bottom:0;background:#eef2ff;z-index:0;transition:width .3s}
+#plan50 .vOpt .lb{position:relative;z-index:1;display:flex;align-items:center;gap:7px}
+#plan50 .vOpt .lb .c{margin-left:auto;font-size:12px;font-weight:800;color:#4f46e5}
+#plan50 .vOpt.mine{border-color:#4f46e5}
+#plan50 .vOpt.mine .lb i{color:#4f46e5}
+#plan50 .vOpt[disabled]{cursor:default}
+#plan50 .vWho{font-size:11.5px;color:var(--tx2);margin-top:8px;line-height:1.6}
+#plan50 .vWho b{color:#b45309;font-weight:700}
+#plan50 .pLink{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-top:12px;text-decoration:none;color:inherit}
+#plan50 .pLink .li{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+#plan50 .pLink b{display:block;font-size:14px;color:var(--tx)}
+#plan50 .pLink span{display:block;font-size:11.5px;color:var(--tx2);margin-top:2px}
+#plan50 .pLink .ar{margin-left:auto;font-size:19px;color:var(--tx3)}
+#plan50 .pNote{font-size:11px;color:var(--tx3);text-align:center;margin-top:16px;line-height:1.6}
+
+#planSh50{display:none;position:fixed;inset:0;z-index:9500;background:rgba(15,23,42,.45);align-items:flex-end;justify-content:center}
+#planSh50.on{display:flex}
+#planSh50 .shIn{background:var(--surface);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom) + 18px);max-height:88vh;overflow-y:auto}
+#planSh50 .shT{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:6px}
+#planSh50 label{display:block;font-size:12px;font-weight:700;color:var(--tx2);margin-top:11px}
+#planSh50 input,#planSh50 textarea,#planSh50 select{width:100%;box-sizing:border-box;margin-top:5px;border:1.5px solid var(--line);border-radius:10px;padding:10px 11px;font-size:15px;font-family:inherit;color:var(--tx);background:var(--bg)}
+#planSh50 textarea{min-height:76px;resize:vertical}
+#planSh50 .two{display:flex;gap:8px}
+#planSh50 .two>div{flex:1}
+#planSh50 .chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--tx);margin-top:12px}
+#planSh50 .chk input{width:auto;margin:0}
+#planSh50 .shB{display:flex;gap:8px;margin-top:18px}
+#planSh50 .shB button{flex:1;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer}
+#planSh50 .shB .no{background:var(--bg);color:var(--tx2)}
+#planSh50 .shB .ok{background:#4f46e5;color:#fff}
+#planSh50 .shB .del{flex:none;background:#fee2e2;color:#b91c1c;padding:13px 16px}
+</style>
+<script>
+/* enh_v50: 기획팀 메뉴 — 데이터는 교사앱 서버(출석 API)의 plan* 액션 → 교사앱 DB '기획팀' 탭. 서버가 기획팀 여부·작성자 권한을 검사 */
+(function(){
+ var TEAM=["강유석","홍윤기","박션","최영미","서예진","황윤정"];
+ var MINUTES="https://daglo.ai/share/JXALbIWxkmyTdm5U";
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
+ function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
+ function isTeam(){ return TEAM.indexOf(me())!==-1; }
+ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+ function pz(n){ return (n<10?"0":"")+n; }
+ function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+pz(d.getMonth()+1)+"-"+pz(d.getDate()); }
+ var WD=["일","월","화","수","목","금","토"];
+ function fmtD(iso){ if(!iso) return ""; var p=iso.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]); return (+p[1])+"/"+(+p[2])+"("+WD[d.getDay()]+")"; }
+ function dday(iso){ var p=iso.split("-"), t=new Date(); t.setHours(0,0,0,0); var n=Math.round((new Date(+p[0],+p[1]-1,+p[2])-t)/864e5); return n===0?"D-DAY":(n>0?"D-"+n:""); }
+
+ /* ── 저장소: 서버 ── */
+ var db=null, loading=false, lastLoad=0;
+ var ERR={notteam:"기획팀만 사용할 수 있습니다.",notowner:"작성자만 수정·삭제할 수 있습니다.",closed:"마감된 투표입니다.",notfound:"이미 삭제된 항목입니다."};
+ function api(body){
+   body.user=me();
+   return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json();})
+     .then(function(res){ if(res&&res.ok&&res.data){ db=res.data; lastLoad=Date.now(); } return res; });
+ }
+ function load(force){
+   if(loading||(!force&&db&&Date.now()-lastLoad<60000)) return Promise.resolve();
+   loading=true; return api({action:"planGet"}).catch(function(){}).then(function(){ loading=false; render(); cardInfo(); });
+ }
+ function send(body){ return api(body).then(function(res){ if(!res||!res.ok){ alert(ERR[res&&res.error]||"저장하지 못했습니다. 잠시 후 다시 시도해 주세요."); return false; } render(); cardInfo(); return true; }, function(){ alert("연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요."); return false; }); }
+
+ /* ── 홈 카드 ── */
+ var card=document.createElement("div"); card.id="planCard50";
+ card.innerHTML='<div class="pcI"><i class="ti ti-users-group"></i></div><div class="pcT"><b>기획팀</b><span id="pc50s">회의 일정 · 논의 사항 · 의사결정</span></div><span class="pcN" id="pc50n" style="display:none"></span><i class="ti ti-chevron-right ar"></i>';
+ card.addEventListener("click",function(){ openPlan(); });
+ function mountCard(){
+   if(document.getElementById("planCard50")) return;
+   var dm=document.getElementById("dataMgr49"), home=document.getElementById("s-home"); if(!home) return;
+   if(dm) dm.parentNode.insertBefore(card,dm); else { var c=home.querySelector(".copyr"); home.insertBefore(card,c); }
+ }
+ function cardInfo(){
+   if(!db) return; var t=todayISO(), nx=db.sched.filter(function(s){return s.date>=t;}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;})[0];
+   var s=document.getElementById("pc50s"), n=document.getElementById("pc50n"); if(!s) return;
+   s.textContent = nx ? "다음 회의 "+fmtD(nx.date)+" "+nx.time : "회의 일정 · 논의 사항 · 의사결정";
+   var todo=db.poll.filter(function(p){ var mv=(p.votes||{})[me()]; return !p.closed && !(p.due&&p.due<t) && !(mv&&mv.length); }).length;
+   n.style.display=todo?"":"none"; n.textContent="투표 "+todo;
+ }
+
+ /* ── 기획팀 화면 ── */
+ var wrap=document.createElement("div"); wrap.id="plan50";
+ var sh=document.createElement("div"); sh.id="planSh50";
+ function openPlan(){ render(); load(true); wrap.classList.add("on"); wrap.scrollTop=0; document.body.style.overflow="hidden"; }
+ function closePlan(){ wrap.classList.remove("on"); document.body.style.overflow=""; cardInfo(); }
+
+ function render(){
+   if(!wrap.parentNode) return;
+   if(!db){ wrap.innerHTML='<div class="pIn"><div class="pBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div><div class="pEmpty" style="text-align:center;padding:40px 0">불러오는 중…</div></div>'; return; }
+   var t=todayISO(), my=me();
+   var up=db.sched.filter(function(s){return s.date>=t;}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;});
+   var past=db.sched.filter(function(s){return s.date<t;}).sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,3);
+   var h='<div class="pIn"><div class="pBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
+     '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.join(" · "))+'</div><i class="ti ti-users-group em"></i></div>';
+   // 1) 회의 일정
+   h+='<div class="pSec"><div class="pSH"><i class="ti ti-calendar-event" style="color:#4f46e5"></i>회의 일정<button class="pAdd" data-a="addS">+ 추가</button></div>';
+   if(up.length){ var n0=up[0];
+     h+='<div class="pNext"><div class="d">다음 회의<span class="dday">'+dday(n0.date)+'</span></div><div class="w">'+fmtD(n0.date)+' '+esc(n0.time)+'</div>'+
+        (n0.place?'<div class="p"><i class="ti ti-map-pin"></i> '+esc(n0.place)+'</div>':'')+(n0.memo?'<div class="p">'+esc(n0.memo)+'</div>':'')+'<div class="p" style="font-size:11px;color:var(--tx3)">'+esc(n0.by||'')+'</div>'+
+        (n0.by===my?'<div class="pAct" style="justify-content:flex-end;margin-top:4px"><button data-a="editS" data-id="'+n0.id+'"><i class="ti ti-pencil"></i></button></div>':'')+'</div>';
+     up.slice(1).forEach(function(s){ h+=itemS(s); });
+   } else h+='<div class="pEmpty">예정된 회의가 없습니다. + 추가로 등록하세요.</div>';
+   if(past.length){ h+='<div class="pMeta" style="margin-top:10px">지난 회의</div>'; past.forEach(function(s){ h+=itemS(s,true); }); }
+   h+='</div>';
+   // 2) 주요 논의 사항
+   var SN=["논의중","결정","보류"];
+   h+='<div class="pSec"><div class="pSH"><i class="ti ti-message-2" style="color:#0d9488"></i>주요 논의 사항<button class="pAdd" data-a="addD">+ 추가</button></div>';
+   var ds=db.disc.slice().sort(function(a,b){ return (a.status===0?0:1)-(b.status===0?0:1); });
+   if(!ds.length) h+='<div class="pEmpty">등록된 논의 사항이 없습니다.</div>';
+   ds.forEach(function(d){
+     h+='<div class="pItem"><div class="pRow"><div class="pMain"><div class="pTitle"><span class="st s'+d.status+'">'+SN[d.status]+'</span>'+esc(d.title)+'</div>'+
+        (d.body?'<div class="pSub">'+esc(d.body)+'</div>':'')+'<div class="pMeta">'+esc(d.by)+' · '+esc(d.at)+'</div></div>'+
+        (d.by===my?'<div class="pAct"><button data-a="editD" data-id="'+d.id+'"><i class="ti ti-pencil"></i></button></div>':'')+'</div></div>';
+   });
+   h+='</div>';
+   // 3) 의사결정 투표
+   h+='<div class="pSec"><div class="pSH"><i class="ti ti-checkbox" style="color:#e8590c"></i>의사결정 투표<button class="pAdd" data-a="addP">+ 투표 만들기</button></div>';
+   var ps=db.poll.slice().sort(function(a,b){ return (a.closed?1:0)-(b.closed?1:0); });
+   if(!ps.length) h+='<div class="pEmpty">진행 중인 투표가 없습니다.</div>';
+   ps.forEach(function(p){
+     p.votes=p.votes||{}; var cnt=p.opts.map(function(){return 0;}), voters=Object.keys(p.votes).filter(function(k){return p.votes[k]&&p.votes[k].length;});
+     voters.forEach(function(k){ p.votes[k].forEach(function(i){ if(cnt[i]!=null) cnt[i]++; }); });
+     var mx=Math.max.apply(null,cnt.concat([1])), mine=p.votes[my]||[], over=p.closed||(p.due&&p.due<t);
+     h+='<div class="pItem"><div class="pRow"><div class="pMain"><div class="pTitle">'+(over?'<span class="st s2">마감</span>':'<span class="st s0">투표중</span>')+esc(p.q)+'</div>'+
+        '<div class="pMeta">'+(p.multi?'복수 선택 · ':'')+(p.due?fmtD(p.due)+'까지 · ':'')+esc(p.by)+'</div></div>'+
+        (p.by===my?'<div class="pAct"><button data-a="editP" data-id="'+p.id+'"><i class="ti ti-pencil"></i></button></div>':'')+'</div>';
+     p.opts.forEach(function(o,i){ var on=mine.indexOf(i)!==-1;
+       h+='<button class="vOpt'+(on?' mine':'')+'" data-a="vote" data-id="'+p.id+'" data-i="'+i+'"'+(over?' disabled':'')+'><span class="bar" style="width:'+(voters.length?Math.round(cnt[i]/mx*100):0)+'%"></span>'+
+          '<span class="lb"><i class="ti ti-'+(on?(p.multi?'square-check':'circle-check'):(p.multi?'square':'circle'))+'"></i>'+esc(o)+'<span class="c">'+cnt[i]+'</span></span></button>';
+     });
+     var not=TEAM.filter(function(n){ return voters.indexOf(n)===-1; });
+     h+='<div class="vWho">참여 '+voters.length+'/'+TEAM.length+'명'+(voters.length?' · '+esc(voters.join(", ")):'')+(not.length&&!over?'<br>미참여: <b>'+esc(not.join(", "))+'</b>':'')+'</div></div>';
+   });
+   h+='</div>';
+   // 4) 회의록
+   h+='<a class="pLink" href="'+MINUTES+'" target="_blank" rel="noopener"><div class="li"><i class="ti ti-notes"></i></div><div><b>회의록 보기</b><span>다글로 공유 회의록</span></div><i class="ti ti-chevron-right ar"></i></a>';
+   h+='<div class="pNote">기획팀('+TEAM.length+'명)에게만 보이는 메뉴입니다.</div></div>';
+   wrap.innerHTML=h;
+ }
+ function itemS(s,past){
+   return '<div class="pItem"'+(past?' style="opacity:.6"':'')+'><div class="pRow"><div class="pMain"><div class="pTitle">'+fmtD(s.date)+' '+esc(s.time)+(s.place?' · '+esc(s.place):'')+'</div>'+
+     (s.memo?'<div class="pSub">'+esc(s.memo)+'</div>':'')+'<div class="pMeta">'+esc(s.by||'')+'</div></div>'+(s.by===me()?'<div class="pAct"><button data-a="editS" data-id="'+s.id+'"><i class="ti ti-pencil"></i></button></div>':'')+'</div></div>';
+ }
+ function find(list,id){ for(var i=0;i<list.length;i++) if(list[i].id===id) return list[i]; return null; }
+
+ /* ── 입력 시트(추가·수정·삭제) ── */
+ function openSheet(title, body, onOk, onDel){
+   sh.innerHTML='<div class="shIn"><div class="shT">'+title+'</div>'+body+'<div class="shB">'+(onDel?'<button class="del" data-s="del"><i class="ti ti-trash"></i></button>':'')+'<button class="no" data-s="no">취소</button><button class="ok" data-s="ok">저장</button></div></div>';
+   sh.classList.add("on");
+   sh.onclick=function(e){ var b=e.target.closest("[data-s]"); if(e.target===sh){ sh.classList.remove("on"); return; } if(!b) return;
+     var a=b.getAttribute("data-s");
+     if(a==="no") sh.classList.remove("on");
+     if(a==="ok"||a==="del"){
+       if(a==="del"&&!confirm("삭제할까요?")) return;
+       var r=(a==="ok")?onOk():onDel(); if(r===false) return;
+       var bs=sh.querySelectorAll(".shB button"); bs.forEach(function(x){x.disabled=true;}); var keep=b.innerHTML; b.textContent="저장 중…";
+       Promise.resolve(r).then(function(ok){ if(ok) sh.classList.remove("on"); else { bs.forEach(function(x){x.disabled=false;}); b.innerHTML=keep; } });
+     }
+   };
+ }
+ function v(id){ var el=document.getElementById(id); return el?el.value.trim():""; }
+ function sheetS(s){
+   var e=s||{date:"",time:"13:30",place:"",memo:""};
+   openSheet(s?"회의 일정 수정":"회의 일정 추가",
+     '<div class="two"><div><label>날짜</label><input type="date" id="f_d" value="'+esc(e.date)+'"></div><div><label>시간</label><input type="time" id="f_t" value="'+esc(e.time)+'"></div></div>'+
+     '<label>장소</label><input id="f_p" value="'+esc(e.place)+'" placeholder="예: 교육관 2층 소회의실">'+
+     '<label>안건 메모</label><textarea id="f_m" placeholder="회의 안건이나 준비물">'+esc(e.memo)+'</textarea>',
+     function(){ if(!v("f_d")){ alert("날짜를 입력하세요."); return false; }
+       var o={date:v("f_d"),time:v("f_t"),place:v("f_p"),memo:v("f_m")}; if(s) o.id=s.id;
+       return send({action:"planSave",kind:"sched",item:o}); },
+     s?function(){ return send({action:"planDel",kind:"sched",id:s.id}); }:null);
+ }
+ function sheetD(d){
+   var e=d||{title:"",body:"",status:0};
+   openSheet(d?"논의 사항 수정":"논의 사항 추가",
+     '<label>제목</label><input id="f_t2" value="'+esc(e.title)+'" placeholder="논의할 주제">'+
+     '<label>내용</label><textarea id="f_b" placeholder="배경, 선택지, 메모">'+esc(e.body)+'</textarea>'+
+     '<label>상태</label><select id="f_s"><option value="0"'+(e.status==0?' selected':'')+'>논의중</option><option value="1"'+(e.status==1?' selected':'')+'>결정</option><option value="2"'+(e.status==2?' selected':'')+'>보류</option></select>',
+     function(){ if(!v("f_t2")){ alert("제목을 입력하세요."); return false; }
+       var o={title:v("f_t2"),body:v("f_b"),status:+v("f_s")}; if(d) o.id=d.id;
+       return send({action:"planSave",kind:"disc",item:o}); },
+     d?function(){ return send({action:"planDel",kind:"disc",id:d.id}); }:null);
+ }
+ function sheetP(p){
+   var e=p||{q:"",opts:[],due:"",multi:false,closed:false};
+   openSheet(p?"투표 수정":"투표 만들기",
+     '<label>질문</label><input id="f_q" value="'+esc(e.q)+'" placeholder="결정할 내용">'+
+     '<label>선택지 (한 줄에 하나)</label><textarea id="f_o" placeholder="선택지1&#10;선택지2">'+esc(e.opts.join("\n"))+'</textarea>'+
+     '<label>마감일</label><input type="date" id="f_due" value="'+esc(e.due)+'">'+
+     '<div class="chk"><input type="checkbox" id="f_mu"'+(e.multi?' checked':'')+'><span>복수 선택 허용</span></div>'+
+     (p?'<div class="chk"><input type="checkbox" id="f_cl"'+(e.closed?' checked':'')+'><span>투표 마감하기</span></div>':'')+
+     (p&&Object.keys(p.votes).length?'<div class="pMeta" style="font-size:11px;color:#b45309;margin-top:10px">선택지를 바꾸면 이미 한 투표가 초기화됩니다.</div>':''),
+     function(){ var opts=v("f_o").split("\n").map(function(x){return x.trim();}).filter(Boolean);
+       if(!v("f_q")||opts.length<2){ alert("질문과 선택지 2개 이상을 입력하세요."); return false; }
+       var mu=document.getElementById("f_mu").checked, cl=p?document.getElementById("f_cl").checked:false;
+       var o={q:v("f_q"),opts:opts,due:v("f_due"),multi:mu,closed:cl}; if(p) o.id=p.id;
+       return send({action:"planSave",kind:"poll",item:o}); },
+     p?function(){ return send({action:"planDel",kind:"poll",id:p.id}); }:null);
+ }
+ function vote(p,i){
+   if(!p) return; p.votes=p.votes||{}; var my=me(), cur=(p.votes[my]||[]).slice();
+   if(p.multi){ var k=cur.indexOf(i); if(k===-1) cur.push(i); else cur.splice(k,1); }
+   else cur=(cur.length===1&&cur[0]===i)?[]:[i];
+   p.votes[my]=cur; render(); send({action:"planVote",id:p.id,sel:cur});
+ }
+ wrap.addEventListener("click",function(e){
+   var b=e.target.closest("[data-a]"); if(!b) return; var a=b.getAttribute("data-a"), id=b.getAttribute("data-id");
+   if(a==="close") closePlan();
+   if(a==="addS") sheetS(); if(a==="editS") sheetS(find(db.sched,id));
+   if(a==="addD") sheetD(); if(a==="editD") sheetD(find(db.disc,id));
+   if(a==="addP") sheetP(); if(a==="editP") sheetP(find(db.poll,id));
+   if(a==="vote") vote(find(db.poll,id), +b.getAttribute("data-i"));
+ });
+
+ function tick(){ mountCard(); var on=isTeam(); card.classList.toggle("on",on); if(on){ load(); cardInfo(); } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ document.body.appendChild(wrap); document.body.appendChild(sh); tick(); setInterval(tick,1500); });
 })();
 </script>
 
