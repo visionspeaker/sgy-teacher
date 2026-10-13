@@ -2985,7 +2985,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"기획팀 게시판", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
-   secs:[["[신규]","- 기획팀 선생님께 홈 화면 '사역 신청 결과' 아래에 '기획팀' 카드가 보여요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요"]]},
+   secs:[["[신규]","- 기획팀 선생님께 홈 화면 '사역 신청 결과' 아래에 '기획팀' 카드가 보여요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요<br>- 글과 의견에 좋아요·싫어요를 누를 수 있고, 길게 누르면 누가 눌렀는지 보여요"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
    secs:[["[개선]","- 지난 주일 출석부는 그날 저장한 명단 그대로 보여요<br>- 이후 등반·반 이동이 있어도 지난 기록은 바뀌지 않습니다"]]},
   {h:"2027 사역 신청 결과", bd:"신규",cls:"bdN", v:"V43", d:"2026/10/08",
@@ -3602,6 +3602,18 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #plan50 .pDet .cmIn textarea{background:var(--surface)}
 #plan50 .pDet .dM{font-size:11.5px;color:var(--tx3);margin-top:12px}
 #plan50 .pDet .cmIn textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:10px;padding:10px 11px;font-size:14px;font-family:inherit;color:var(--tx);resize:none}
+#plan50 .rxRow{display:flex;gap:6px;margin-top:12px}
+#plan50 .rxB{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;color:var(--tx2);cursor:pointer;font-family:inherit;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#plan50 .rxB i{font-size:15px}
+#plan50 .rxB.sm{padding:2px 8px;font-size:11.5px}
+#plan50 .rxB.sm i{font-size:13px}
+#plan50 .rxB.on.u{background:#e3efe6;border-color:#8bb89a;color:#3f6f52}
+#plan50 .rxB.on.d{background:#fdecec;border-color:#eab3b3;color:#b91c1c}
+#plan50 .cmI .rxRow{margin-top:5px;gap:5px}
+#plan50 .post .rxN{color:#3f6f52;font-weight:700}
+#rxPop51{position:fixed;z-index:9700;max-width:240px;background:#1f2937;color:#fff;font-size:12.5px;line-height:1.5;border-radius:10px;padding:8px 11px;box-shadow:0 6px 18px rgba(0,0,0,.25);pointer-events:none;display:none}
+#rxPop51 b{color:#a7f3d0}
+#rxPop51 b.d{color:#fecaca}
 #plan50 .pDet .dAct{display:flex;justify-content:flex-end;gap:6px;margin-top:12px}
 #plan50 .pDet .dAct button{border:0;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 #plan50 .pDet .dAct .ed{background:#e3efe6;color:#3f6f52}
@@ -3705,7 +3717,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(p.cat===3){ var v=Object.keys(p.votes||{}).filter(function(k){return p.votes[k]&&p.votes[k].length;}).length;
      side=voteOpen(p)?'<div class="side v">투표중<br>'+v+'/'+TEAM.length+'</div>':'<div class="side">마감</div>'; }
    return '<div class="post'+(openId===p.id?' open':'')+'" data-a="view" data-id="'+p.id+'"><div class="pm"><div class="pt"><span class="cat c'+p.cat+'">'+CATS[p.cat]+'</span>'+(p.pin?'<i class="ti ti-pin pinI"></i>':'')+'<span class="ttl">'+esc(p.title)+'</span></div>'+
-     '<div class="ps">'+(p.date?'<span class="wh"><i class="ti ti-calendar-event"></i> '+fmtD(p.date)+(p.time?' '+esc(p.time):'')+'</span>':'')+(p.cat===3&&p.due?'<span class="wh" style="color:#6b4fa0">'+fmtD(p.due)+' 마감</span>':'')+'<span>'+esc(p.by)+' · '+esc(p.at||'')+'</span>'+((p.cm&&p.cm.length)?'<span class="cmN"><i class="ti ti-message-circle"></i> '+p.cm.length+'</span>':'')+'</div></div>'+side+'<i class="ti ti-chevron-down chev"></i></div>'+(openId===p.id?'<div class="pDet" data-pid="'+p.id+'">'+detail(p)+'</div>':'');
+     '<div class="ps">'+(p.date?'<span class="wh"><i class="ti ti-calendar-event"></i> '+fmtD(p.date)+(p.time?' '+esc(p.time):'')+'</span>':'')+(p.cat===3&&p.due?'<span class="wh" style="color:#6b4fa0">'+fmtD(p.due)+' 마감</span>':'')+'<span>'+esc(p.by)+' · '+esc(p.at||'')+'</span>'+((p.rx&&p.rx.u&&p.rx.u.length)?'<span class="rxN"><i class="ti ti-thumb-up"></i> '+p.rx.u.length+'</span>':'')+((p.cm&&p.cm.length)?'<span class="cmN"><i class="ti ti-message-circle"></i> '+p.cm.length+'</span>':'')+'</div></div>'+side+'<i class="ti ti-chevron-down chev"></i></div>'+(openId===p.id?'<div class="pDet" data-pid="'+p.id+'">'+detail(p)+'</div>':'');
  }
 
  /* ── 글 보기 ── */
@@ -3724,14 +3736,40 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      var not=TEAM.filter(function(n){ return voters.indexOf(n)===-1; });
      h+='<div class="vWho">참여 '+voters.length+'/'+TEAM.length+'명'+(voters.length?' · '+esc(voters.join(", ")):'')+(not.length&&open?'<br>미참여: <b>'+esc(not.join(", "))+'</b>':'')+'</div>';
    }
+   h+=rxHTML(p,p.id,"",false);
    var cm=p.cm||[];
    h+='<div class="cmH">의견 '+cm.length+'</div>';
-   cm.forEach(function(c){ h+='<div class="cmI"><div class="cw"><b>'+esc(c.by)+'</b>'+esc(c.at||'')+(c.by===my?'<button data-a="cdel" data-id="'+p.id+'" data-c="'+c.id+'" aria-label="의견 삭제"><i class="ti ti-x"></i></button>':'')+'</div><div class="ct">'+esc(c.tx)+'</div></div>'; });
+   cm.forEach(function(c){ h+='<div class="cmI"><div class="cw"><b>'+esc(c.by)+'</b>'+esc(c.at||'')+(c.by===my?'<button data-a="cdel" data-id="'+p.id+'" data-c="'+c.id+'" aria-label="의견 삭제"><i class="ti ti-x"></i></button>':'')+'</div><div class="ct">'+esc(c.tx)+'</div>'+rxHTML(c,p.id,c.id,true)+'</div>'; });
    h+='<div class="cmIn"><textarea id="f_cm" placeholder="의견을 남겨 주세요" rows="1"></textarea><button data-a="cadd" data-id="'+p.id+'">등록</button></div>';
    if(p.by===my) h+='<div class="dAct"><button class="ed" data-a="edit" data-id="'+p.id+'"><i class="ti ti-pencil"></i>수정</button><button class="del" data-a="del" data-id="'+p.id+'"><i class="ti ti-trash"></i>삭제</button></div>';
    return h;
  }
  var cur=null, mode="", openId=null;
+ function rxHTML(o,pid,cid,small){   // 좋아요·싫어요 (o.rx={u:[이름],d:[이름]})
+   var rx=o.rx||{}, u=rx.u||[], d=rx.d||[], my=me(), c=cid?' data-c="'+cid+'"':'', sm=small?' sm':'';
+   return '<div class="rxRow"><button type="button" class="rxB u'+sm+(u.indexOf(my)>=0?' on':'')+'" data-a="react" data-k="u" data-id="'+pid+'"'+c+'><i class="ti ti-thumb-up"></i>'+(u.length||'')+'</button>'+
+     '<button type="button" class="rxB d'+sm+(d.indexOf(my)>=0?' on':'')+'" data-a="react" data-k="d" data-id="'+pid+'"'+c+'><i class="ti ti-thumb-down"></i>'+(d.length||'')+'</button></div>';
+ }
+ function react(pid,cid,k){
+   var p=find(pid); if(!p) return; var o=p; if(cid){ o=null; (p.cm||[]).forEach(function(c){ if(c.id===cid) o=c; }); if(!o) return; }
+   var my=me(); o.rx=o.rx||{u:[],d:[]}; o.rx.u=o.rx.u||[]; o.rx.d=o.rx.d||[];
+   var other=k==="u"?"d":"u", had=o.rx[k].indexOf(my)>=0;
+   o.rx[other]=o.rx[other].filter(function(n){return n!==my;});        // 좋아요·싫어요는 하나만
+   o.rx[k]=had?o.rx[k].filter(function(n){return n!==my;}):o.rx[k].concat([my]);
+   render(); send({action:"planReact",id:pid,cid:cid||"",k:k});
+ }
+ /* 길게 누르면 누가 눌렀는지 이름 표시 */
+ var pop=document.createElement("div"); pop.id="rxPop51"; var lpT=null, lpDone=false, popT=null;
+ function showWho(btn){
+   var p=find(btn.getAttribute("data-id")); if(!p) return; var o=p, cid=btn.getAttribute("data-c");
+   if(cid){ (p.cm||[]).forEach(function(c){ if(c.id===cid) o=c; }); }
+   var rx=o.rx||{}, u=rx.u||[], d=rx.d||[];
+   pop.innerHTML='<b>좋아요</b> '+(u.length?esc(u.join(", ")):'없음')+'<br><b class="d">싫어요</b> '+(d.length?esc(d.join(", ")):'없음');
+   if(!pop.parentNode) document.body.appendChild(pop);
+   pop.style.display="block"; var r=btn.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight;
+   pop.style.left=Math.max(8,Math.min(r.left,window.innerWidth-w-8))+"px"; pop.style.top=Math.max(8,r.top-h-8)+"px";
+   clearTimeout(popT); popT=setTimeout(function(){ pop.style.display="none"; },3000);
+ }
  function scrollToPost(id){ setTimeout(function(){ var el=wrap.querySelector('.post[data-id="'+id+'"]'); if(!el) return; var r=el.getBoundingClientRect(); if(r.top<70||r.top>wrap.clientHeight*0.55) wrap.scrollTop+=r.top-80; },0); }
  function goPost(id){ var p=find(id); if(!p) return; if(filt>=0&&p.cat!==filt) filt=-1; openId=id; render(); scrollToPost(id); }
  function vote(p,i){
@@ -3797,8 +3835,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(a==="del"){ if(!confirm("이 글을 삭제할까요?")) return; b.disabled=true; send({action:"planDel",kind:"post",id:id}).then(function(ok){ if(ok) openId=null; else b.disabled=false; render(); }); }
    if(a==="cadd"){ var t=v("f_cm"); if(!t) return; b.disabled=true; send({action:"planComment",id:id,text:t}).then(function(ok){ var c=document.getElementById("f_cm"); if(ok&&c) c.value=""; else render(); }); }
    if(a==="cdel"){ if(!confirm("의견을 삭제할까요?")) return; send({action:"planComment",id:id,del:b.getAttribute("data-c")}); }
+   if(a==="react"){ if(lpDone){ lpDone=false; return; } react(id,b.getAttribute("data-c"),b.getAttribute("data-k")); }
  });
 
+ wrap.addEventListener("pointerdown",function(e){ var b=e.target.closest(".rxB"); if(!b) return; lpDone=false; clearTimeout(lpT); lpT=setTimeout(function(){ lpDone=true; showWho(b); },450); });
+ ["pointerup","pointercancel","pointerleave"].forEach(function(t){ wrap.addEventListener(t,function(){ clearTimeout(lpT); },true); });
+ wrap.addEventListener("scroll",function(){ clearTimeout(lpT); pop.style.display="none"; });
+ wrap.addEventListener("contextmenu",function(e){ if(e.target.closest(".rxB")) e.preventDefault(); });
  function tick(){ mountCard(); var on=isTeam(); card.classList.toggle("on",on); if(on){ load(); cardInfo(); } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ document.body.appendChild(wrap); document.body.appendChild(sh); tick(); setInterval(tick,1500); });
