@@ -353,7 +353,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V45</span>
+    <span class="badge">V46</span>
   </header>
 
   <main id="main">
@@ -2984,6 +2984,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"기획팀 카드 디자인 변경", bd:"개선",cls:"bdI", v:"V46", d:"2026/10/13",
+   secs:[["[개선]","- 기획팀 카드를 '사역 신청 결과' 아래로 옮기고, 차분한 색과 새 아이콘으로 바꿨어요"]]},
   {h:"기획팀 메뉴", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
    secs:[["[신규]","- 기획팀 선생님께 홈 화면에 '기획팀' 카드가 보여요<br>- 회의 일정·주요 논의 사항을 앱에서 바로 등록하고, 의사결정 투표와 회의록도 한 곳에서 확인합니다"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
@@ -3449,21 +3451,21 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
 <style>
 /* enh_v50: 기획팀 메뉴 — 기획팀 교사 로그인 시에만 홈에 표시. 회의 일정·주요 논의 사항·의사결정 투표·회의록 */
-#planCard50{display:none;margin-top:22px;align-items:center;gap:12px;background:linear-gradient(120deg,#4f46e5,#7c3aed);border-radius:16px;padding:14px 15px;color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(79,70,229,.25);-webkit-tap-highlight-color:transparent}
+#planCard50{display:none;align-items:center;gap:12px;margin-top:11px;background:#eef5f0;border:1px solid #cfe3d5;border-radius:14px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #planCard50.on{display:flex}
-#planCard50:active{opacity:.85}
-#planCard50 .pcI{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+#planCard50:active{opacity:.8}
+#planCard50 .pcI{width:40px;height:40px;border-radius:11px;background:#d9ebdf;color:#3f6f52;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
 #planCard50 .pcT{flex:1;min-width:0}
-#planCard50 .pcT b{display:block;font-size:15px;font-weight:800}
-#planCard50 .pcT span{display:block;font-size:11.5px;opacity:.9;margin-top:2px}
-#planCard50 .pcN{font-size:11px;font-weight:800;background:#fff;color:#4f46e5;border-radius:999px;padding:3px 9px;flex:none}
-#planCard50 .ar{font-size:20px;opacity:.85;flex:none}
+#planCard50 .pcT b{display:block;font-size:14.5px;font-weight:700;color:#3f6f52}
+#planCard50 .pcT span{display:block;font-size:11.5px;color:#6f9580;margin-top:2px}
+#planCard50 .pcN{font-size:10.5px;font-weight:800;background:#3f6f52;color:#fff;border-radius:999px;padding:3px 8px;flex:none}
+#planCard50 .ar{font-size:20px;color:#3f6f52;flex:none}
 
 #plan50{display:none;position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #plan50.on{display:block}
 #plan50 .pIn{max-width:520px;margin:0 auto;padding:6px 16px 60px}
 #plan50 .pBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
-#plan50 .pHero{background:linear-gradient(120deg,#4f46e5,#7c3aed);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden}
+#plan50 .pHero{background:#5f8a70;border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden}
 #plan50 .pHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
 #plan50 .pHero .t{font-size:20px;font-weight:800;margin-top:5px}
 #plan50 .pHero .s{font-size:12px;opacity:.9;margin-top:4px;line-height:1.5}
@@ -3471,7 +3473,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #plan50 .pSec{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 15px 12px;margin-top:12px}
 #plan50 .pSH{display:flex;align-items:center;gap:7px;padding:12px 0 8px;font-size:14.5px;font-weight:800;color:var(--tx)}
 #plan50 .pSH i{font-size:18px}
-#plan50 .pAdd{margin-left:auto;font-size:12px;font-weight:700;color:#4f46e5;background:#eef2ff;border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
+#plan50 .pAdd{margin-left:auto;font-size:12px;font-weight:700;color:#3f6f52;background:#d9ebdf;border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
 #plan50 .pEmpty{font-size:12.5px;color:var(--tx3);padding:10px 0 4px}
 #plan50 .pItem{border-top:1px solid var(--line);padding:11px 0}
 #plan50 .pItem:first-of-type{border-top:0}
@@ -3482,21 +3484,21 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #plan50 .pMeta{font-size:11px;color:var(--tx3);margin-top:5px}
 #plan50 .pAct{display:flex;gap:2px;flex:none}
 #plan50 .pAct button{border:0;background:transparent;color:var(--tx3);font-size:17px;padding:4px;cursor:pointer}
-#plan50 .pNext{background:#eef2ff;border-radius:12px;padding:12px 13px;margin:4px 0 8px}
-#plan50 .pNext .d{font-size:11px;font-weight:800;color:#4f46e5}
+#plan50 .pNext{background:#d9ebdf;border-radius:12px;padding:12px 13px;margin:4px 0 8px}
+#plan50 .pNext .d{font-size:11px;font-weight:800;color:#3f6f52}
 #plan50 .pNext .w{font-size:17px;font-weight:800;color:var(--tx);margin-top:3px}
 #plan50 .pNext .p{font-size:12.5px;color:var(--tx2);margin-top:3px}
-#plan50 .dday{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 6px;margin-left:6px;background:#4f46e5;color:#fff;vertical-align:1px}
+#plan50 .dday{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 6px;margin-left:6px;background:#3f6f52;color:#fff;vertical-align:1px}
 #plan50 .st{display:inline-block;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 7px;margin-right:6px;vertical-align:1px}
 #plan50 .st.s0{background:#fef3c7;color:#b45309}
 #plan50 .st.s1{background:#dcfce7;color:#15803d}
 #plan50 .st.s2{background:#f1f5f9;color:#64748b}
 #plan50 .vOpt{display:block;width:100%;text-align:left;position:relative;overflow:hidden;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px;margin-top:7px;cursor:pointer;font-size:13.5px;color:var(--tx)}
-#plan50 .vOpt .bar{position:absolute;left:0;top:0;bottom:0;background:#eef2ff;z-index:0;transition:width .3s}
+#plan50 .vOpt .bar{position:absolute;left:0;top:0;bottom:0;background:#d9ebdf;z-index:0;transition:width .3s}
 #plan50 .vOpt .lb{position:relative;z-index:1;display:flex;align-items:center;gap:7px}
-#plan50 .vOpt .lb .c{margin-left:auto;font-size:12px;font-weight:800;color:#4f46e5}
-#plan50 .vOpt.mine{border-color:#4f46e5}
-#plan50 .vOpt.mine .lb i{color:#4f46e5}
+#plan50 .vOpt .lb .c{margin-left:auto;font-size:12px;font-weight:800;color:#3f6f52}
+#plan50 .vOpt.mine{border-color:#3f6f52}
+#plan50 .vOpt.mine .lb i{color:#3f6f52}
 #plan50 .vOpt[disabled]{cursor:default}
 #plan50 .vWho{font-size:11.5px;color:var(--tx2);margin-top:8px;line-height:1.6}
 #plan50 .vWho b{color:#b45309;font-weight:700}
@@ -3521,7 +3523,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #planSh50 .shB{display:flex;gap:8px;margin-top:18px}
 #planSh50 .shB button{flex:1;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer}
 #planSh50 .shB .no{background:var(--bg);color:var(--tx2)}
-#planSh50 .shB .ok{background:#4f46e5;color:#fff}
+#planSh50 .shB .ok{background:#3f6f52;color:#fff}
 #planSh50 .shB .del{flex:none;background:#fee2e2;color:#b91c1c;padding:13px 16px}
 </style>
 <script>
@@ -3555,12 +3557,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 홈 카드 ── */
  var card=document.createElement("div"); card.id="planCard50";
- card.innerHTML='<div class="pcI"><i class="ti ti-users-group"></i></div><div class="pcT"><b>기획팀</b><span id="pc50s">회의 일정 · 논의 사항 · 의사결정</span></div><span class="pcN" id="pc50n" style="display:none"></span><i class="ti ti-chevron-right ar"></i>';
+ card.innerHTML='<div class="pcI"><i class="ti ti-presentation"></i></div><div class="pcT"><b>기획팀</b><span id="pc50s">회의 일정 · 논의 사항 · 의사결정</span></div><span class="pcN" id="pc50n" style="display:none"></span><i class="ti ti-chevron-right ar"></i>';
  card.addEventListener("click",function(){ openPlan(); });
  function mountCard(){
-   if(document.getElementById("planCard50")) return;
-   var dm=document.getElementById("dataMgr49"), home=document.getElementById("s-home"); if(!home) return;
-   if(dm) dm.parentNode.insertBefore(card,dm); else { var c=home.querySelector(".copyr"); home.insertBefore(card,c); }
+   var home=document.getElementById("s-home"); if(!home) return;
+   var mh=document.getElementById("sgyMinHome"), grid=home.querySelector(".grid");
+   if(mh){ if(mh.nextElementSibling!==card) mh.parentNode.insertBefore(card, mh.nextSibling); }   // 사역 신청 결과 바로 아래
+   else if(grid){ if(card.nextElementSibling!==grid) grid.parentNode.insertBefore(card, grid); }    // 그 카드가 없으면 메뉴 위
  }
  function cardInfo(){
    if(!db) return; var t=todayISO(), nx=db.sched.filter(function(s){return s.date>=t;}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;})[0];
@@ -3583,9 +3586,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var up=db.sched.filter(function(s){return s.date>=t;}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;});
    var past=db.sched.filter(function(s){return s.date<t;}).sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,3);
    var h='<div class="pIn"><div class="pBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
-     '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.join(" · "))+'</div><i class="ti ti-users-group em"></i></div>';
+     '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.join(" · "))+'</div><i class="ti ti-presentation em"></i></div>';
    // 1) 회의 일정
-   h+='<div class="pSec"><div class="pSH"><i class="ti ti-calendar-event" style="color:#4f46e5"></i>회의 일정<button class="pAdd" data-a="addS">+ 추가</button></div>';
+   h+='<div class="pSec"><div class="pSH"><i class="ti ti-calendar-event" style="color:#3f6f52"></i>회의 일정<button class="pAdd" data-a="addS">+ 추가</button></div>';
    if(up.length){ var n0=up[0];
      h+='<div class="pNext"><div class="d">다음 회의<span class="dday">'+dday(n0.date)+'</span></div><div class="w">'+fmtD(n0.date)+' '+esc(n0.time)+'</div>'+
         (n0.place?'<div class="p"><i class="ti ti-map-pin"></i> '+esc(n0.place)+'</div>':'')+(n0.memo?'<div class="p">'+esc(n0.memo)+'</div>':'')+'<div class="p" style="font-size:11px;color:var(--tx3)">'+esc(n0.by||'')+'</div>'+
