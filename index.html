@@ -353,7 +353,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V46</span>
+    <span class="badge">V45</span>
   </header>
 
   <main id="main">
@@ -2984,10 +2984,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
-  {h:"기획팀 카드 디자인 변경", bd:"개선",cls:"bdI", v:"V46", d:"2026/10/13",
-   secs:[["[개선]","- 기획팀 카드를 '사역 신청 결과' 아래로 옮기고, 차분한 색과 새 아이콘으로 바꿨어요"]]},
   {h:"기획팀 메뉴", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
-   secs:[["[신규]","- 기획팀 선생님께 홈 화면에 '기획팀' 카드가 보여요<br>- 회의 일정·주요 논의 사항을 앱에서 바로 등록하고, 의사결정 투표와 회의록도 한 곳에서 확인합니다"]]},
+   secs:[["[신규]","- 기획팀 선생님께 홈 화면 '사역 신청 결과' 아래에 '기획팀' 카드가 보여요<br>- 회의 일정·주요 논의 사항을 앱에서 바로 등록하고, 의사결정 투표와 회의록도 한 곳에서 확인합니다"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
    secs:[["[개선]","- 지난 주일 출석부는 그날 저장한 명단 그대로 보여요<br>- 이후 등반·반 이동이 있어도 지난 기록은 바뀌지 않습니다"]]},
   {h:"2027 사역 신청 결과", bd:"신규",cls:"bdN", v:"V43", d:"2026/10/08",
@@ -3586,7 +3584,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var up=db.sched.filter(function(s){return s.date>=t;}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;});
    var past=db.sched.filter(function(s){return s.date<t;}).sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,3);
    var h='<div class="pIn"><div class="pBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
-     '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.join(" · "))+'</div><i class="ti ti-presentation em"></i></div>';
+     '<div class="pHero"><div class="k">PLANNING TEAM</div><div class="t">기획팀</div><div class="s">'+esc(TEAM.filter(function(n){return n!=="강유석";}).join(" · "))+'</div><i class="ti ti-presentation em"></i></div>';
    // 1) 회의 일정
    h+='<div class="pSec"><div class="pSH"><i class="ti ti-calendar-event" style="color:#3f6f52"></i>회의 일정<button class="pAdd" data-a="addS">+ 추가</button></div>';
    if(up.length){ var n0=up[0];
