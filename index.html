@@ -3462,9 +3462,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #planCard50 .pcN{font-size:10.5px;font-weight:800;background:#3f6f52;color:#fff;border-radius:999px;padding:3px 8px;flex:none}
 #planCard50 .ar{font-size:20px;color:#3f6f52;flex:none}
 
-#plan50{display:none;position:fixed;top:0;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#plan50{display:none;position:fixed;inset:0;z-index:18;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #plan50.on{display:block}
-#plan50 .pIn{max-width:520px;margin:0 auto;padding:6px 16px 90px}
+#plan50 .pIn{max-width:520px;margin:0 auto;padding:6px 16px calc(120px + env(safe-area-inset-bottom))}
 #plan50 .pBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
 #plan50 .pHero{background:#5f8a70;border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden}
 #plan50 .pHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
