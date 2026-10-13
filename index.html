@@ -2989,7 +2989,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
    secs:[["[개선]","- 지난 주일 출석부는 그날 저장한 명단 그대로 보여요<br>- 이후 등반·반 이동이 있어도 지난 기록은 바뀌지 않습니다"]]},
   {h:"2027 사역 신청 결과", bd:"신규",cls:"bdN", v:"V43", d:"2026/10/08",
-   secs:[["[신규]","- 학생앱에서 신청한 2027 사역 신청 결과를 앱 안에서 사람별·사역별로 볼 수 있어요<br>- 신청 기간(~11/29)에는 홈 상단에 표시되고, 끝나면 아카이브로 이동합니다"]]},
+   secs:[["[신규]","- 학생앱에서 신청한 2027 사역 신청 결과를 앱 안에서 지원자별·사역별로 볼 수 있어요<br>- 신청 기간(~11/29)에는 홈 상단에 표시되고, 끝나면 아카이브로 이동합니다"]]},
   {h:"홈 메뉴 디자인 개편", bd:"개선",cls:"bdI", v:"V42", d:"2026/10/06",
    secs:[["[개선]","- 홈 메뉴를 큰 아이콘 + 제목 형태로 정리(설명문 제거)해 더 보기 쉽게 바꿨어요"]]},
   {h:"홈 3단 · 예배출석부 추가", bd:"신규",cls:"bdN", v:"V41", d:"2026/10/06",
@@ -3355,7 +3355,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #minRe{background:#fff;border:1px solid #f0e3d2;color:#8a7a63;border-radius:9px;padding:6px 12px;font-size:12.5px;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 </style>
 <script>
-/* enh_v48: 2027 사역 신청 결과 — 아카이브 맨 위 카드 → 앱 안에서 명단 확인 (사람별 / 사역별) */
+/* enh_v48: 2027 사역 신청 결과 — 아카이브 맨 위 카드 → 앱 안에서 명단 확인 (지원자 / 사역 탭) */
 (function(){
  var CSV="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/gviz/tq?tqx=out:csv&sheet="+encodeURIComponent("사역신청");
  var PRAISE=["싱어","리더","율동","신디","드럼","베이스","기타","일렉"], OFFICER=["회장","부회장","총무","서기"], ETC=["방송팀","SNS 기자","성가대","헬퍼"];
@@ -3394,7 +3394,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    m.innerHTML='<div class="card">'+
      '<div class="hd"><div><div class="t1"><i class="ti ti-heart-handshake"></i> 2027 사역 신청 결과</div><div class="t2">학생앱 신청 명단 · 신청기간 10/11~11/29</div></div><button class="x" id="minX" type="button" aria-label="닫기">&times;</button></div>'+
      '<div id="minSum"></div>'+
-     '<div id="minTabs"><button type="button" data-v="person" class="on">사람별</button><button type="button" data-v="role">사역별</button></div>'+
+     '<div id="minTabs"><button type="button" data-v="person" class="on">지원자</button><button type="button" data-v="role">사역</button></div>'+
      '<div id="minList"></div>'+
      '<div id="minFoot"><span class="st" id="minSt"></span><button id="minRe" type="button"><i class="ti ti-refresh"></i> 새로고침</button></div>'+
      '</div>';
