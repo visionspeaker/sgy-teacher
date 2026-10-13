@@ -3643,15 +3643,19 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 저장소 ── */
  var db=null, loading=false, lastLoad=0;
+ /* 속도 개선(10/13): 마지막으로 받은 내용을 기기에 저장해 두고 열 때 바로 보여 준 뒤, 뒤에서 최신으로 갱신 */
+ var CK="sgy_plan_cache_v1";
+ function saveCache(){ try{ localStorage.setItem(CK, JSON.stringify(db)); }catch(e){} }
+ (function(){ try{ var c=JSON.parse(localStorage.getItem(CK)||"null"); if(c&&c.post) db=c; }catch(e){} })();
  var ERR={notteam:"의사결정 투표는 기획팀만 참여합니다.",notteacher:"로그인한 교사만 사용할 수 있습니다.",notowner:"작성자만 수정·삭제할 수 있습니다.",closed:"마감된 의사결정입니다.",notfound:"이미 삭제된 글입니다."};
  function api(body){
    body.user=me();
    var pr = fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json();});
-   return pr.then(function(res){ if(res&&res.ok&&res.data){ db=res.data; db.post=db.post||[]; lastLoad=Date.now(); } return res; });
+   return pr.then(function(res){ if(res&&res.ok&&res.data){ db=res.data; db.post=db.post||[]; lastLoad=Date.now(); saveCache(); } return res; });
  }
  function load(force){
    if(loading||(!force&&db&&Date.now()-lastLoad<60000)) return Promise.resolve();
-   loading=true; return api({action:"planGet"}).catch(function(){}).then(function(){ loading=false; render(); cardInfo(); });
+   loading=true; render(); return api({action:"planGet"}).catch(function(){}).then(function(){ loading=false; render(); cardInfo(); });
  }
  function send(body){ return api(body).then(function(res){ if(!res||!res.ok){ alert(ERR[res&&res.error]||"저장하지 못했습니다. 잠시 후 다시 시도해 주세요."); return false; } render(); cardInfo(); return true; }, function(){ alert("연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요."); return false; }); }
  function posts(){ return (db&&db.post)||[]; }
@@ -3685,7 +3689,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  var wrap=document.createElement("div"); wrap.id="plan50";
  var sh=document.createElement("div"); sh.id="planSh50";
  var filt=-1;
- function openPlan(){ render(); load(true); wrap.classList.add("on"); wrap.scrollTop=0; document.body.style.overflow="hidden"; }
+ function openPlan(){ render(); load(Date.now()-lastLoad>20000); wrap.classList.add("on"); wrap.scrollTop=0; document.body.style.overflow="hidden"; }
  function closePlan(){ wrap.classList.remove("on"); sh.classList.remove("on"); document.body.style.overflow=""; cardInfo();
    if(location.hash==="#planning"){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} } }
  /* 딥링크 #planning → 기획팀 화면 (로그인 후 열림) */
@@ -3706,7 +3710,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    h+='<div class="pills"><button class="pill'+(filt<0?' on':'')+'" data-a="filt" data-i="-1">전체<i>'+posts().length+'</i></button>'+
      CATS.map(function(c,i){ return '<button class="pill'+(filt===i?' on':'')+'" data-a="filt" data-i="'+i+'">'+c+(cnt[i]?'<i>'+cnt[i]+'</i>':'')+'</button>'; }).join("")+'</div>';
    var list=posts().filter(function(p){ return filt<0||p.cat===filt; });
-   h+='<div class="bH">게시글 '+list.length+'개<button data-a="write"><i class="ti ti-pencil"></i>글쓰기</button></div>';
+   h+='<div class="bH">게시글 '+list.length+'개'+(loading?' <span style="margin-left:6px;color:var(--tx3)"><i class="ti ti-refresh"></i> 최신 내용 확인 중</span>':'')+'<button data-a="write"><i class="ti ti-pencil"></i>글쓰기</button></div>';
    if(!list.length) h+='<div class="board"><div class="pEmpty">'+(filt<0?'아직 글이 없습니다. 글쓰기로 시작해 보세요.':CATS[filt]+' 글이 없습니다.')+'</div></div>';
    else { h+='<div class="board">'; list.forEach(function(p){ h+=row(p); }); h+='</div>'; }
    var rc=[]; list.forEach(function(p){ (p.cm||[]).forEach(function(c){ rc.push({p:p,c:c}); }); });
@@ -3839,7 +3843,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(a==="vote"){ var vp=find(id); if(vp) vote(vp,+b.getAttribute("data-i")); }
    if(a==="edit") form(find(id));
    if(a==="del"){ if(!confirm("이 글을 삭제할까요?")) return; b.disabled=true; send({action:"planDel",kind:"post",id:id}).then(function(ok){ if(ok) openId=null; else b.disabled=false; render(); }); }
-   if(a==="cadd"){ var t=v("f_cm"); if(!t) return; b.disabled=true; send({action:"planComment",id:id,text:t}).then(function(ok){ var c=document.getElementById("f_cm"); if(ok&&c) c.value=""; else render(); }); }
+   if(a==="cadd"){ var t=v("f_cm"); if(!t) return; var cp=find(id); var c0=document.getElementById("f_cm"); if(c0) c0.value="";
+     if(cp){ cp.cm=(cp.cm||[]).concat([{id:"tmp"+Date.now(),by:me(),at:"방금",ts:Date.now(),tx:t}]); render(); }   // 바로 표시
+     send({action:"planComment",id:id,text:t}).then(function(ok){ if(!ok){ var c=document.getElementById("f_cm"); if(c&&!c.value) c.value=t; load(true); } }); }
    if(a==="cdel"){ if(!confirm("의견을 삭제할까요?")) return; send({action:"planComment",id:id,del:b.getAttribute("data-c")}); }
    if(a==="react"){ if(lpDone){ lpDone=false; return; } react(id,b.getAttribute("data-c"),b.getAttribute("data-k")); }
  });
