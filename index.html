@@ -399,10 +399,10 @@
           <div class="ic tl"><i class="ti ti-calendar-event"></i></div>
           <div class="nm">연간계획</div><div class="ds">한 해 일정과 행사</div>
         </div>
-        <a class="tile" href="https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?gid=0#gid=0" target="_blank" rel="noopener">
-          <div class="ic pk"><i class="ti ti-clipboard-text"></i></div>
-          <div class="nm">입회원서</div><div class="ds">새친구 등록 결과</div>
-        </a>
+        <div class="tile" id="planTile52" role="button">
+          <div class="ic" style="background:linear-gradient(135deg,#7fae8f,#3f6f52)"><i class="ti ti-presentation"></i></div>
+          <div class="nm">기획팀</div><div class="ds">회의·안건·행사·의사결정</div>
+        </div>
         <div class="tile" onclick="go('contact')">
           <div class="ic bl"><i class="ti ti-mail"></i></div>
           <div class="nm">문의하기</div><div class="ds">피드백·문의 남기기</div>
@@ -690,6 +690,8 @@ function go(s, keepScroll, skipHash){
     const BULLETIN = { t:'온라인 주보', s:'이번 주 예배 순서와 광고', ic:'ti-news',
       url:'https://vision153.notion.site/2026eda158ae8095999ac133933fd32a' };
     const ATTEND = { t:'출석체크', s:'앱에서 바로 출석 체크', ic:'ti-calendar-check', url:'#attend' };
+    const ENROLL = { t:'입회원서', s:'새친구 등록 결과', ic:'ti-clipboard-text',
+      url:'https://docs.google.com/spreadsheets/d/1-902OXQ-41rEAdBzMOvKWxm1hRGA_j5yZx8e3pyp-l8/edit?gid=0#gid=0' };
 
     // 홈 상단 캠프 버튼: 신청은 T1 전까지, 설문은 T2 이후
     const cSignup = document.getElementById('campSignup');
@@ -716,6 +718,7 @@ function go(s, keepScroll, skipHash){
                        : row(SURVEY, false, '8/1(토) 08:00 오픈 예정'); // T2 전 잠금
       if(now >= T1) h += row(SIGNUP, true, '');               // 신청: T1 이후 노출
       h += row(BULLETIN, true, '');                            // 온라인 주보: 맨 아래 상시 노출
+      h += row(ENROLL, true, '').replace('<a class="arItem"', '<a class="arItem" data-dl="1"');   // 입회원서: 홈에서 아카이브로 이동(10/13)
       box.innerHTML = h;
     }
   }catch(e){}
@@ -1577,7 +1580,7 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 </style>
 <script>
 (function(){
- var MENUS=[["home","홈","ti-home"],["attend","출석체크","ti-calendar-check"],["offering","헌금 현황","ti-coin"],["share","공유 링크","ti-link"],["plan","연간계획","ti-calendar"],["contact","문의하기","ti-message"],["archive","아카이브","ti-archive"]];
+ var MENUS=[["home","홈","ti-home"],["attend","출석체크","ti-calendar-check"],["offering","헌금 현황","ti-coin"],["share","공유 링크","ti-link"],["plan","연간계획","ti-calendar"],["contact","문의하기","ti-message"],["planning","기획팀","ti-presentation"],["archive","아카이브","ti-archive"]];
  function base(){return (location.origin+location.pathname).replace(/index\.html$/,"");}
  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
  function copy(t){ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(function(){fb(t);});}else fb(t); }
@@ -2360,11 +2363,11 @@ body.offAuthed #s-offering #offWho{display:flex;gap:8px;justify-content:flex-end
    var list=document.querySelector(".dlList"); if(!list) return;
    var r=list.getBoundingClientRect(); if(!(r.width>0 && r.height>0)) return;
    var have=existingUrls(list);
-   document.querySelectorAll("#s-home a.tile[href]").forEach(function(t){
+   document.querySelectorAll("#s-home a.tile[href], #archiveList a.arItem[data-dl][href]").forEach(function(t){
      var href=(t.getAttribute("href")||"").trim();
      if(href.indexOf("http")!==0) return;
      if(have[href]) return;
-     var nmEl=t.querySelector(".nm"); var name=nmEl?nmEl.textContent.trim():(t.textContent||"").replace(/\s+/g," ").trim().slice(0,16);
+     var nmEl=t.querySelector(".nm")||t.querySelector(".t1"); var name=nmEl?nmEl.textContent.trim():(t.textContent||"").replace(/\s+/g," ").trim().slice(0,16);
      var icEl=t.querySelector("i.ti"); var iconCls=icEl?icEl.className:"ti ti-link";
      list.appendChild(makeRow(name, href, iconCls));
      have[href]=1;
@@ -2985,7 +2988,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"기획팀 게시판", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
-   secs:[["[신규]","- 기획팀 선생님께 홈 화면 '사역 신청 결과' 아래에 '기획팀' 카드가 보여요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요<br>- 글과 의견에 좋아요·싫어요를 누를 수 있고, 길게 누르면 누가 눌렀는지 보여요"]]},
+   secs:[["[신규]","- 홈 메뉴에 '기획팀'이 생겼어요(입회원서는 아카이브로 이동). 모든 선생님이 보고 글·의견을 남길 수 있고, 의사결정 투표는 기획팀이 참여해요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요<br>- 글과 의견에 좋아요·싫어요를 누를 수 있고, 길게 누르면 누가 눌렀는지 보여요"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
    secs:[["[개선]","- 지난 주일 출석부는 그날 저장한 명단 그대로 보여요<br>- 이후 등반·반 이동이 있어도 지난 기록은 바뀌지 않습니다"]]},
   {h:"2027 사역 신청 결과", bd:"신규",cls:"bdN", v:"V43", d:"2026/10/08",
@@ -3627,7 +3630,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
  var CATS=["회의","안건","행사","의사결정","회의록","기타"], DATED={0:1,2:1};   // 회의·행사는 일시·장소 입력, 회의록은 링크 입력
  function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
- function isTeam(){ return TEAM.indexOf(me())!==-1; }
+ function isTeam(){ return TEAM.indexOf(me())!==-1; }          // 의사결정 투표 권한
+ function isTeacher(){ return !!me(); }                           // 열람·글·의견·좋아요: 로그인한 전체 교사(10/13)
  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
  function pz(n){ return (n<10?"0":"")+n; }
  function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+pz(d.getMonth()+1)+"-"+pz(d.getDate()); }
@@ -3639,7 +3643,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 저장소 ── */
  var db=null, loading=false, lastLoad=0;
- var ERR={notteam:"기획팀만 사용할 수 있습니다.",notowner:"작성자만 수정·삭제할 수 있습니다.",closed:"마감된 의사결정입니다.",notfound:"이미 삭제된 글입니다."};
+ var ERR={notteam:"의사결정 투표는 기획팀만 참여합니다.",notteacher:"로그인한 교사만 사용할 수 있습니다.",notowner:"작성자만 수정·삭제할 수 있습니다.",closed:"마감된 의사결정입니다.",notfound:"이미 삭제된 글입니다."};
  function api(body){
    body.user=me();
    var pr = fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json();});
@@ -3667,17 +3671,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  var card=document.createElement("div"); card.id="planCard50";
  card.innerHTML='<div class="pcI"><i class="ti ti-presentation"></i></div><div class="pcT"><b>기획팀</b><span id="pc50s">회의 · 안건 · 행사 · 의사결정</span></div><span class="pcN" id="pc50n" style="display:none"></span><i class="ti ti-chevron-right ar"></i>';
  card.addEventListener("click",function(){ openPlan(); });
- function mountCard(){
-   var home=document.getElementById("s-home"); if(!home) return;
-   var mh=document.getElementById("sgyMinHome"), grid=home.querySelector(".grid");
-   if(mh){ if(mh.nextElementSibling!==card) mh.parentNode.insertBefore(card, mh.nextSibling); }   // 사역 신청 결과 바로 아래
-   else if(grid){ if(card.nextElementSibling!==grid) grid.parentNode.insertBefore(card, grid); }    // 그 카드가 없으면 메뉴 위
- }
+ function mountCard(){ /* 10/13: 홈 카드 대신 메뉴 그리드의 기획팀 타일(#planTile52, 옛 입회원서 자리) */ }
+ document.addEventListener("click",function(e){ if(e.target.closest&&e.target.closest("#planTile52")) openPlan(); });
  function cardInfo(){
    if(!db) return; var s=document.getElementById("pc50s"), n=document.getElementById("pc50n"); if(!s) return;
    var nt=notices().filter(function(x){return !x.pin;})[0];
    s.textContent = nt ? nt.dd+" · "+nt.p.title : "회의 · 안건 · 행사 · 의사결정";
-   var todo=posts().filter(function(p){ var mv=(p.votes||{})[me()]; return voteOpen(p) && !(mv&&mv.length); }).length;
+   var todo=isTeam()?posts().filter(function(p){ var mv=(p.votes||{})[me()]; return voteOpen(p) && !(mv&&mv.length); }).length:0;
    n.style.display=todo?"":"none"; n.textContent="투표 "+todo;
  }
 
@@ -3686,7 +3686,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  var sh=document.createElement("div"); sh.id="planSh50";
  var filt=-1;
  function openPlan(){ render(); load(true); wrap.classList.add("on"); wrap.scrollTop=0; document.body.style.overflow="hidden"; }
- function closePlan(){ wrap.classList.remove("on"); sh.classList.remove("on"); document.body.style.overflow=""; cardInfo(); }
+ function closePlan(){ wrap.classList.remove("on"); sh.classList.remove("on"); document.body.style.overflow=""; cardInfo();
+   if(location.hash==="#planning"){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} } }
+ /* 딥링크 #planning → 기획팀 화면 (로그인 후 열림) */
+ var wantHash=false;
+ function fromHash(){ if(location.hash==="#planning"){ if(isTeacher()&&wrap.parentNode) openPlan(); else wantHash=true; } }
+ window.addEventListener("hashchange",fromHash);
  function render(){
    if(!wrap.parentNode) return;
    var kc=document.getElementById("f_cm"), kv=kc?kc.value:"", kf=!!(kc&&document.activeElement===kc);   // 작성 중인 의견 보존
@@ -3729,11 +3734,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(p.cat===3&&p.opts){
      var votes=p.votes||{}, cnt=p.opts.map(function(){return 0;}), voters=Object.keys(votes).filter(function(k){return votes[k]&&votes[k].length;});
      voters.forEach(function(k){ votes[k].forEach(function(i){ if(cnt[i]!=null) cnt[i]++; }); });
-     var mx=Math.max.apply(null,cnt.concat([1])), mine=votes[my]||[], open=voteOpen(p);
+     var mx=Math.max.apply(null,cnt.concat([1])), mine=votes[my]||[], open=voteOpen(p)&&isTeam();
      h+='<div class="dM" style="margin-top:14px">'+(open?'투표중':'마감')+(p.multi?' · 복수 선택':'')+(p.due?' · '+fmtD(p.due)+'까지':'')+'</div>';
      p.opts.forEach(function(o,i){ var on=mine.indexOf(i)!==-1;
        h+='<button class="vOpt'+(on?' mine':'')+'" data-a="vote" data-id="'+p.id+'" data-i="'+i+'"'+(open?'':' disabled')+'><span class="bar" style="width:'+(voters.length?Math.round(cnt[i]/mx*100):0)+'%"></span><span class="lb"><i class="ti ti-'+(on?(p.multi?'square-check':'circle-check'):(p.multi?'square':'circle'))+'"></i>'+esc(o)+'<span class="c">'+cnt[i]+'</span></span></button>'; });
      var not=TEAM.filter(function(n){ return voters.indexOf(n)===-1; });
+     if(voteOpen(p)&&!isTeam()) h+='<div class="dM" style="margin-top:6px">투표는 기획팀만 참여합니다 · 결과만 볼 수 있어요</div>';
      h+='<div class="vWho">참여 '+voters.length+'/'+TEAM.length+'명'+(voters.length?' · '+esc(voters.join(", ")):'')+(not.length&&open?'<br>미참여: <b>'+esc(not.join(", "))+'</b>':'')+'</div>';
    }
    h+=rxHTML(p,p.id,"",false);
@@ -3842,9 +3848,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  ["pointerup","pointercancel","pointerleave"].forEach(function(t){ wrap.addEventListener(t,function(){ clearTimeout(lpT); },true); });
  wrap.addEventListener("scroll",function(){ clearTimeout(lpT); pop.style.display="none"; });
  wrap.addEventListener("contextmenu",function(e){ if(e.target.closest(".rxB")) e.preventDefault(); });
- function tick(){ mountCard(); var on=isTeam(); card.classList.toggle("on",on); if(on){ load(); cardInfo(); } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
+ function tick(){ var on=isTeacher(); if(on){ load(); if(wantHash){ wantHash=false; openPlan(); } } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
- ready(function(){ document.body.appendChild(wrap); document.body.appendChild(sh); tick(); setInterval(tick,1500); });
+ ready(function(){ document.body.appendChild(wrap); document.body.appendChild(sh); fromHash(); tick(); setInterval(tick,1500); });
 })();
 </script>
 
