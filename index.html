@@ -353,7 +353,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V45</span>
+    <span class="badge">V46</span>
   </header>
 
   <main id="main">
@@ -383,10 +383,10 @@
           <div class="ic ai"><i class="ti ti-sparkles"></i></div>
           <div class="nm">교사 회의 AI검색</div><div class="ds">회의 자료 AI 검색<br>(Gemini Notebook)</div>
         </a>
-        <a class="tile" href="https://band.us/band/99538939/post/130" target="_blank" rel="noopener">
+        <div class="tile" id="mtgTile54" role="button">
           <div class="ic bl"><i class="ti ti-notes"></i></div>
           <div class="nm">교사 회의록</div><div class="ds">회의록 게시글</div>
-        </a>
+        </div>
         <a class="tile" href="https://band.us/@sgyct" target="_blank" rel="noopener">
           <div class="ic bd"><i class="ti ti-users-group"></i></div>
           <div class="nm">교사 밴드</div><div class="ds">공지·소통 커뮤니티</div>
@@ -1580,7 +1580,7 @@ const CONTACT_API = "https://script.google.com/macros/s/AKfycbwvVVB1-rTMOs7ZfICm
 </style>
 <script>
 (function(){
- var MENUS=[["home","홈","ti-home"],["attend","출석체크","ti-calendar-check"],["offering","헌금 현황","ti-coin"],["share","공유 링크","ti-link"],["plan","연간계획","ti-calendar"],["contact","문의하기","ti-message"],["planning","기획팀","ti-presentation"],["archive","아카이브","ti-archive"]];
+ var MENUS=[["home","홈","ti-home"],["attend","출석체크","ti-calendar-check"],["offering","헌금 현황","ti-coin"],["share","공유 링크","ti-link"],["plan","연간계획","ti-calendar"],["contact","문의하기","ti-message"],["planning","기획팀","ti-presentation"],["minutes","교사 회의록","ti-file-text"],["archive","아카이브","ti-archive"]];
  function base(){return (location.origin+location.pathname).replace(/index\.html$/,"");}
  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
  function copy(t){ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(function(){fb(t);});}else fb(t); }
@@ -2987,6 +2987,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
+   secs:[["[신규]","- '교사 회의록'을 누르면 앱 안에서 다글로AI 밴드 페이지와 노션 요약 페이지로 갈 수 있어요<br>- 노션에 정리된 최근 회의(구분·날짜·주요 안건·참석자)를 앱에서 바로 보고, 회의별 전체 요약으로 이동해요"]]},
   {h:"기획팀 게시판", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
    secs:[["[신규]","- 홈 메뉴에 '기획팀'이 생겼어요(입회원서는 아카이브로 이동). 모든 선생님이 보고 글·의견을 남길 수 있고, 의사결정 투표는 기획팀이 참여해요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요<br>- 글과 의견에 좋아요·싫어요를 누를 수 있고, 길게 누르면 누가 눌렀는지 보여요"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
@@ -3859,6 +3861,104 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function tick(){ var on=isTeacher(); if(on){ load(); if(wantHash){ wantHash=false; openPlan(); } } else { db=null; if(wrap.classList.contains("on")) closePlan(); } }
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ document.body.appendChild(wrap); document.body.appendChild(sh); fromHash(); tick(); setInterval(tick,1500); });
+})();
+</script>
+
+<style>
+/* enh_v54: 교사 회의록 메뉴 — 다글로AI 밴드 페이지 / 노션 요약 페이지 링크 + 노션 최근 회의 목록(교사앱 서버가 노션 공개 페이지를 대신 읽음) */
+#mtg54{display:none;position:fixed;inset:0;z-index:18;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#mtg54.on{display:block}
+#mtg54 .mIn{max-width:520px;margin:0 auto;padding:6px 16px calc(120px + env(safe-area-inset-bottom))}
+#mtg54 .mBack{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--tx2);margin:14px 2px 0;cursor:pointer}
+#mtg54 .mHero{background:linear-gradient(120deg,#4b8be0,#2f6fcf);border-radius:16px;padding:16px 17px;margin-top:10px;color:#fff;position:relative;overflow:hidden}
+#mtg54 .mHero .k{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.85}
+#mtg54 .mHero .t{font-size:20px;font-weight:800;margin-top:5px}
+#mtg54 .mHero .s{font-size:12px;opacity:.9;margin-top:4px}
+#mtg54 .mHero .em{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:58px;line-height:1;opacity:.22}
+#mtg54 .mLink{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-top:10px;text-decoration:none;color:inherit}
+#mtg54 .mLink .li{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#fff;flex:none}
+#mtg54 .mLink b{display:block;font-size:14.5px;color:var(--tx);line-height:1.35}
+#mtg54 .mLink span{display:block;font-size:11.5px;color:var(--tx2);margin-top:2px}
+#mtg54 .mLink .ar{margin-left:auto;font-size:19px;color:var(--tx3);flex:none}
+#mtg54 .mH{display:flex;align-items:center;gap:5px;margin:20px 2px 8px;font-size:13px;font-weight:800;color:var(--tx2)}
+#mtg54 .mH .src{margin-left:auto;font-size:11px;font-weight:600;color:var(--tx3)}
+#mtg54 .mList{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#mtg54 .mRow{padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
+#mtg54 .mRow:first-child{border-top:0}
+#mtg54 .mRow.open{background:#f3f7fd}
+#mtg54 .mTop{display:flex;align-items:center;gap:7px}
+#mtg54 .mTy{flex:none;font-size:10.5px;font-weight:800;border-radius:6px;padding:2px 7px;background:#e3ecf9;color:#2f6fcf}
+#mtg54 .mTy.p{background:#e3efe6;color:#3f6f52}
+#mtg54 .mTy.e{background:#fde9dc;color:#c2410c}
+#mtg54 .mT{font-size:14px;font-weight:700;color:var(--tx);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mtg54 .mD{flex:none;font-size:11.5px;color:var(--tx3);font-weight:700}
+#mtg54 .mK{font-size:12.5px;color:var(--tx2);margin-top:5px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#mtg54 .mRow.open .mK{-webkit-line-clamp:unset;display:block;color:var(--tx)}
+#mtg54 .mMore{display:none;margin-top:8px;font-size:11.5px;color:var(--tx2);line-height:1.6}
+#mtg54 .mRow.open .mMore{display:block}
+#mtg54 .mMore a{display:inline-flex;align-items:center;gap:4px;margin-top:8px;background:#e3ecf9;color:#2f6fcf;font-weight:700;font-size:12.5px;border-radius:999px;padding:6px 12px;text-decoration:none}
+#mtg54 .mEmpty{font-size:12.5px;color:var(--tx3);padding:24px 0;text-align:center}
+</style>
+<script>
+/* enh_v54: 교사 회의록 메뉴 */
+(function(){
+ var BAND="https://band.us/band/99538939/post/130";
+ var NOTION="https://vision153.notion.site/f7032a6a509949a1925be8903a10c43b";
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
+ var CK="sgy_minutes_cache_v1", rows=null, loading=false, lastLoad=0, openId=null, failed=false;
+ try{ var c=JSON.parse(localStorage.getItem(CK)||"null"); if(c&&c.length) rows=c; }catch(e){}
+ function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
+ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+ var WD=["일","월","화","수","목","금","토"];
+ function fmtD(iso){ if(!iso) return ""; var p=iso.split("-"), d=new Date(+p[0],+p[1]-1,+p[2]); return (+p[1])+"/"+(+p[2])+"("+WD[d.getDay()]+")"; }
+ function load(force){
+   if(loading||(!force&&rows&&Date.now()-lastLoad<60000)) return;
+   loading=true; failed=false; render();
+   var pr = window.__MTG_MOCK ? Promise.resolve({ok:true,rows:window.__MTG_MOCK}) :
+     fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"minutes",user:me()})}).then(function(r){return r.json();});
+   pr.then(function(res){ if(res&&res.ok&&res.rows){ rows=res.rows; lastLoad=Date.now(); try{ localStorage.setItem(CK,JSON.stringify(rows)); }catch(e){} } else failed=true; })
+     .catch(function(){ failed=true; }).then(function(){ loading=false; render(); });
+ }
+ var wrap=document.createElement("div"); wrap.id="mtg54";
+ function render(){
+   if(!wrap.parentNode) return;
+   var h='<div class="mIn"><div class="mBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
+     '<div class="mHero"><div class="k">TEACHER MEETING</div><div class="t">교사 회의록</div><div class="s">회의 녹음 원문과 요약 정리를 한 곳에서</div><i class="ti ti-file-text em"></i></div>'+
+     '<a class="mLink" href="'+BAND+'" target="_blank" rel="noopener"><div class="li" style="background:linear-gradient(135deg,#34d399,#059669)"><i class="ti ti-microphone"></i></div><div><b>교사 회의록 다글로AI 밴드 페이지</b><span>회의 녹음·다글로 원문 게시글</span></div><i class="ti ti-external-link ar"></i></a>'+
+     '<a class="mLink" href="'+NOTION+'" target="_blank" rel="noopener"><div class="li" style="background:#1f2937"><i class="ti ti-notebook"></i></div><div><b>교사 회의록 요약 정리 노션 페이지</b><span>회의별 요약·안건 정리</span></div><i class="ti ti-external-link ar"></i></a>';
+   h+='<div class="mH"><i class="ti ti-list-details"></i>최근 회의'+(loading?' <span class="src"><i class="ti ti-refresh"></i> 최신 내용 확인 중</span>':'<span class="src">노션 요약 기준</span>')+'</div>';
+   if(!rows){ h+='<div class="mList"><div class="mEmpty">'+(failed?'불러오지 못했습니다. 위 노션 페이지에서 확인해 주세요.':'불러오는 중…')+'</div></div>'; }
+   else {
+     h+='<div class="mList">';
+     rows.slice(0,10).forEach(function(r){
+       var cls=/기획/.test(r.ty)?' p':(/수련회|평가|준비/.test(r.ty)?' e':'');
+       var cnt=r.at?r.at.split(",").filter(Boolean).length:0;
+       h+='<div class="mRow'+(openId===r.id?' open':'')+'" data-a="row" data-id="'+esc(r.id)+'"><div class="mTop"><span class="mTy'+cls+'">'+esc(r.ty||'회의')+'</span><span class="mT">'+esc(r.t)+'</span><span class="mD">'+fmtD(r.d)+'</span></div>'+
+          '<div class="mK">'+esc(r.k)+'</div>'+
+          '<div class="mMore">'+(cnt?'<div><i class="ti ti-users"></i> 참석 '+cnt+'명 · '+esc(r.at.split(",").join(", "))+'</div>':'')+(r.len?'<div><i class="ti ti-clock"></i> 녹음 '+esc(r.len)+'</div>':'')+
+          '<a href="https://vision153.notion.site/'+esc(r.id)+'" target="_blank" rel="noopener"><i class="ti ti-notebook"></i>노션에서 전체 요약 보기</a></div></div>';
+     });
+     h+='</div>';
+     if(failed) h+='<div class="mEmpty" style="padding:10px 0">최신 내용을 불러오지 못해 저장된 목록을 보여 드려요.</div>';
+   }
+   wrap.innerHTML=h+'</div>';
+ }
+ function openM(){ render(); load(Date.now()-lastLoad>60000); wrap.classList.add("on"); wrap.scrollTop=0; }
+ function closeM(){ wrap.classList.remove("on"); if(location.hash==="#minutes"){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} } }
+ wrap.addEventListener("click",function(e){
+   var b=e.target.closest("[data-a]"); if(!b||e.target.closest("a")) return; var a=b.getAttribute("data-a");
+   if(a==="close") closeM();
+   if(a==="row"){ var id=b.getAttribute("data-id"); openId=(openId===id)?null:id; render(); }
+ });
+ document.addEventListener("click",function(e){
+   if(e.target.closest&&e.target.closest("#mtgTile54")){ openM(); return; }
+   var nb=e.target.closest&&e.target.closest("nav button"); if(nb&&nb.id!=="accTab30"&&wrap.classList.contains("on")) closeM();
+ },true);
+ var wantHash=false;
+ function fromHash(){ if(location.hash==="#minutes"){ if(me()&&wrap.parentNode) openM(); else wantHash=true; } }
+ window.addEventListener("hashchange",fromHash);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ document.body.appendChild(wrap); fromHash(); setInterval(function(){ if(wantHash&&me()){ wantHash=false; openM(); } },1500); });
 })();
 </script>
 
