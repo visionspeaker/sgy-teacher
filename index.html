@@ -4145,7 +4145,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var h='<div class="sIn"><div class="sBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
      '<div class="sHero"><div class="k">TEACHER ANALYTICS</div><div class="t">교사 접속 통계</div><div class="s"><i class="ti ti-lock"></i>관리자 전용 · 교사 화면에는 표시되지 않아요</div><i class="ti ti-chart-bar em"></i></div>'+
      '<div class="seg">'+[["w","이번 주"],["m","이번 달"],["a","6개월"]].map(function(p){ return '<span data-a="per" data-v="'+p[0]+'" class="'+(per===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>';
-   if(!rows){ wrap.innerHTML=h+'<div class="empty">'+(failed?'불러오지 못했습니다. 잠시 후 다시 열어 주세요.':'불러오는 중…')+'</div></div>'; return; }
+   if(!rows||failed){ wrap.innerHTML=h+'<div class="empty">'+(failed?'통계를 불러오지 못했습니다.<br><span data-a="retry" style="display:inline-block;margin-top:10px;padding:7px 14px;border-radius:999px;background:#eef0ff;color:#4338ca;font-weight:700;cursor:pointer">다시 불러오기</span>':'불러오는 중…')+'</div></div>'; return; }
    var all=sessions(), R=range(), A=agg(all,R.a,R.b), P=R.pa!=null?agg(all,R.pa,R.pb):null;
    h+='<div class="kpis"><div class="kpi"><div class="l">접속 교사</div><div class="v">'+A.users+'<small>/'+TEACHERS.length+'명</small></div>'+delta(A.users,P&&P.users,"명")+'</div>'+
      '<div class="kpi"><div class="l">총 접속</div><div class="v">'+A.n+'<small>회</small></div>'+delta(A.n,P&&P.n,"%")+'</div>'+
@@ -4201,15 +4201,24 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function load(){
    if(loading) return; loading=true; failed=false;
-   var pr=window.__TRK_MOCK?Promise.resolve({ok:true,rows:window.__TRK_MOCK}):
-     fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"trackStats",user:me()})}).then(function(r){ return r.json(); });
-   pr.then(function(res){ if(res&&res.ok) rows=res.rows||[]; else failed=true; }).catch(function(){ failed=true; }).then(function(){ loading=false; render(); });
+   /* 구글이 요청을 기본 응답('출석 API 연결됨')으로 돌려보내는 경우가 있어, rows 배열이 없으면 최대 3번 다시 요청 */
+   function once(){ return window.__TRK_MOCK?Promise.resolve({ok:true,rows:window.__TRK_MOCK}):
+     new Promise(function(ok,no){ /* 구글 응답이 1분 넘게 멈추는 경우가 있어 20초가 지나면 다시 시도 */
+       var ac=window.AbortController?new AbortController():null, t=setTimeout(function(){ if(ac) ac.abort(); no(new Error("timeout")); },20000);
+       fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"trackStats",user:me()}),signal:ac?ac.signal:undefined})
+         .then(function(r){ return r.json(); }).then(function(j){ clearTimeout(t); ok(j); },function(e){ clearTimeout(t); no(e); }); }); }
+   function tryN(n){ return once().catch(function(){ return null; }).then(function(res){
+     if(res&&res.ok&&Array.isArray(res.rows)) return res;
+     if(res&&res.ok===false&&res.error) return res;
+     return n>1?tryN(n-1):null; }); }
+   tryN(3).then(function(res){ if(res&&res.ok&&Array.isArray(res.rows)) rows=res.rows; else failed=true; }).then(function(){ loading=false; render(); });
  }
- function openS(){ if(me()!==ADMIN) return; render(); load(); wrap.classList.add("on"); wrap.scrollTop=0; }
+ function openS(){ if(me()!==ADMIN) return; rows=null; failed=false; render(); load(); wrap.classList.add("on"); wrap.scrollTop=0; }
  function closeS(){ wrap.classList.remove("on"); }
  wrap.addEventListener("click",function(e){
    var b=e.target.closest("[data-a]"); if(!b) return; var a=b.getAttribute("data-a"), v=b.getAttribute("data-v");
    if(a==="close") closeS();
+   else if(a==="retry"){ rows=null; failed=false; render(); load(); }
    else if(a==="per"){ per=v; openU=null; render(); }
    else if(a==="sort"){ sortBy=v; render(); }
    else if(a==="t"){ openU=openU===v?null:v; render(); }
