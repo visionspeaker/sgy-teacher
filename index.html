@@ -2988,7 +2988,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
-   secs:[["[신규]","- '교사 회의록'을 누르면 앱 안에서 다글로AI 밴드 페이지와 노션 요약 페이지로 갈 수 있어요<br>- 노션에 정리된 최근 회의(구분·날짜·주요 안건·참석자)를 앱에서 바로 보고, 회의별 전체 요약으로 이동해요"]]},
+   secs:[["[신규]","- '교사 회의록'을 누르면 앱 안에서 다글로AI 밴드 페이지와 노션 요약 페이지로 갈 수 있어요<br>- 노션에 정리된 최근 회의(구분·날짜·주요 안건·발언자)를 앱에서 바로 보고, 회의별 전체 요약으로 이동해요"]]},
   {h:"기획팀 게시판", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
    secs:[["[신규]","- 홈 메뉴에 '기획팀'이 생겼어요(입회원서는 아카이브로 이동). 모든 선생님이 보고 글·의견을 남길 수 있고, 의사결정 투표는 기획팀이 참여해요<br>- 회의·안건·행사·의사결정·회의록을 게시판에 올리고, 알약으로 구분해서 볼 수 있어요<br>- 다가오는 일정과 주요사항은 위쪽 알림에 모아 보여 줍니다<br>- 글마다 의견을 남길 수 있고, 최근 의견을 눌러 바로 그 글로 이동해요<br>- 글과 의견에 좋아요·싫어요를 누를 수 있고, 길게 누르면 누가 눌렀는지 보여요"]]},
   {h:"지난 출석부 기록 고정", bd:"개선",cls:"bdI", v:"V44", d:"2026/10/12",
@@ -3935,7 +3935,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
        var cnt=r.at?r.at.split(",").filter(Boolean).length:0;
        h+='<div class="mRow'+(openId===r.id?' open':'')+'" data-a="row" data-id="'+esc(r.id)+'"><div class="mTop"><span class="mTy'+cls+'">'+esc(r.ty||'회의')+'</span><span class="mT">'+esc(r.t)+'</span><span class="mD">'+fmtD(r.d)+'</span></div>'+
           '<div class="mK">'+esc(r.k)+'</div>'+
-          '<div class="mMore">'+(cnt?'<div><i class="ti ti-users"></i> 참석 '+cnt+'명 · '+esc(r.at.split(",").join(", "))+'</div>':'')+(r.len?'<div><i class="ti ti-clock"></i> 녹음 '+esc(r.len)+'</div>':'')+
+          '<div class="mMore">'+(cnt?'<div><i class="ti ti-microphone"></i> 발언 '+cnt+'명 · '+esc(r.at.split(",").join(", "))+'</div>':'')+(r.len?'<div><i class="ti ti-clock"></i> 녹음 '+esc(r.len)+'</div>':'')+
           '<a href="https://vision153.notion.site/'+esc(r.id)+'" target="_blank" rel="noopener"><i class="ti ti-notebook"></i>노션에서 전체 요약 보기</a></div></div>';
      });
      h+='</div>';
