@@ -15,6 +15,31 @@
 -->
 <html lang="ko">
 <head>
+<script>
+/* enh_v56(head): 구글 오응답 방어 — 서버에 POST로 보낸 요청이 구글 쪽에서 GET으로 바뀌어 doGet 기본 응답
+   ('출석 API 연결됨' / 'offering api')이 오는 경우가 있음(10/15 확인). 그대로 두면 출석 저장·로그인 등이 실패를 성공으로 오인.
+   → Apps Script로 가는 POST 응답이 기본 응답과 똑같으면 0.8초 뒤 최대 2번 다시 보내고, 그래도 같으면 {ok:false,error:"neterr"}(로그인 화면은 네트워크 오류로 안내)로 바꿔 돌려줌.
+   기본 응답은 doPost가 실행되지 않았다는 뜻이라 다시 보내도 중복 저장되지 않음. */
+(function(){
+ var of=window.fetch; if(!of) return;
+ var SIGS=['{"ok":true,"msg":"출석 API 연결됨"}','{"ok":true,"msg":"offering api"}'];
+ window.fetch=function(input,init){
+   var url=typeof input==="string"?input:((input&&input.url)||"");
+   if(!(init&&String(init.method||"").toUpperCase()==="POST"&&/^https:\/\/script\.google\.com\/macros\//.test(url))) return of.apply(this,arguments);
+   var self=this, args=arguments;
+   function attempt(left){
+     return of.apply(self,args).then(function(r){
+       return r.clone().text().then(function(t){
+         if(SIGS.indexOf(String(t).trim())<0) return r;
+         if(left>0) return new Promise(function(ok){ setTimeout(ok,800); }).then(function(){ return attempt(left-1); });
+         return new Response('{"ok":false,"error":"neterr","misroute":true}',{status:200,headers:{"Content-Type":"application/json"}});
+       },function(){ return r; });
+     });
+   }
+   return attempt(2);
+ };
+})();
+</script>
 <style>
 /* enh_v47(head): 홈 디자인 CSS를 head로 올려 첫 화면부터 3단·아이콘형으로 표시(모바일 깜빡임 제거 1단계) */
 .grid.grid-top{grid-template-columns:1fr 1fr 1fr !important}
