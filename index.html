@@ -3998,9 +3998,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #stat55 .sHero .t{font-size:20px;font-weight:800;margin-top:5px}
 #stat55 .sHero .s{font-size:12px;opacity:.9;margin-top:4px;display:flex;align-items:center;gap:4px}
 #stat55 .sHero .em{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:60px;opacity:.2}
-#stat55 .seg{display:flex;background:#efe4d6;border-radius:12px;padding:3px;margin-top:12px}
-#stat55 .seg span{flex:1;text-align:center;font-size:12.5px;font-weight:700;color:var(--tx2);padding:7px 0;border-radius:10px;cursor:pointer}
-#stat55 .seg span.on{background:#fff;color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+#stat55 .seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#stat55 .seg span{font-size:12.5px;font-weight:700;color:var(--tx2);background:var(--surface);border:1px solid var(--line);padding:6px 13px;border-radius:999px;cursor:pointer}
+#stat55 .seg span.on{background:#4f46e5;border-color:#4f46e5;color:#fff}
 #stat55 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 #stat55 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 10px}
 #stat55 .kpi .l{font-size:11px;color:var(--tx2);font-weight:700}
@@ -4126,7 +4126,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 관리자 화면 ── */
  var wrap=document.createElement("div"); wrap.id="stat55";
- var rows=null, loading=false, failed=false, per="w", sortBy="c", openU=null;
+ var rows=null, loading=false, failed=false, per="t", sortBy="c", openU=null;
  var COL=["#f59e0b","#ef4444","#10b981","#3b82f6","#8b5cf6","#ec4899","#14b8a6","#f97316","#6366f1","#84cc16","#06b6d4","#a855f7","#e11d48","#0ea5e9","#64748b"];
  var WD=["일","월","화","수","목","금","토"];
  function d0(t){ var d=new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
@@ -4136,10 +4136,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function md(t){ var d=new Date(t); return (d.getMonth()+1)+"/"+d.getDate(); }
  function range(){
    var n=Date.now(), now=new Date(n), a, pa, pb;
-   if(per==="w"){ a=d0(n)-now.getDay()*864e5; pa=a-7*864e5; pb=a-(a-pa)+(n-a); }
+   var b=n+1, t0=d0(n);
+   if(per==="t"){ a=t0; pa=t0-864e5; pb=n-864e5; }                 /* 오늘: 어제 같은 시각까지와 비교 */
+   else if(per==="y"){ a=t0-864e5; b=t0; pa=a-864e5; pb=a; }      /* 어제: 그제와 비교 */
+   else if(per==="w"){ a=d0(n)-now.getDay()*864e5; pa=a-7*864e5; pb=a-(a-pa)+(n-a); }
    else if(per==="m"){ a=new Date(now.getFullYear(),now.getMonth(),1).getTime(); pa=new Date(now.getFullYear(),now.getMonth()-1,1).getTime(); pb=Math.min(a,pa+(n-a)); }
    else { a=0; pa=null; }
-   return {a:a,b:n+1,pa:pa,pb:pb};
+   return {a:a,b:b,pa:pa,pb:pb};
  }
  /* 조각 → 세션(교사+sid)으로 묶기 */
  function sessions(){
@@ -4169,7 +4172,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(!wrap.parentNode) return;
    var h='<div class="sIn"><div class="sBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
      '<div class="sHero"><div class="k">TEACHER ANALYTICS</div><div class="t">교사 접속 통계</div><div class="s"><i class="ti ti-lock"></i>관리자 전용 · 교사 화면에는 표시되지 않아요</div><i class="ti ti-chart-bar em"></i></div>'+
-     '<div class="seg">'+[["w","이번 주"],["m","이번 달"],["a","6개월"]].map(function(p){ return '<span data-a="per" data-v="'+p[0]+'" class="'+(per===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>';
+     '<div class="seg">'+[["t","오늘"],["y","어제"],["w","이번 주"],["m","이번 달"],["a","6개월"]].map(function(p){ return '<span data-a="per" data-v="'+p[0]+'" class="'+(per===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>';
    if(!rows||failed){ wrap.innerHTML=h+'<div class="empty">'+(failed?'통계를 불러오지 못했습니다.<br><span data-a="retry" style="display:inline-block;margin-top:10px;padding:7px 14px;border-radius:999px;background:#eef0ff;color:#4338ca;font-weight:700;cursor:pointer">다시 불러오기</span>':'불러오는 중…')+'</div></div>'; return; }
    var all=sessions(), R=range(), A=agg(all,R.a,R.b), P=R.pa!=null?agg(all,R.pa,R.pb):null;
    h+='<div class="kpis"><div class="kpi"><div class="l">접속 교사</div><div class="v">'+A.users+'<small>/'+TEACHERS.length+'명</small></div>'+delta(A.users,P&&P.users,"명")+'</div>'+
