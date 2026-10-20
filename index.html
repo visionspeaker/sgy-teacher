@@ -378,7 +378,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V46</span>
+    <span class="badge">V47</span>
   </header>
 
   <main id="main">
@@ -3012,6 +3012,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"교사 회의록 새 글 알림", bd:"신규",cls:"bdN", v:"V47", d:"2026/10/21",
+   secs:[["[신규]","- 새 회의록이 올라오면 홈 '교사 회의록' 아이콘에 빨간 N 표시가 떠요<br>- '교사 회의록'을 한 번 열어 보면 표시가 사라져요(휴대폰·PC 등 기기마다 따로 기억해요)"]]},
   {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
    secs:[["[신규]","- '교사 회의록'을 누르면 앱 안에서 다글로AI 밴드 페이지와 노션 요약 페이지로 갈 수 있어요<br>- 노션에 정리된 최근 회의(구분·날짜·주요 안건·발언자)를 앱에서 바로 보고, 회의별 전체 요약으로 이동해요"]]},
   {h:"기획팀 게시판", bd:"신규",cls:"bdN", v:"V45", d:"2026/10/13",
@@ -4265,6 +4267,54 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      dm.appendChild(a);
    }
  });
+})();
+</script>
+
+
+<style>
+/* enh_v57: 교사 회의록 새 글 알림 — 홈 '교사 회의록' 아이콘에 빨간 N 알약. 이 기기에서 회의록 화면을 한 번 열면 사라짐(기기 기준) */
+#mtgTile54 .ic{position:relative;overflow:visible}
+#mtgTile54 .mtgN57{position:absolute;top:-5px;right:-6px;min-width:21px;height:21px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:#ef4444;color:#fff;font-size:11.5px;font-weight:800;line-height:17px;text-align:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(239,68,68,.45);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;letter-spacing:0;pointer-events:none;animation:mtgN57pop .35s ease-out}
+@keyframes mtgN57pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+</style>
+<script>
+/* enh_v57: 교사 회의록 새 글 알림 (N 알약)
+   - 회의 목록은 enh_v54와 같은 서버(action:"minutes")·같은 캐시(sgy_minutes_cache_v1)를 씀
+   - 회의 구분 키 = 회의일|회의명 (노션 행 id는 확정 처리 때 바뀌므로 쓰지 않음)
+   - 본 회의 키 목록은 이 기기 localStorage(sgy_minutes_seen_v1)에 저장. 처음엔 비어 있으므로 기존 회의도 새 글로 표시됨 */
+(function(){
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
+ var CK="sgy_minutes_cache_v1", SK="sgy_minutes_seen_v1", TK="sgy_minutes_chk_v57", EVERY=10*60*1000, busy=false;
+ function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
+ function rows(){ try{ var r=JSON.parse(localStorage.getItem(CK)||"null"); return (r&&r.length)?r:null; }catch(e){ return null; } }
+ function key(r){ return (r.d||"")+"|"+(r.t||""); }
+ function seen(){ try{ var s=JSON.parse(localStorage.getItem(SK)||"null"); return Array.isArray(s)?s:[]; }catch(e){ return []; } }
+ function hasNew(){ var r=rows(); if(!r) return false; var s=seen(); return r.some(function(x){ return s.indexOf(key(x))===-1; }); }
+ function markSeen(){ var r=rows(); if(!r) return; var s=seen(); r.forEach(function(x){ var k=key(x); if(s.indexOf(k)===-1) s.push(k); }); if(s.length>300) s=s.slice(-300); try{ localStorage.setItem(SK,JSON.stringify(s)); }catch(e){} }
+ function badge(){
+   var t=document.getElementById("mtgTile54"); if(!t) return; var ic=t.querySelector(".ic"); if(!ic) return;
+   var b=ic.querySelector(".mtgN57"), on=hasNew();
+   if(on&&!b){ b=document.createElement("span"); b.className="mtgN57"; b.textContent="N"; b.setAttribute("aria-label","새 회의록"); ic.appendChild(b); }
+   if(!on&&b) b.remove();
+ }
+ function refresh(){
+   if(busy||!me()) return; var last=+localStorage.getItem(TK)||0; if(rows()&&Date.now()-last<EVERY) return;
+   busy=true;
+   fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"minutes",user:me()})})
+    .then(function(r){ return r.json(); })
+    .then(function(res){ if(res&&res.ok&&res.rows){ try{ localStorage.setItem(CK,JSON.stringify(res.rows)); localStorage.setItem(TK,String(Date.now())); }catch(e){} } })
+    .catch(function(){}).then(function(){ busy=false; badge(); });
+ }
+ function tick(){
+   var m=document.getElementById("mtg54");
+   if(m&&m.classList.contains("on")) markSeen();   // 회의록 화면이 열려 있으면 본 것으로 처리(새로 불러온 회의 포함)
+   badge();
+ }
+ // 아이콘을 누르는 순간 바로 알약 제거
+ document.addEventListener("click",function(e){ if(e.target.closest&&e.target.closest("#mtgTile54")){ markSeen(); badge(); } },true);
+ document.addEventListener("visibilitychange",function(){ if(!document.hidden) refresh(); });
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ ready(function(){ tick(); refresh(); setInterval(tick,1500); setInterval(refresh,60000); });
 })();
 </script>
 
