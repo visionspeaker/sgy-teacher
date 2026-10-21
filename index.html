@@ -378,7 +378,7 @@
       onerror="this.style.display='none';document.getElementById('logoFb').style.display='flex'">
     <div class="logoFb" id="logoFb"><i class="ti ti-school"></i></div>
     <div><h1>송탄영광교회 중고등부 교사</h1><p>교사 전용 앱 · TEACHERS</p></div>
-    <span class="badge">V47</span>
+    <span class="badge">V48</span>
   </header>
 
   <main id="main">
@@ -3012,6 +3012,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v37: 교사앱 릴리스노트 — 주황 배너 탭(V37) */
 (function(){
  var CARDS=[
+  {h:"2026 다니엘기도회 참여 현황", bd:"신규",cls:"bdN", v:"V48", d:"2026/10/21",
+   secs:[["[신규]","- 11/1~21 다니엘기도회 기간에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요"]]},
   {h:"교사 회의록 새 글 알림", bd:"신규",cls:"bdN", v:"V47", d:"2026/10/21",
    secs:[["[신규]","- 새 회의록이 올라오면 홈 '교사 회의록' 아이콘에 빨간 N 표시가 떠요<br>- '교사 회의록'을 한 번 열어 보면 표시가 사라져요(휴대폰·PC 등 기기마다 따로 기억해요)"]]},
   {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
@@ -4128,7 +4130,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 관리자 화면 ── */
  var wrap=document.createElement("div"); wrap.id="stat55";
- var rows=null, loading=false, failed=false, per="t", sortBy="c", openU=null;
+ var rows=null, loading=false, failed=false, per="t", sortBy="c", openU=null, app="접속기록", seq=0;   /* app: 접속기록(교사앱) | 학생앱 */
+ function stu(){ return app==="학생앱"; }
+ function devId(u){ return /^d[a-z0-9]{8,20}$/.test(u); }
  var COL=["#f59e0b","#ef4444","#10b981","#3b82f6","#8b5cf6","#ec4899","#14b8a6","#f97316","#6366f1","#84cc16","#06b6d4","#a855f7","#e11d48","#0ea5e9","#64748b"];
  var WD=["일","월","화","수","목","금","토"];
  function d0(t){ var d=new Date(t); d.setHours(0,0,0,0); return d.getTime(); }
@@ -4173,11 +4177,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function render(){
    if(!wrap.parentNode) return;
    var h='<div class="sIn"><div class="sBack" data-a="close"><i class="ti ti-arrow-left"></i>홈으로</div>'+
-     '<div class="sHero"><div class="k">TEACHER ANALYTICS</div><div class="t">교사 접속 통계</div><div class="s"><i class="ti ti-lock"></i>관리자 전용 · 교사 화면에는 표시되지 않아요</div><i class="ti ti-chart-bar em"></i></div>'+
+     '<div class="sHero"><div class="k">'+(stu()?'STUDENT APP ANALYTICS':'TEACHER ANALYTICS')+'</div><div class="t">'+(stu()?'학생앱 접속 통계':'교사 접속 통계')+'</div><div class="s"><i class="ti ti-lock"></i>관리자 전용 · 교사 화면에는 표시되지 않아요</div><i class="ti ti-chart-bar em"></i></div>'+
+     '<div class="seg">'+[["접속기록","교사앱"],["학생앱","학생앱"]].map(function(p){ return '<span data-a="app" data-v="'+p[0]+'" class="'+(app===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>'+
      '<div class="seg">'+[["t","오늘"],["y","어제"],["w","이번 주"],["m","이번 달"],["a","6개월"]].map(function(p){ return '<span data-a="per" data-v="'+p[0]+'" class="'+(per===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>';
    if(!rows||failed){ wrap.innerHTML=h+'<div class="empty">'+(failed?'통계를 불러오지 못했습니다.<br><span data-a="retry" style="display:inline-block;margin-top:10px;padding:7px 14px;border-radius:999px;background:#eef0ff;color:#4338ca;font-weight:700;cursor:pointer">다시 불러오기</span>':'불러오는 중…')+'</div></div>'; return; }
    var all=sessions(), R=range(), A=agg(all,R.a,R.b), P=R.pa!=null?agg(all,R.pa,R.pb):null;
-   h+='<div class="kpis"><div class="kpi"><div class="l">접속 교사</div><div class="v">'+A.users+'<small>/'+TEACHERS.length+'명</small></div>'+delta(A.users,P&&P.users,"명")+'</div>'+
+   h+='<div class="kpis"><div class="kpi"><div class="l">'+(stu()?'접속 학생·기기':'접속 교사')+'</div><div class="v">'+A.users+'<small>'+(stu()?'명':'/'+TEACHERS.length+'명')+'</small></div>'+delta(A.users,P&&P.users,"명")+'</div>'+
      '<div class="kpi"><div class="l">총 접속</div><div class="v">'+A.n+'<small>회</small></div>'+delta(A.n,P&&P.n,"%")+'</div>'+
      '<div class="kpi"><div class="l">평균 체류</div><div class="v">'+Math.floor(A.avg/60)+'<small>분</small> '+Math.round(A.avg%60)+'<small>초</small></div>'+delta(A.avg,P&&(P.n?P.avg:null),"s")+'</div></div>';
    /* 최근 2주 일별 */
@@ -4193,12 +4198,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var TL=Object.keys(T).map(function(k){ return T[k]; });
    TL.sort(function(x,y){ return sortBy==="c"?(y.c-x.c||y.sec-x.sec):sortBy==="t"?(y.sec-x.sec):(y.last-x.last); });
    var mxS=Math.max(1,Math.max.apply(null,TL.map(function(x){ return sortBy==="c"?x.c:x.sec; }).concat([1])));
-   h+='<div class="h"><i class="ti ti-users"></i>교사별<div class="sort">'+[["c","접속순"],["t","체류순"],["r","최근순"]].map(function(p){ return '<span data-a="sort" data-v="'+p[0]+'" class="'+(sortBy===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div></div><div class="card">';
+   h+='<div class="h"><i class="ti ti-users"></i>'+(stu()?'학생·기기별':'교사별')+'<div class="sort">'+[["c","접속순"],["t","체류순"],["r","최근순"]].map(function(p){ return '<span data-a="sort" data-v="'+p[0]+'" class="'+(sortBy===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div></div><div class="card">';
    if(!TL.length) h+='<div class="empty">이 기간에는 기록이 없어요</div>';
    TL.forEach(function(x){
      var ci=TEACHERS.indexOf(x.u), open=openU===x.u;
-     h+='<div class="tr'+(open?' open':'')+'" data-a="t" data-v="'+esc(x.u)+'"><div class="tTop"><div class="av" style="background:'+COL[(ci<0?0:ci)%COL.length]+'">'+esc(x.u.slice(-2))+'</div>'+
-       '<div class="tN"><b>'+esc(x.u)+'</b><span>'+when(x.last)+'</span></div><div class="tS"><b>'+x.c+'회</b><span>'+hm(x.sec)+'</span></div></div>'+
+     h+='<div class="tr'+(open?' open':'')+'" data-a="t" data-v="'+esc(x.u)+'"><div class="tTop"><div class="av" style="background:'+(devId(x.u)?'#a1a1aa':COL[(ci<0?0:ci)%COL.length])+'">'+esc(devId(x.u)?'기기':x.u.slice(-2))+'</div>'+
+       '<div class="tN"><b>'+esc(devId(x.u)?'로그인 안 한 기기 ·'+x.u.slice(-4):x.u)+'</b><span>'+when(x.last)+'</span></div><div class="tS"><b>'+x.c+'회</b><span>'+hm(x.sec)+'</span></div></div>'+
        '<div class="mini"><i style="width:'+Math.round((sortBy==="c"?x.c:x.sec)/mxS*100)+'%"></i></div>';
      if(open){
        var ML=Object.keys(x.menus).map(function(k){ return [k,x.menus[k]]; }).sort(function(p,q){ return q[1]-p[1]; }).slice(0,5);
@@ -4210,12 +4215,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    });
    h+='</div>';
    /* 메뉴별 */
-   var icons=tileIcons(), M={};
+   var icons=stu()?{}:tileIcons(), M={};
    Object.keys(icons).forEach(function(k){ M[k]={n:k,c:0,u:{}}; });
    A.S.forEach(function(s){ s.m.forEach(function(m){ var x=M[m]||(M[m]={n:m,c:0,u:{}}); x.c++; x.u[s.u]=1; }); });
    var MLs=Object.keys(M).map(function(k){ return M[k]; }).sort(function(p,q){ return q.c-p.c; });
    var mxM=Math.max(1,MLs.length?MLs[0].c:1);
-   h+='<div class="h"><i class="ti ti-layout-grid"></i>메뉴별 사용<span class="r">사용 횟수 · 사용 교사</span></div><div class="card">'+
+   h+='<div class="h"><i class="ti ti-layout-grid"></i>메뉴별 사용<span class="r">사용 횟수 · '+(stu()?'사용자':'사용 교사')+'</span></div><div class="card">'+
      MLs.map(function(m){ var ic=icons[m.n], nu=Object.keys(m.u).length;
        var icH='<div class="ic"><i class="ti ti-pointer"></i></div>';
        if(ic){ var cs=getComputedStyle(ic), im=ic.querySelector("img"), ii=ic.querySelector("i");
@@ -4224,24 +4229,24 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    /* 2주 이상 미접속(전체 기록 기준) */
    var lastBy={}; all.forEach(function(s){ lastBy[s.u]=Math.max(lastBy[s.u]||0,s.e); });
    var cut=Date.now()-14*864e5, idle=TEACHERS.filter(function(n){ return !(lastBy[n]>=cut); });
-   h+='<div class="h"><i class="ti ti-user-off"></i>2주 이상 미접속<span class="r">마지막 접속</span></div><div class="card '+(idle.length?'idle':'')+'">'+
+   if(!stu()) h+='<div class="h"><i class="ti ti-user-off"></i>2주 이상 미접속<span class="r">마지막 접속</span></div><div class="card '+(idle.length?'idle':'')+'">'+
      (idle.length?idle.map(function(n){ return '<span>'+esc(n)+'<em>'+(lastBy[n]?md(lastBy[n]):'기록 없음')+'</em></span>'; }).join(""):'<div class="empty">모든 교사가 2주 안에 접속했어요</div>')+'</div>';
-   h+='<div class="foot"><i class="ti ti-info-circle"></i><span>앱이 화면에 떠 있던 시간만 체류로 셉니다. 30분 넘게 쉬었다 들어오면 새 접속으로 셉니다. 기록은 10/15부터 쌓이며, 6개월이 지나면 자동으로 지워집니다.</span></div></div>';
+   h+='<div class="foot"><i class="ti ti-info-circle"></i><span>앱이 화면에 떠 있던 시간만 체류로 셉니다. 30분 넘게 쉬었다 들어오면 새 접속으로 셉니다. 기록은 '+(stu()?'10/21':'10/15')+'부터 쌓이며,'+(stu()?' 학생앱은 다니엘기도회에 로그인한 학생만 이름으로, 나머지는 기기 번호로 남습니다.':'')+' 6개월이 지나면 자동으로 지워집니다.</span></div></div>';
    var sc=wrap.scrollTop; wrap.innerHTML=h; wrap.scrollTop=sc;
  }
  function load(){
-   if(loading) return; loading=true; failed=false;
+   if(loading) return; loading=true; failed=false; var my=++seq;
    /* 구글이 요청을 기본 응답('출석 API 연결됨')으로 돌려보내는 경우가 있어, rows 배열이 없으면 최대 3번 다시 요청 */
    function once(){ return window.__TRK_MOCK?Promise.resolve({ok:true,rows:window.__TRK_MOCK}):
      new Promise(function(ok,no){ /* 구글 응답이 1분 넘게 멈추는 경우가 있어 20초가 지나면 다시 시도 */
        var ac=window.AbortController?new AbortController():null, t=setTimeout(function(){ if(ac) ac.abort(); no(new Error("timeout")); },20000);
-       fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"trackStats",user:me()}),signal:ac?ac.signal:undefined})
+       fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"trackStats",user:me(),app:app}),signal:ac?ac.signal:undefined})
          .then(function(r){ return r.json(); }).then(function(j){ clearTimeout(t); ok(j); },function(e){ clearTimeout(t); no(e); }); }); }
    function tryN(n){ return once().catch(function(){ return null; }).then(function(res){
      if(res&&res.ok&&Array.isArray(res.rows)) return res;
      if(res&&res.ok===false&&res.error) return res;
      return n>1?tryN(n-1):null; }); }
-   tryN(3).then(function(res){ if(res&&res.ok&&Array.isArray(res.rows)) rows=res.rows; else failed=true; }).then(function(){ loading=false; render(); });
+   tryN(3).then(function(res){ if(my!==seq) return; if(res&&res.ok&&Array.isArray(res.rows)) rows=res.rows; else failed=true; loading=false; render(); });
  }
  function openS(){ if(me()!==ADMIN) return; rows=null; failed=false; render(); load(); wrap.classList.add("on"); wrap.scrollTop=0; }
  function closeS(){ wrap.classList.remove("on"); }
@@ -4250,6 +4255,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(a==="close") closeS();
    else if(a==="retry"){ rows=null; failed=false; render(); load(); }
    else if(a==="per"){ per=v; openU=null; render(); }
+   else if(a==="app"){ if(app===v) return; app=v; openU=null; rows=null; failed=false; loading=false; render(); load(); }
    else if(a==="sort"){ sortBy=v; render(); }
    else if(a==="t"){ openU=openU===v?null:v; render(); }
  });
@@ -4315,6 +4321,156 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  document.addEventListener("visibilitychange",function(){ if(!document.hidden) refresh(); });
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  ready(function(){ tick(); refresh(); setInterval(tick,1500); setInterval(refresh,60000); });
+})();
+</script>
+
+<style>
+/* enh_v58: 2026 다니엘기도회 참여 현황 (학생앱 참여 체크 → 교사앱 서버 dn_*, 비공개 시트) */
+#dnModal{position:fixed;inset:0;background:rgba(29,27,58,.45);z-index:100003;display:none;align-items:center;justify-content:center;padding:16px}
+#dnModal.on{display:flex}
+#dnModal .card{background:#fff;width:100%;max-width:420px;max-height:86vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+#dnModal .hd{background:#efeaff;padding:14px 16px;border-bottom:1px solid #ddd3fb;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#dnModal .hd .t1{font-size:16px;font-weight:500;color:#4b2fb8;display:flex;align-items:center;gap:7px}
+#dnModal .hd .t2{font-size:12px;color:#8a7cc4;margin-top:2px}
+#dnModal .x{background:none;border:0;color:#4b2fb8;font-size:22px;line-height:1;cursor:pointer;font-family:inherit;padding:0 2px}
+#dnSum{display:flex;gap:6px;padding:12px 14px 8px}
+#dnSum .b{flex:1;border-radius:10px;padding:8px 2px;text-align:center}
+#dnSum .b .n{font-size:11px}
+#dnSum .b .v{font-size:19px;font-weight:500}
+#dnTabs{display:flex;gap:5px;padding:0 14px 8px;flex-wrap:wrap}
+#dnTabs button{border:1px solid #e4e0f5;background:#fff;color:#6b6790;border-radius:999px;padding:5px 11px;font-size:12.5px;font-family:inherit;cursor:pointer}
+#dnTabs button.on{background:#5b3fd6;border-color:#5b3fd6;color:#fff}
+#dnTabs .sp{flex:1}
+#dnList{padding:0 12px 10px;overflow:auto}
+#dnList .row{border:1px solid #ece9f7;border-radius:10px;padding:9px 11px;margin-bottom:7px}
+#dnList .top{display:flex;align-items:center;gap:7px}
+#dnList .nm{font-size:14.5px;font-weight:500;color:#1d1b3a}
+#dnList .gr{font-size:11px;color:#8b89a3}
+#dnList .tg{font-size:10.5px;border-radius:999px;padding:2px 7px}
+#dnList .cnt{margin-left:auto;font-size:13px;font-weight:500;color:#4b2fb8;white-space:nowrap}
+#dnList .cells{display:grid;grid-template-columns:repeat(21,1fr);gap:2px;margin-top:7px}
+#dnList .c{height:16px;border-radius:3px;background:#f3f2f8;font-size:8px;line-height:16px;text-align:center;color:transparent;cursor:pointer}
+#dnList .c.past{background:#e6e4ef}
+#dnList .c.s{background:#6c5ce7}
+#dnList .c.t{background:#1d9e75}
+#dnList .c.td{box-shadow:inset 0 0 0 1.5px #5b3fd6}
+#dnList .c.fu{cursor:default}
+#dnList .ft{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:#a09eb8}
+#dnList .rs{background:none;border:0;color:#8b89a3;font-size:11px;font-family:inherit;cursor:pointer;text-decoration:underline;padding:0}
+#dnList .empty{text-align:center;color:#a09eb8;font-size:13px;padding:22px 0;line-height:1.6}
+#dnLeg{display:flex;gap:10px;justify-content:center;font-size:11px;color:#8b89a3;padding:0 14px 8px}
+#dnLeg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+#dnFoot{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-top:1px solid #efedf7}
+#dnFoot .st{color:#8b89a3;font-size:11.5px}
+#dnRe{background:#fff;border:1px solid #e4e0f5;color:#6b6790;border-radius:9px;padding:6px 12px;font-size:12.5px;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+</style>
+<script>
+/* enh_v58: 2026 다니엘기도회 참여 현황 — 11/1~11/22 홈 상단 카드, 그 밖엔 아카이브 맨 위(삭제 아님)
+   서버(ATTEND_API): dn_board(교사만) / dn_tcheck(대신 체크·취소, 오늘까지만) / dn_reset(숫자 초기화) */
+(function(){
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
+ var DAYS=21, GR=["전체","중1","중2","중3","고1","고2","고3"];
+ var list=null, state=null, grade="전체", sortBy="g", busy=false;
+ function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
+ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+ function post(o){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){ return r.json(); }); }
+ function live(){ var n=new Date(); return n>=new Date(2026,10,1,0,0,0) && n<new Date(2026,10,23,0,0,0); }
+ function dayNow(){ var n=new Date(); return Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(2026,10,1))/864e5)+1; }
+ function ensureHome(){
+   var ex=document.getElementById("sgyDnHome");
+   if(!live()){ if(ex) ex.remove(); return; }
+   var panel=document.getElementById("s-home"); if(ex || !panel) return;
+   var grid=panel.querySelector(".grid"), d=dayNow();
+   var a=document.createElement("a"); a.id="sgyDnHome"; a.className="campBtn"; a.href="#";
+   a.style.cssText="background:#f3efff;border-color:#d9cffb";
+   a.innerHTML='<div class="ci" style="background:#e4dbff;color:#5b3fd6"><i class="ti ti-flame"></i></div>'+
+     '<div class="ct"><div class="t1" style="color:#4b2fb8">2026 다니엘기도회 <span class="sgyBadge" style="background:#5b3fd6;color:#fff">'+(d<=DAYS?'Day '+d:'종료')+'</span></div>'+
+     '<div class="t2" style="color:#8a7cc4">학생 참여 현황 · 11/1~11/21</div></div><i class="ti ti-chevron-right" style="color:#5b3fd6"></i>';
+   var min=document.getElementById("sgyMinHome");
+   if(min) panel.insertBefore(a, min); else if(grid) panel.insertBefore(a, grid); else panel.appendChild(a);
+ }
+ function ensureArchive(){
+   var al=document.getElementById("archiveList"); if(!al) return;
+   var ar=document.getElementById("sgyDnAr");
+   if(live()){ if(ar) ar.remove(); return; }
+   if(ar) return;
+   var a=document.createElement("a"); a.id="sgyDnAr"; a.className="arItem"; a.href="#";
+   a.innerHTML='<div class="ci"><i class="ti ti-flame"></i></div><div class="ct"><div class="t1">2026 다니엘기도회 참여 현황</div><div class="t2">학생앱 참여 체크 · 11/1~11/21</div></div>';
+   al.insertBefore(a, al.firstChild);
+ }
+ function buildModal(){
+   if(document.getElementById("dnModal")) return;
+   var m=document.createElement("div"); m.id="dnModal";
+   m.innerHTML='<div class="card">'+
+     '<div class="hd"><div><div class="t1"><i class="ti ti-flame"></i> 2026 다니엘기도회 참여 현황</div><div class="t2">학생앱 참여 체크 · 11/1~11/21 · 매일 저녁 7~11시</div></div><button class="x" id="dnX" type="button" aria-label="닫기">&times;</button></div>'+
+     '<div id="dnSum"></div><div id="dnTabs"></div>'+
+     '<div id="dnLeg"><span><i style="background:#6c5ce7"></i>학생 체크</span><span><i style="background:#1d9e75"></i>선생님 체크</span><span><i style="background:#e6e4ef"></i>불참</span></div>'+
+     '<div id="dnList"></div>'+
+     '<div id="dnFoot"><span class="st" id="dnSt"></span><button id="dnRe" type="button"><i class="ti ti-refresh"></i> 새로고침</button></div>'+
+     '</div>';
+   document.body.appendChild(m);
+   m.addEventListener("click",function(e){
+     if(e.target===m || e.target.closest("#dnX")){ m.classList.remove("on"); return; }
+     if(e.target.closest("#dnRe")){ load(); return; }
+     var t=e.target.closest("[data-g]"); if(t){ grade=t.getAttribute("data-g"); render(); return; }
+     var so=e.target.closest("[data-sort]"); if(so){ sortBy=so.getAttribute("data-sort"); render(); return; }
+     var c=e.target.closest(".c[data-d]"); if(c){ toggle(c.getAttribute("data-n"), +c.getAttribute("data-d"), c.classList.contains("s")||c.classList.contains("t")); return; }
+     var rs=e.target.closest(".rs[data-n]"); if(rs){ reset(rs.getAttribute("data-n")); return; }
+   });
+ }
+ function cnt(x){ return Object.keys(x.days).length; }
+ function render(){
+   var sum=document.getElementById("dnSum"), tb=document.getElementById("dnTabs"), el=document.getElementById("dnList"); if(!sum) return;
+   if(!me()){ sum.innerHTML=""; tb.innerHTML=""; el.innerHTML='<div class="empty">로그인한 선생님만 볼 수 있어요.</div>'; return; }
+   if(!list){ el.innerHTML='<div class="empty">불러오는 중…</div>'; return; }
+   var d=state?state.day:dayNow();
+   var today=list.filter(function(x){ return x.days[d]; }).length, g10=list.filter(function(x){ return cnt(x)>=10; }).length, g21=list.filter(function(x){ return cnt(x)>=DAYS; }).length, reg=list.filter(function(x){ return x.reg; }).length;
+   function b(n,v,bg,c){ return '<div class="b" style="background:'+bg+'"><div class="n" style="color:'+c+'">'+n+'</div><div class="v" style="color:'+c+'">'+v+'</div></div>'; }
+   sum.innerHTML=b(d>=1&&d<=DAYS?"오늘(Day "+d+")":"오늘",(d>=1&&d<=DAYS?today:"-")+"명","#efecff","#4b3bc4")+b("10일 이상",g10+"명","#fff3df","#8a5a00")+b("21일 완주",g21+"명","#e3f4ea","#1f7a4a")+b("로그인",reg+"/"+list.length,"#f3f2f8","#6b6790");
+   tb.innerHTML=GR.map(function(g){ return '<button type="button" data-g="'+g+'" class="'+(grade===g?"on":"")+'">'+g+'</button>'; }).join("")+'<span class="sp"></span>'+
+     [["g","학년순"],["c","참여순"]].map(function(p){ return '<button type="button" data-sort="'+p[0]+'" class="'+(sortBy===p[0]?"on":"")+'">'+p[1]+'</button>'; }).join("");
+   var L=list.filter(function(x){ return grade==="전체"||x.grade===grade; });
+   if(sortBy==="c") L=L.slice().sort(function(a,b){ return cnt(b)-cnt(a); });
+   if(!L.length){ el.innerHTML='<div class="empty">학생이 없어요</div>'; return; }
+   el.innerHTML=L.map(function(x){
+     var n=cnt(x), cells="";
+     for(var i=1;i<=DAYS;i++){ var v=x.days[i]; cells+='<div class="c'+(v?' '+v:'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+'"></div>'; }
+     var tag=n>=DAYS?'<span class="tg" style="background:#e3f4ea;color:#1f7a4a">완주</span>':(n>=10?'<span class="tg" style="background:#fff3df;color:#8a5a00">10일+</span>':'');
+     return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+'</span><span class="gr">'+esc(x.grade)+'</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
+       '<div class="cells">'+cells+'</div>'+
+       '<div class="ft"><span>'+(x.reg?'학생앱 로그인함':'아직 로그인 안 함')+'</span>'+(x.reg?'<button type="button" class="rs" data-n="'+esc(x.name)+'">숫자 초기화</button>':'')+'</div></div>';
+   }).join("");
+ }
+ function stamp(t){ var st=document.getElementById("dnSt"); if(st) st.textContent=t; }
+ function load(){
+   if(!me()){ render(); return; }
+   stamp("불러오는 중…");
+   post({action:"dn_board",user:me()}).then(function(j){
+     if(j&&j.ok&&Array.isArray(j.list)){ list=j.list; state=j.state; render(); var d=new Date(); stamp("업데이트 "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)); }
+     else { stamp(j&&j.error==="notteacher"?"교사 로그인이 필요해요":"불러오기 실패 · 새로고침"); render(); }
+   }).catch(function(){ stamp("불러오기 실패 · 새로고침"); });
+ }
+ function toggle(name,day,on){
+   var d=state?state.day:dayNow();
+   if(busy||day>d) return;
+   if(!confirm(name+" · Day "+day+(on?" 참여 체크를 취소할까요?":" 참여를 선생님이 대신 체크할까요?"))) return;
+   busy=true; stamp("저장하는 중…");
+   post({action:"dn_tcheck",user:me(),name:name,day:day,on:!on}).then(function(j){
+     busy=false; if(j&&j.ok) load(); else { stamp("저장 실패"); alert(j&&j.error==="badday"?"아직 오지 않은 날은 체크할 수 없어요.":"저장하지 못했어요. 다시 시도해 주세요."); }
+   }).catch(function(){ busy=false; stamp("저장 실패"); });
+ }
+ function reset(name){
+   if(busy||!confirm(name+" 학생의 로그인 숫자 4자리를 초기화할까요?\n학생은 다음에 들어올 때 새 숫자를 정하면 돼요. 참여 기록은 그대로예요.")) return;
+   busy=true; stamp("초기화하는 중…");
+   post({action:"dn_reset",user:me(),name:name}).then(function(j){ busy=false; if(j&&j.ok){ alert(name+" 학생의 숫자를 초기화했어요."); load(); } else stamp("초기화 실패"); }).catch(function(){ busy=false; stamp("초기화 실패"); });
+ }
+ document.addEventListener("click",function(e){
+   var t=e.target.closest && e.target.closest("#sgyDnAr, #sgyDnHome");
+   if(t){ e.preventDefault(); e.stopPropagation(); buildModal(); document.getElementById("dnModal").classList.add("on"); render(); load(); }
+ }, true);
+ function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
+ function tick(){ ensureArchive(); ensureHome(); }
+ ready(function(){ tick(); setInterval(tick,1500); });
 })();
 </script>
 
