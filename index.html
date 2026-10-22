@@ -4441,7 +4441,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      var n=cnt(x), cells="";
      for(var i=1;i<=DAYS;i++){ var v=x.days[i]; cells+='<div class="c'+(v?' '+v:'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+'"></div>'; }
      var tag=n>=DAYS?'<span class="tg" style="background:#e3f4ea;color:#1f7a4a">완주</span>':(n>=10?'<span class="tg" style="background:#fff3df;color:#8a5a00">10일+</span>':'');
-     if(T) return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+' 선생님</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
+     if(T) return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+(x.name==="강유석"?' 전도사님':' 선생님')+'</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
        '<div class="cells">'+cells+'</div><div class="ft"><span>'+(x.reg?'학생앱에서 참여 중':'아직 학생앱에서 참여 안 함')+'</span></div></div>';
      return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+'</span><span class="gr">'+esc(x.grade)+'</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
        '<div class="cells">'+cells+'</div>'+
