@@ -3015,7 +3015,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"2026 다니엘기도회 참여 현황", bd:"신규",cls:"bdN", v:"V48", d:"2026/10/21",
-   secs:[["[신규]","- 11/1~21 다니엘기도회 기간에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요<br>- 선생님도 학생앱에서 함께 참여할 수 있어요. 교사앱에 로그인돼 있으면 따로 로그인하지 않아도 자동으로 알아봐요(아이폰 홈 화면 앱은 교사앱 이름·비밀번호로 한 번 로그인)<br>- 참여 현황에서 학생과 선생님을 나눠 보고, 숫자도 따로 세요"]]},
+   secs:[["[신규]","- 11/1~21 다니엘기도회 기간에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요<br>- 교회(오프라인)·유튜브(온라인) 참여를 색으로 나눠 보고, 오늘 교회·유튜브 인원을 따로 세요<br>- 선생님도 학생앱에서 함께 참여할 수 있어요. 교사앱에 로그인돼 있으면 따로 로그인하지 않아도 자동으로 알아봐요(아이폰 홈 화면 앱은 교사앱 이름·비밀번호로 한 번 로그인)<br>- 참여 현황에서 학생과 선생님을 나눠 보고, 숫자도 따로 세요"]]},
   {h:"교사 회의록 새 글 알림", bd:"신규",cls:"bdN", v:"V47", d:"2026/10/21",
    secs:[["[신규]","- 새 회의록이 올라오면 홈 '교사 회의록' 아이콘에 빨간 N 표시가 떠요<br>- '교사 회의록'을 한 번 열어 보면 표시가 사라져요(휴대폰·PC 등 기기마다 따로 기억해요)"]]},
   {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
@@ -4330,7 +4330,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 /* enh_v58: 2026 다니엘기도회 참여 현황 (학생앱 참여 체크 → 교사앱 서버 dn_*, 비공개 시트) */
 #dnModal{position:fixed;inset:0;background:rgba(29,27,58,.45);z-index:100003;display:none;align-items:center;justify-content:center;padding:16px}
 #dnModal.on{display:flex}
-#dnModal .card{background:#fff;width:100%;max-width:420px;max-height:86vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+#dnModal .card{background:#fff;width:100%;max-width:420px;max-height:86vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;position:relative}
 #dnModal .hd{background:#efeaff;padding:14px 16px;border-bottom:1px solid #ddd3fb;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 #dnModal .hd .t1{font-size:16px;font-weight:500;color:#4b2fb8;display:flex;align-items:center;gap:7px}
 #dnModal .hd .t2{font-size:12px;color:#8a7cc4;margin-top:2px}
@@ -4357,7 +4357,20 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #dnList .c{height:16px;border-radius:3px;background:#f3f2f8;font-size:8px;line-height:16px;text-align:center;color:transparent;cursor:pointer}
 #dnList .c.past{background:#e6e4ef}
 #dnList .c.s{background:#6c5ce7}
-#dnList .c.t{background:#1d9e75}
+#dnList .c.y{background:#f97316}
+#dnList .c.tc{background-image:radial-gradient(circle,#fff 24%,transparent 28%)}
+#dnPick{position:absolute;inset:0;background:rgba(29,27,58,.35);display:flex;align-items:center;justify-content:center;z-index:2}
+#dnPick .pk{background:#fff;border-radius:14px;padding:14px;width:250px;text-align:center}
+#dnPick .pt{font-size:14px;font-weight:500;color:#1d1b3a}
+#dnPick .ps{font-size:11.5px;color:#8b89a3;margin-top:2px}
+#dnPick .pb{display:flex;gap:6px;margin-top:12px}
+#dnPick .pb button{flex:1;border-radius:10px;padding:10px 4px;font-size:13px;font-family:inherit;cursor:pointer;border:1px solid #e4e0f5;background:#fff;color:#1d1b3a;display:flex;flex-direction:column;align-items:center;gap:3px}
+#dnPick .pb button i{font-size:19px}
+#dnPick .pb .pc{background:#5b3fd6;border-color:#5b3fd6;color:#fff}
+#dnPick .pb .py{color:#c2410c;border-color:#f5c4b3}
+#dnPick .pb .px{color:#c0392b;border-color:#f3b3ad}
+#dnPick .pz{margin-top:10px;background:none;border:0;color:#8b89a3;font-size:12.5px;font-family:inherit;cursor:pointer}
+#dnSub{font-size:11.5px;color:#8b89a3;padding:0 16px 6px}
 #dnList .c.td{box-shadow:inset 0 0 0 1.5px #5b3fd6}
 #dnList .c.fu{cursor:default}
 #dnList .ft{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:#a09eb8}
@@ -4408,8 +4421,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var m=document.createElement("div"); m.id="dnModal";
    m.innerHTML='<div class="card">'+
      '<div class="hd"><div><div class="t1"><i class="ti ti-flame"></i> 2026 다니엘기도회 참여 현황</div><div class="t2">학생앱 참여 체크 · 11/1~11/21 · 매일 저녁 7~11시</div></div><button class="x" id="dnX" type="button" aria-label="닫기">&times;</button></div>'+
-     '<div id="dnWho"></div><div id="dnSum"></div><div id="dnTabs"></div>'+
-     '<div id="dnLeg"><span><i style="background:#6c5ce7"></i>학생 체크</span><span><i style="background:#1d9e75"></i>선생님 체크</span><span><i style="background:#e6e4ef"></i>불참</span></div>'+
+     '<div id="dnWho"></div><div id="dnSum"></div><div id="dnSub"></div><div id="dnTabs"></div>'+
+     '<div id="dnLeg"><span><i style="background:#6c5ce7"></i>교회</span><span><i style="background:#f97316"></i>유튜브</span><span><i style="background:#e6e4ef"></i>불참</span><span><i style="background:#6c5ce7;background-image:radial-gradient(circle,#fff 24%,transparent 28%)"></i>선생님 체크</span></div>'+
      '<div id="dnList"></div>'+
      '<div id="dnFoot"><span class="st" id="dnSt"></span><button id="dnRe" type="button"><i class="ti ti-refresh"></i> 새로고침</button></div>'+
      '</div>';
@@ -4420,7 +4433,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      var w=e.target.closest("[data-who]"); if(w){ who=w.getAttribute("data-who"); render(); return; }
      var t=e.target.closest("[data-g]"); if(t){ grade=t.getAttribute("data-g"); render(); return; }
      var so=e.target.closest("[data-sort]"); if(so){ sortBy=so.getAttribute("data-sort"); render(); return; }
-     var c=e.target.closest(".c[data-d]"); if(c){ toggle(c.getAttribute("data-n"), +c.getAttribute("data-d"), c.classList.contains("s")||c.classList.contains("t")); return; }
+     var c=e.target.closest(".c[data-d]"); if(c){ toggle(c.getAttribute("data-n"), +c.getAttribute("data-d"), c.classList.contains("s")||c.classList.contains("y")); return; }
      var rs=e.target.closest(".rs[data-n]"); if(rs){ reset(rs.getAttribute("data-n")); return; }
    });
  }
@@ -4431,9 +4444,11 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(!me()){ sum.innerHTML=""; tb.innerHTML=""; el.innerHTML='<div class="empty">로그인한 선생님만 볼 수 있어요.</div>'; return; }
    if(!list){ el.innerHTML='<div class="empty">불러오는 중…</div>'; return; }
    var d=state?state.day:dayNow(), T=who==="t", src=T?(tlist||[]):list;
-   var today=src.filter(function(x){ return x.days[d]; }).length, g10=src.filter(function(x){ return cnt(x)>=10; }).length, g21=src.filter(function(x){ return cnt(x)>=DAYS; }).length, reg=src.filter(function(x){ return x.reg; }).length, ever=src.filter(function(x){ return cnt(x)>0; }).length;
+   var todC=src.filter(function(x){ return x.days[d] && x.days[d].charAt(0)!=="y"; }).length, todY=src.filter(function(x){ return x.days[d] && x.days[d].charAt(0)==="y"; }).length, g10=src.filter(function(x){ return cnt(x)>=10; }).length, g21=src.filter(function(x){ return cnt(x)>=DAYS; }).length, reg=src.filter(function(x){ return x.reg; }).length, ever=src.filter(function(x){ return cnt(x)>0; }).length;
    function b(n,v,bg,c){ return '<div class="b" style="background:'+bg+'"><div class="n" style="color:'+c+'">'+n+'</div><div class="v" style="color:'+c+'">'+v+'</div></div>'; }
-   sum.innerHTML=b(d>=1&&d<=DAYS?"오늘(Day "+d+")":"오늘",(d>=1&&d<=DAYS?today:"-")+"명","#efecff","#4b3bc4")+b("10일 이상",g10+"명","#fff3df","#8a5a00")+b("21일 완주",g21+"명","#e3f4ea","#1f7a4a")+(T?b("참여한 적",ever+"/"+src.length,"#f3f2f8","#6b6790"):b("로그인",reg+"/"+src.length,"#f3f2f8","#6b6790"));
+   var inP=d>=1&&d<=DAYS;
+   sum.innerHTML=b("오늘 교회",(inP?todC:"-")+"명","#efecff","#4b3bc4")+b("오늘 유튜브",(inP?todY:"-")+"명","#fff1e6","#c2410c")+b("10일 이상",g10+"명","#fff3df","#8a5a00")+b("21일 완주",g21+"명","#e3f4ea","#1f7a4a");
+   document.getElementById("dnSub").textContent=(inP?"Day "+d+" · ":"")+(T?"참여한 적 "+ever+"/"+src.length+"명":"학생앱 로그인 "+reg+"/"+src.length+"명");
    tb.innerHTML=(T?'':GR.map(function(g){ return '<button type="button" data-g="'+g+'" class="'+(grade===g?"on":"")+'">'+g+'</button>'; }).join(""))+'<span class="sp"></span>'+
      [["g",T?"명단순":"학년순"],["c","참여순"]].map(function(p){ return '<button type="button" data-sort="'+p[0]+'" class="'+(sortBy===p[0]?"on":"")+'">'+p[1]+'</button>'; }).join("");
    var L=T?src.slice():src.filter(function(x){ return grade==="전체"||x.grade===grade; });
@@ -4441,11 +4456,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(!L.length){ el.innerHTML='<div class="empty">학생이 없어요</div>'; return; }
    el.innerHTML=L.map(function(x){
      var n=cnt(x), cells="";
-     for(var i=1;i<=DAYS;i++){ var v=x.days[i]; cells+='<div class="c'+(v?' '+v:'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+'"></div>'; }
+     var nc=0;
+     for(var i=1;i<=DAYS;i++){ var v=x.days[i]; if(v&&v.charAt(0)!=="y") nc++; cells+='<div class="c'+(v?' '+(v.charAt(0)==="y"?"y":"s")+(v.length>1?' tc':''):'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+(v?(v.charAt(0)==="y"?' 유튜브':' 교회')+(v.length>1?' (선생님 체크)':''):'')+'"></div>'; }
      var tag=n>=DAYS?'<span class="tg" style="background:#e3f4ea;color:#1f7a4a">완주</span>':(n>=10?'<span class="tg" style="background:#fff3df;color:#8a5a00">10일+</span>':'');
-     if(T) return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+(x.name==="강유석"?' 전도사님':' 선생님')+'</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
+     if(T) return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+(x.name==="강유석"?' 전도사님':' 선생님')+'</span>'+tag+'<span class="cnt">'+n+'/21일'+(n?' · 교회 '+nc:'')+'</span></div>'+
        '<div class="cells">'+cells+'</div><div class="ft"><span>'+(x.reg?'학생앱에서 참여 중':'아직 학생앱에서 참여 안 함')+'</span></div></div>';
-     return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+'</span><span class="gr">'+esc(x.grade)+'</span>'+tag+'<span class="cnt">'+n+'/21일</span></div>'+
+     return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+'</span><span class="gr">'+esc(x.grade)+'</span>'+tag+'<span class="cnt">'+n+'/21일'+(n?' · 교회 '+nc:'')+'</span></div>'+
        '<div class="cells">'+cells+'</div>'+
        '<div class="ft"><span>'+(x.reg?'학생앱 로그인함':'아직 로그인 안 함')+'</span>'+(x.reg?'<button type="button" class="rs" data-n="'+esc(x.name)+'">숫자 초기화</button>':'')+'</div></div>';
    }).join("");
@@ -4462,9 +4478,25 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function toggle(name,day,on){
    var d=state?state.day:dayNow();
    if(busy||day>d) return;
-   if(!confirm(name+" · Day "+day+(on?" 참여 체크를 취소할까요?":" 참여를 선생님이 대신 체크할까요?"))) return;
+   /* 교회 / 유튜브 / 취소 중에서 고르기 */
+   var card=document.querySelector("#dnModal .card"), old=document.getElementById("dnPick"); if(old) old.remove();
+   var pk=document.createElement("div"); pk.id="dnPick";
+   pk.innerHTML='<div class="pk"><div class="pt">'+esc(name)+' · Day '+day+'</div><div class="ps">선생님이 대신 체크해요</div><div class="pb">'+
+     '<button type="button" class="pc" data-m="c"><i class="ti ti-building-church"></i>교회</button>'+
+     '<button type="button" class="py" data-m="y"><i class="ti ti-brand-youtube"></i>유튜브</button>'+
+     (on?'<button type="button" class="px" data-m="x"><i class="ti ti-x"></i>취소</button>':'')+
+     '</div><button type="button" class="pz">닫기</button></div>';
+   card.appendChild(pk);
+   pk.addEventListener("click",function(e){
+     e.stopPropagation();
+     if(e.target===pk || e.target.closest(".pz")){ pk.remove(); return; }
+     var bt=e.target.closest("[data-m]"); if(!bt) return;
+     var m=bt.getAttribute("data-m"); pk.remove(); save(name,day,m);
+   });
+ }
+ function save(name,day,m){
    busy=true; stamp("저장하는 중…");
-   post({action:"dn_tcheck",user:me(),name:name,day:day,on:!on}).then(function(j){
+   post({action:"dn_tcheck",user:me(),name:name,day:day,on:m!=="x",mode:m}).then(function(j){
      busy=false; if(j&&j.ok) load(); else { stamp("저장 실패"); alert(j&&j.error==="badday"?"아직 오지 않은 날은 체크할 수 없어요.":"저장하지 못했어요. 다시 시도해 주세요."); }
    }).catch(function(){ busy=false; stamp("저장 실패"); });
  }
