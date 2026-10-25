@@ -4069,6 +4069,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #stat55 .idle{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px}
 #stat55 .idle span{font-size:12px;font-weight:700;background:#fdecec;color:#b42318;border-radius:999px;padding:5px 10px}
 #stat55 .idle span em{font-style:normal;font-weight:600;color:#d46b62;margin-left:4px;font-size:11px}
+#stat55 .stale span{background:#fff4e5;color:#9a5b00}
+#stat55 .stale span em{color:#b7791f}
+#stat55 .stale .nt{width:100%;font-size:11.5px;color:var(--tx3);margin-top:4px}
 #stat55 .empty{font-size:12.5px;color:var(--tx3);padding:22px 0;text-align:center}
 #stat55 .foot{font-size:11px;color:var(--tx3);line-height:1.6;margin:16px 4px 0;display:flex;gap:5px}
 </style>
@@ -4132,7 +4135,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 
  /* ── 관리자 화면 ── */
  var wrap=document.createElement("div"); wrap.id="stat55";
- var rows=null, loading=false, failed=false, per="t", sortBy="c", openU=null, app="접속기록", seq=0;   /* app: 접속기록(교사앱) | 학생앱 */
+ var rows=null, seen={}, loading=false, failed=false, per="t", sortBy="c", openU=null, app="접속기록", seq=0;   /* seen: 서버가 적은 마지막 접속(이름→ms) */   /* app: 접속기록(교사앱) | 학생앱 */
  function stu(){ return app==="학생앱"; }
  function devId(u){ return /^d[a-z0-9]{8,20}$/.test(u); }
  var COL=["#f59e0b","#ef4444","#10b981","#3b82f6","#8b5cf6","#ec4899","#14b8a6","#f97316","#6366f1","#84cc16","#06b6d4","#a855f7","#e11d48","#0ea5e9","#64748b"];
@@ -4184,7 +4187,11 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      '<div class="seg">'+[["t","오늘"],["y","어제"],["w","이번 주"],["m","이번 달"],["a","6개월"]].map(function(p){ return '<span data-a="per" data-v="'+p[0]+'" class="'+(per===p[0]?"on":"")+'">'+p[1]+'</span>'; }).join("")+'</div>';
    if(!rows||failed){ wrap.innerHTML=h+'<div class="empty">'+(failed?'통계를 불러오지 못했습니다.<br><span data-a="retry" style="display:inline-block;margin-top:10px;padding:7px 14px;border-radius:999px;background:#eef0ff;color:#4338ca;font-weight:700;cursor:pointer">다시 불러오기</span>':'불러오는 중…')+'</div></div>'; return; }
    var all=sessions(), R=range(), A=agg(all,R.a,R.b), P=R.pa!=null?agg(all,R.pa,R.pb):null;
-   h+='<div class="kpis"><div class="kpi"><div class="l">'+(stu()?'접속 학생·기기':'접속 교사')+'</div><div class="v">'+A.users+'<small>'+(stu()?'명':'/'+TEACHERS.length+'명')+'</small></div>'+delta(A.users,P&&P.users,"명")+'</div>'+
+   /* 비콘 기록에 없는데 서버에는 이 기간 접속이 남은 사람 = 통계에 안 잡히는 분 → 접속 인원에도 더함 */
+   var inA={}; A.S.forEach(function(s){ inA[s.u]=1; });
+   var stale=Object.keys(seen||{}).filter(function(n){ return seen[n]>=R.a && seen[n]<R.b && !inA[n]; }).sort(function(x,y){ return seen[y]-seen[x]; });
+   var uCnt=A.users+stale.length;
+   h+='<div class="kpis"><div class="kpi"><div class="l">'+(stu()?'접속 학생·기기':'접속 교사')+'</div><div class="v">'+uCnt+'<small>'+(stu()?'명':'/'+TEACHERS.length+'명')+'</small></div>'+delta(uCnt,P&&P.users,"명")+'</div>'+
      '<div class="kpi"><div class="l">총 접속</div><div class="v">'+A.n+'<small>회</small></div>'+delta(A.n,P&&P.n,"%")+'</div>'+
      '<div class="kpi"><div class="l">평균 체류</div><div class="v">'+Math.floor(A.avg/60)+'<small>분</small> '+Math.round(A.avg%60)+'<small>초</small></div>'+delta(A.avg,P&&(P.n?P.avg:null),"s")+'</div></div>';
    /* 최근 2주 일별 */
@@ -4216,6 +4223,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      h+='</div>';
    });
    h+='</div>';
+   if(stale.length) h+='<div class="h"><i class="ti ti-eye-off"></i>통계에 안 잡히는 분<span class="r">마지막 접속</span></div><div class="card idle stale">'+
+     stale.map(function(n){ return '<span>'+esc(n)+'<em>'+when(seen[n])+'</em></span>'; }).join("")+
+     '<div class="nt">앱은 열었는데 접속 기록이 안 왔어요. 앱을 위로 밀어 완전히 닫았다가 다시 열면 기록돼요.</div></div>';
    /* 메뉴별 */
    var icons=stu()?{}:tileIcons(), M={};
    Object.keys(icons).forEach(function(k){ M[k]={n:k,c:0,u:{}}; });
@@ -4230,6 +4240,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
        return '<div class="mr'+(m.c?'':' zero')+'">'+icH+'<span class="n">'+esc(m.n)+'</span><span class="b"><i style="width:'+Math.round(m.c/mxM*100)+'%"></i></span><span class="c"><b>'+m.c+'회</b><span>'+(nu?nu+'명':'사용 없음')+'</span></span></div>'; }).join("")+'</div>';
    /* 2주 이상 미접속(전체 기록 기준) */
    var lastBy={}; all.forEach(function(s){ lastBy[s.u]=Math.max(lastBy[s.u]||0,s.e); });
+   Object.keys(seen||{}).forEach(function(n){ lastBy[n]=Math.max(lastBy[n]||0,seen[n]); });   /* 서버 기록도 합쳐서 미접속 판단 */
    var cut=Date.now()-14*864e5, idle=TEACHERS.filter(function(n){ return !(lastBy[n]>=cut); });
    if(!stu()) h+='<div class="h"><i class="ti ti-user-off"></i>2주 이상 미접속<span class="r">마지막 접속</span></div><div class="card '+(idle.length?'idle':'')+'">'+
      (idle.length?idle.map(function(n){ return '<span>'+esc(n)+'<em>'+(lastBy[n]?md(lastBy[n]):'기록 없음')+'</em></span>'; }).join(""):'<div class="empty">모든 교사가 2주 안에 접속했어요</div>')+'</div>';
@@ -4248,7 +4259,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
      if(res&&res.ok&&Array.isArray(res.rows)) return res;
      if(res&&res.ok===false&&res.error) return res;
      return n>1?tryN(n-1):null; }); }
-   tryN(3).then(function(res){ if(my!==seq) return; if(res&&res.ok&&Array.isArray(res.rows)) rows=res.rows; else failed=true; loading=false; render(); });
+   tryN(3).then(function(res){ if(my!==seq) return; if(res&&res.ok&&Array.isArray(res.rows)){ rows=res.rows; seen=res.seen||{}; } else failed=true; loading=false; render(); });
  }
  function openS(){ if(me()!==ADMIN) return; rows=null; failed=false; render(); load(); wrap.classList.add("on"); wrap.scrollTop=0; }
  function closeS(){ wrap.classList.remove("on"); }
@@ -4257,7 +4268,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    if(a==="close") closeS();
    else if(a==="retry"){ rows=null; failed=false; render(); load(); }
    else if(a==="per"){ per=v; openU=null; render(); }
-   else if(a==="app"){ if(app===v) return; app=v; openU=null; rows=null; failed=false; loading=false; render(); load(); }
+   else if(a==="app"){ if(app===v) return; app=v; openU=null; rows=null; seen={}; failed=false; loading=false; render(); load(); }
    else if(a==="sort"){ sortBy=v; render(); }
    else if(a==="t"){ openU=openU===v?null:v; render(); }
  });
@@ -4512,6 +4523,24 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function ready(fn){ if(document.readyState!=="loading") fn(); else document.addEventListener("DOMContentLoaded",fn); }
  function tick(){ ensureArchive(); ensureHome(); }
  ready(function(){ tick(); setInterval(tick,1500); });
+})();
+</script>
+
+<script>
+/* enh_v62: 마지막 접속 신호 — 앱을 열거나 다시 볼 때 30분에 한 번 서버에 알림(접속 통계 보완, 영광 커넥트와 같은 방식).
+   내릴 때 보내는 접속 기록(sendBeacon)이 빠져도 관리자 통계에서 '통계에 안 잡히는 분'으로 보인다. 실패해도 무시. */
+(function(){
+ var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec", K="sgy_seen_v1";
+ function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
+ function ping(){
+   var u=me(); if(!u || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+   var n=Date.now(), l={}; try{ l=JSON.parse(localStorage.getItem(K)||"{}")||{}; }catch(e){}
+   if(l.u===u && n-(l.t||0)<1800000) return;
+   try{ localStorage.setItem(K,JSON.stringify({u:u,t:n})); }catch(e){}
+   try{ fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"seen",user:u})}).catch(function(){}); }catch(e){}
+ }
+ setTimeout(ping,2500);
+ document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible") ping(); });
 })();
 </script>
 
