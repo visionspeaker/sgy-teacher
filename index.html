@@ -4238,12 +4238,12 @@ nav{grid-template-columns:repeat(4,1fr)!important}
        if(ic){ var cs=getComputedStyle(ic), im=ic.querySelector("img"), ii=ic.querySelector("i");
          icH='<div class="ic" style="background:'+esc(cs.backgroundImage!=="none"?cs.backgroundImage:cs.backgroundColor)+'">'+(im?'<img src="'+esc(im.getAttribute("src"))+'" style="width:100%;height:100%;object-fit:cover;border-radius:9px">':'<i class="'+esc(ii?ii.className:"ti ti-apps")+'"></i>')+'</div>'; }
        return '<div class="mr'+(m.c?'':' zero')+'">'+icH+'<span class="n">'+esc(m.n)+'</span><span class="b"><i style="width:'+Math.round(m.c/mxM*100)+'%"></i></span><span class="c"><b>'+m.c+'회</b><span>'+(nu?nu+'명':'사용 없음')+'</span></span></div>'; }).join("")+'</div>';
-   /* 2주 이상 미접속(전체 기록 기준) */
+   /* 3일 이상 미접속(전체 기록 기준, 10/29 2주→3일) */
    var lastBy={}; all.forEach(function(s){ lastBy[s.u]=Math.max(lastBy[s.u]||0,s.e); });
    Object.keys(seen||{}).forEach(function(n){ lastBy[n]=Math.max(lastBy[n]||0,seen[n]); });   /* 서버 기록도 합쳐서 미접속 판단 */
-   var cut=Date.now()-14*864e5, idle=TEACHERS.filter(function(n){ return !(lastBy[n]>=cut); });
-   if(!stu()) h+='<div class="h"><i class="ti ti-user-off"></i>2주 이상 미접속<span class="r">마지막 접속</span></div><div class="card '+(idle.length?'idle':'')+'">'+
-     (idle.length?idle.map(function(n){ return '<span>'+esc(n)+'<em>'+(lastBy[n]?md(lastBy[n]):'기록 없음')+'</em></span>'; }).join(""):'<div class="empty">모든 교사가 2주 안에 접속했어요</div>')+'</div>';
+   var cut=Date.now()-3*864e5, idle=TEACHERS.filter(function(n){ return !(lastBy[n]>=cut); });
+   if(!stu()) h+='<div class="h"><i class="ti ti-user-off"></i>3일 이상 미접속<span class="r">마지막 접속</span></div><div class="card '+(idle.length?'idle':'')+'">'+
+     (idle.length?idle.map(function(n){ return '<span>'+esc(n)+'<em>'+(lastBy[n]?md(lastBy[n]):'기록 없음')+'</em></span>'; }).join(""):'<div class="empty">모든 교사가 3일 안에 접속했어요</div>')+'</div>';
    h+='<div class="foot"><i class="ti ti-info-circle"></i><span>앱이 화면에 떠 있던 시간만 체류로 셉니다. 30분 넘게 쉬었다 들어오면 새 접속으로 셉니다. 기록은 '+(stu()?'10/21':'10/15')+'부터 쌓이며,'+(stu()?' 학생앱은 다니엘기도회에 로그인한 학생만 이름으로, 나머지는 기기 번호로 남습니다.':'')+' 6개월이 지나면 자동으로 지워집니다.</span></div></div>';
    var sc=wrap.scrollTop; wrap.innerHTML=h; wrap.scrollTop=sc;
  }
