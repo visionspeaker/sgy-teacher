@@ -4478,11 +4478,22 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    }).join("");
  }
  function stamp(t){ var st=document.getElementById("dnSt"); if(st) st.textContent=t; }
+ /* 10/31: 참여 현황에서 뺄 학생(장기결석, 사용자가 준 10명). 공개 저장소라 이름 대신 해시로만 적음 — sha256("sgy-dn-2026|"+이름) 앞 16자리.
+    빠진 학생도 기도회에 한 번이라도 참여(체크)하면 다시 보이게 함. 해시 계산이 안 되는 환경이면 제외 없이 표시 */
+ var _raw=[]; function list0(){ return _raw.map(function(x){ return x.name; }); }
+ var EXH=["8a36532fe2e0d249","b93013fc568caa3c","7689b6ffe188c779","be1b2535c1443133","8b02c0bcd20efb94","db7ed0493942f964","d3e4fb98c2deeebe","07b5e72b616c49cc","58dd5380dc8f9550","7291b9acd9763f64"];
+ function longAbs(){
+   if(!(window.crypto&&crypto.subtle&&window.TextEncoder)||!list0()) return Promise.resolve({});
+   var o={}, names=list0();
+   return Promise.all(names.map(function(n){ return crypto.subtle.digest("SHA-256",new TextEncoder().encode("sgy-dn-2026|"+n)).then(function(b){
+     var h=Array.prototype.map.call(new Uint8Array(b),function(x){ return ("0"+x.toString(16)).slice(-2); }).join("").slice(0,16);
+     if(EXH.indexOf(h)>=0) o[n]=1; }); })).then(function(){ return o; }).catch(function(){ return {}; });
+ }
  function load(){
    if(!me()){ render(); return; }
    stamp("불러오는 중…");
-   post({action:"dn_board",user:me()}).then(function(j){
-     if(j&&j.ok&&Array.isArray(j.list)){ list=j.list; tlist=j.tlist||[]; state=j.state; render(); var d=new Date(); stamp("업데이트 "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)); }
+   post({action:"dn_board",user:me()}).then(function(j){ _raw=(j&&j.list)||[]; return longAbs().then(function(LA){ return [j,LA]; }); }).then(function(rs){ var j=rs[0], LA=rs[1];
+     if(j&&j.ok&&Array.isArray(j.list)){ list=j.list.filter(function(x){ return !(LA[x.name] && !Object.keys(x.days||{}).some(function(k){ return x.days[k]; })); }); tlist=j.tlist||[]; state=j.state; render(); var d=new Date(); stamp("업데이트 "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)); }
      else { stamp(j&&j.error==="notteacher"?"교사 로그인이 필요해요":"불러오기 실패 · 새로고침"); render(); }
    }).catch(function(){ stamp("불러오기 실패 · 새로고침"); });
  }
