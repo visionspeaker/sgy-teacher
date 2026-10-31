@@ -3015,7 +3015,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"2026 다니엘기도회 참여 현황", bd:"신규",cls:"bdN", v:"V48", d:"2026/10/21",
-   secs:[["[신규]","- 11/1~21 다니엘기도회 기간에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요<br>- 교회(오프라인)·유튜브(온라인) 참여를 색으로 나눠 보고, 오늘 교회·유튜브 인원을 따로 세요<br>- 선생님도 학생앱에서 함께 참여할 수 있어요. 교사앱에 로그인돼 있으면 따로 로그인하지 않아도 자동으로 알아봐요(아이폰 홈 화면 앱은 교사앱 이름·비밀번호로 한 번 로그인)<br>- 참여 현황에서 학생과 선생님을 나눠 보고, 숫자도 따로 세요"]]},
+   secs:[["[신규]","- 11/1~21 다니엘기도회 기간(시작 전날부터)에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요<br>- 교회(오프라인)·유튜브(온라인) 참여를 색으로 나눠 보고, 오늘 교회·유튜브 인원을 따로 세요<br>- 선생님도 학생앱에서 함께 참여할 수 있어요. 교사앱에 로그인돼 있으면 따로 로그인하지 않아도 자동으로 알아봐요(아이폰 홈 화면 앱은 교사앱 이름·비밀번호로 한 번 로그인)<br>- 참여 현황에서 학생과 선생님을 나눠 보고, 숫자도 따로 세요"]]},
   {h:"교사 회의록 새 글 알림", bd:"신규",cls:"bdN", v:"V47", d:"2026/10/21",
    secs:[["[신규]","- 새 회의록이 올라오면 홈 '교사 회의록' 아이콘에 빨간 N 표시가 떠요<br>- '교사 회의록'을 한 번 열어 보면 표시가 사라져요(휴대폰·PC 등 기기마다 따로 기억해요)"]]},
   {h:"교사 회의록 메뉴", bd:"신규",cls:"bdN", v:"V46", d:"2026/10/14",
@@ -4403,7 +4403,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
  function post(o){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){ return r.json(); }); }
- function live(){ var n=new Date(); return n>=new Date(2026,10,1,0,0,0) && n<new Date(2026,10,23,0,0,0); }
+ function live(){ var n=new Date(); return n>=new Date(2026,9,31,0,0,0) && n<new Date(2026,10,23,0,0,0); }   /* 10/31: 시작 전날부터 홈에 표시(사용자 지시) */
  function dayNow(){ var n=new Date(); return Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(2026,10,1))/864e5)+1; }
  function ensureHome(){
    var ex=document.getElementById("sgyDnHome");
@@ -4413,7 +4413,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    var a=document.createElement("a"); a.id="sgyDnHome"; a.className="campBtn"; a.href="#";
    a.style.cssText="background:#f3efff;border-color:#d9cffb";
    a.innerHTML='<div class="ci" style="background:#e4dbff;color:#5b3fd6"><i class="ti ti-flame"></i></div>'+
-     '<div class="ct"><div class="t1" style="color:#4b2fb8">2026 다니엘기도회 <span class="sgyBadge" style="background:#5b3fd6;color:#fff">'+(d<=DAYS?'Day '+d:'종료')+'</span></div>'+
+     '<div class="ct"><div class="t1" style="color:#4b2fb8">2026 다니엘기도회 <span class="sgyBadge" style="background:#5b3fd6;color:#fff">'+(d<1?(d===0?'내일 시작':'D-'+(1-d)):d<=DAYS?'Day '+d:'종료')+'</span></div>'+
      '<div class="t2" style="color:#8a7cc4">학생 참여 현황 · 11/1~11/21</div></div><i class="ti ti-chevron-right" style="color:#5b3fd6"></i>';
    var min=document.getElementById("sgyMinHome");
    if(min) panel.insertBefore(a, min); else if(grid) panel.insertBefore(a, grid); else panel.appendChild(a);
