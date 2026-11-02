@@ -4370,6 +4370,8 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 #dnList .c.s{background:#6c5ce7}
 #dnList .c.y{background:#f97316}
 #dnList .c.tc{background-image:radial-gradient(circle,#fff 24%,transparent 28%)}
+#dnList .c.sv{animation:dnSv .9s ease-in-out infinite alternate}
+@keyframes dnSv{from{opacity:1}to{opacity:.35}}
 #dnPick{position:absolute;inset:0;background:rgba(29,27,58,.35);display:flex;align-items:center;justify-content:center;z-index:2}
 #dnPick .pk{background:#fff;border-radius:14px;padding:14px;width:250px;text-align:center}
 #dnPick .pt{font-size:14px;font-weight:500;color:#1d1b3a}
@@ -4399,7 +4401,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
  var DAYS=21, GR=["전체","중1","중2","중3","고1","고2","고3"];
- var list=null, tlist=null, state=null, grade="전체", sortBy="g", busy=false, who="s";   /* who: s 학생 / t 선생님(교사앱 명단 15명) */
+ var list=null, tlist=null, state=null, grade="전체", sortBy="g", busy=false, who="s", seq=0, pend={}, npend=0;   /* seq: 마지막 불러오기만 반영 · pend: 저장 중인 칸(이름|날) / who: s 학생 / t 선생님(교사앱 명단 15명) */
  function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
  function post(o){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){ return r.json(); }); }
@@ -4468,7 +4470,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    el.innerHTML=L.map(function(x){
      var n=cnt(x), cells="";
      var nc=0;
-     for(var i=1;i<=DAYS;i++){ var v=x.days[i]; if(v&&v.charAt(0)!=="y") nc++; cells+='<div class="c'+(v?' '+(v.charAt(0)==="y"?"y":"s")+(v.length>1?' tc':''):'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+(v?(v.charAt(0)==="y"?' 유튜브':' 교회')+(v.length>1?' (선생님 체크)':''):'')+'"></div>'; }
+     for(var i=1;i<=DAYS;i++){ var v=x.days[i]; if(v&&v.charAt(0)!=="y") nc++; cells+='<div class="c'+(v?' '+(v.charAt(0)==="y"?"y":"s")+(v.length>1?' tc':''):'')+(i<d&&!v?' past':'')+(i===d?' td':'')+(i>d?' fu':'')+(pend[x.name+'|'+i]?' sv':'')+'" data-n="'+esc(x.name)+'" data-d="'+i+'" title="Day '+i+(v?(v.charAt(0)==="y"?' 유튜브':' 교회')+(v.length>1?' (선생님 체크)':''):'')+'"></div>'; }
      var tag=n>=DAYS?'<span class="tg" style="background:#e3f4ea;color:#1f7a4a">완주</span>':(n>=10?'<span class="tg" style="background:#fff3df;color:#8a5a00">10일+</span>':'');
      if(T) return '<div class="row"><div class="top"><span class="nm">'+esc(x.name)+(x.name==="강유석"?' 전도사님':' 선생님')+'</span>'+tag+'<span class="cnt">'+n+'/21일'+(n?' · 교회 '+nc:'')+'</span></div>'+
        '<div class="cells">'+cells+'</div><div class="ft"><span>'+(x.reg?'학생앱에서 참여 중':'아직 학생앱에서 참여 안 함')+'</span></div></div>';
@@ -4491,15 +4493,15 @@ nav{grid-template-columns:repeat(4,1fr)!important}
  }
  function load(){
    if(!me()){ render(); return; }
-   stamp("불러오는 중…");
-   post({action:"dn_board",user:me()}).then(function(j){ _raw=(j&&j.list)||[]; return longAbs().then(function(LA){ return [j,LA]; }); }).then(function(rs){ var j=rs[0], LA=rs[1];
+   var my=++seq; stamp(npend?"저장하는 중…":"불러오는 중…");
+   post({action:"dn_board",user:me()}).then(function(j){ if(my!==seq) return null; _raw=(j&&j.list)||[]; return longAbs().then(function(LA){ return [j,LA]; }); }).then(function(rs){ if(!rs||my!==seq||npend) return; var j=rs[0], LA=rs[1];   /* 11/2: 늦게 온 옛 명단·저장 중 받은 명단이 새 체크를 덮지 않게 */
      if(j&&j.ok&&Array.isArray(j.list)){ list=j.list.filter(function(x){ return !(LA[x.name] && !Object.keys(x.days||{}).some(function(k){ return x.days[k]; })); }); tlist=j.tlist||[]; state=j.state; render(); var d=new Date(); stamp("업데이트 "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)); }
      else { stamp(j&&j.error==="notteacher"?"교사 로그인이 필요해요":"불러오기 실패 · 새로고침"); render(); }
-   }).catch(function(){ stamp("불러오기 실패 · 새로고침"); });
+   }).catch(function(){ if(my===seq) stamp("불러오기 실패 · 새로고침"); });
  }
  function toggle(name,day,on){
    var d=state?state.day:dayNow();
-   if(busy||day>d) return;
+   if(busy||day>d||pend[name+"|"+day]) return;
    /* 교회 / 유튜브 / 취소 중에서 고르기 */
    var card=document.querySelector("#dnModal .card"), old=document.getElementById("dnPick"); if(old) old.remove();
    var pk=document.createElement("div"); pk.id="dnPick";
@@ -4517,10 +4519,20 @@ nav{grid-template-columns:repeat(4,1fr)!important}
    });
  }
  function save(name,day,m){
-   busy=true; stamp("저장하는 중…");
-   post({action:"dn_tcheck",user:me(),name:name,day:day,on:m!=="x",mode:m}).then(function(j){
-     busy=false; if(j&&j.ok) load(); else { stamp("저장 실패"); alert(j&&j.error==="badday"?"아직 오지 않은 날은 체크할 수 없어요.":"저장하지 못했어요. 다시 시도해 주세요."); }
-   }).catch(function(){ busy=false; stamp("저장 실패"); });
+   /* 11/2: 누르는 즉시 칸·숫자를 바꾸고(저장 중엔 깜빡임) 저장은 뒤에서. 실패하면 되돌림. 저장이 모두 끝나면 서버 명단으로 한 번 맞춤 */
+   var k=name+"|"+day, x=null;
+   [list||[],tlist||[]].forEach(function(a){ a.forEach(function(y){ if(y.name===name) x=y; }); });
+   var prev=x?x.days[day]:undefined;
+   if(x){ if(m==="x") delete x.days[day]; else x.days[day]=m+"t"; }
+   pend[k]=1; npend++; seq++; render(); stamp("저장하는 중…");
+   function done(ok,err){
+     delete pend[k]; npend--;
+     if(!ok){ if(x){ if(prev===undefined) delete x.days[day]; else x.days[day]=prev; }
+       render(); stamp("저장 실패"); alert(err==="badday"?"아직 오지 않은 날은 체크할 수 없어요.":name+" Day "+day+" 저장하지 못했어요. 다시 시도해 주세요."); }
+     else render();
+     if(!npend) load();
+   }
+   post({action:"dn_tcheck",user:me(),name:name,day:day,on:m!=="x",mode:m}).then(function(j){ done(!!(j&&j.ok), j&&j.error); }).catch(function(){ done(false); });
  }
  function reset(name){
    if(busy||!confirm(name+" 학생의 로그인 숫자 4자리를 초기화할까요?\n학생은 다음에 들어올 때 새 숫자를 정하면 돼요. 참여 기록은 그대로예요.")) return;
