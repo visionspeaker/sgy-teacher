@@ -4401,7 +4401,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var API="https://script.google.com/macros/s/AKfycbynttLT1S2F3OjVW345W3NUijszhXpnUmeTfZObxb6W3I4wxUmqrj5HgPK5gFqAiri5/exec";
  var DAYS=21, GR=["전체","중1","중2","중3","고1","고2","고3"];
- var list=null, tlist=null, state=null, grade="전체", sortBy="g", busy=false, who="s", seq=0, pend={}, npend=0;   /* seq: 마지막 불러오기만 반영 · pend: 저장 중인 칸(이름|날) / who: s 학생 / t 선생님(교사앱 명단 15명) */
+ var list=null, tlist=null, state=null, grade="전체", sortBy="c", busy=false, who="s", seq=0, pend={}, npend=0;   /* seq: 마지막 불러오기만 반영 · pend: 저장 중인 칸(이름|날) / who: s 학생 / t 선생님(교사앱 명단 15명) */
  function me(){ try{ var a=JSON.parse(localStorage.getItem("sgy_teacher_auth_v1")||"null"); return (a&&a.name)||""; }catch(e){ return ""; } }
  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
  function post(o){ return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){ return r.json(); }); }
