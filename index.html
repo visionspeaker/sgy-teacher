@@ -907,8 +907,27 @@ function go(s, keepScroll, skipHash){
     if(e.target.closest('.attReason')) return;      // 사유 입력칸은 토글 제외
     if(readonly) return;
     const card=e.target.closest('.attCard'); if(!card) return;
-    const i=+card.dataset.i; students[i].present=!students[i].present; saved[students[i].cls]=false; render();
+    const i=+card.dataset.i; students[i].present=!students[i].present; saved[students[i].cls]=false;
+    if(!patchCard(card,i)) render();
   });
+  // 11/16: 출석 토글은 누른 카드만 고친다. 전체 다시 그리기(render)는 뒤에 붙는 '최종 수정' 줄·버튼들이 잠깐 사라져 화면이 위로 튀었음
+  function patchCard(card,i){
+    try{
+      const s=students[i], cls=s.cls;
+      card.classList.toggle('on', s.present);
+      const pill=card.querySelector('.apill'); if(pill) pill.textContent=s.present?'출석':'결석';
+      let ta=card.querySelector('textarea.attReason');
+      if(s.present){ if(ta) ta.remove(); }
+      else if(!ta){ ta=document.createElement('textarea'); ta.className='attReason'; ta.rows=1; ta.placeholder='결석 사유'; ta.value=s.reason||'';
+        const top=card.querySelector('.acTop'); if(top&&top.nextSibling) card.insertBefore(ta, top.nextSibling); else card.appendChild(ta); }
+      const idxs=students.map((x,k)=>x.cls===cls?k:-1).filter(k=>k>=0), presN=idxs.filter(k=>students[k].present).length, total=idxs.length;
+      const btn=listEl.querySelector('.attSaveCls[data-cls="'+cls.replace(/"/g,'\\"')+'"]'), agL=btn&&btn.closest('.attGrp')&&btn.closest('.attGrp').querySelector('.agL');
+      const cnt=agL&&[].slice.call(agL.children).filter(x=>x.tagName==='SPAN').pop();
+      if(cnt) cnt.textContent='('+presN+'/'+total+') '+(total?Math.round(presN/total*100):0)+'%';
+      renderStrip(); updateCounts();
+      return true;
+    }catch(e){ return false; }
+  }
   listEl.addEventListener('input', function(e){
     const inp=e.target.closest('.attReason'); if(!inp) return;
     const card=inp.closest('.attCard'); if(!card) return;
