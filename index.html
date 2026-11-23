@@ -3034,7 +3034,7 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 (function(){
  var CARDS=[
   {h:"당겨서 새로고침", bd:"신규",cls:"bdN", v:"V49", d:"2026/11/23",
-   secs:[["[신규]","- 화면 맨 위에서 아래로 당겼다 놓으면 앱이 최신 화면으로 새로고침돼요"],["[개선]","- 새 업데이트가 올라오면 앱을 다시 열 때 자동으로 최신 화면이 떠요<br>- 마지막 새로고침 후 하루가 지나 앱을 열면 자동으로 새로고침돼요(로그인·저장된 내용은 그대로)"]]},
+   secs:[["[신규]","- 화면 맨 위에서 아래로 당겼다 놓으면 앱이 최신 화면으로 새로고침돼요"],["[개선]","- 새 업데이트가 올라오면 앱을 다시 열 때 자동으로 최신 화면이 떠요<br>- 날짜가 바뀐 뒤 처음 앱을 열면 자동으로 새로고침돼요(로그인·저장된 내용은 그대로)"]]},
   {h:"2026 다니엘기도회 참여 현황", bd:"신규",cls:"bdN", v:"V48", d:"2026/10/21",
    secs:[["[신규]","- 11/1~21 다니엘기도회 기간(시작 전날부터)에 홈 위쪽 카드에서 학생들의 참여 현황을 볼 수 있어요(오늘 참여 인원·10일 이상·21일 완주)<br>- 학생별 21일 칸에서 폰이 없던 학생의 참여를 대신 체크하거나 취소할 수 있어요<br>- 학생이 로그인 숫자 4자리를 잊으면 '숫자 초기화'로 풀어 줄 수 있어요<br>- 기간이 끝나면 아카이브로 옮겨져 언제든 다시 볼 수 있어요<br>- 교회(오프라인)·유튜브(온라인) 참여를 색으로 나눠 보고, 오늘 교회·유튜브 인원을 따로 세요<br>- 선생님도 학생앱에서 함께 참여할 수 있어요. 교사앱에 로그인돼 있으면 따로 로그인하지 않아도 자동으로 알아봐요(아이폰 홈 화면 앱은 교사앱 이름·비밀번호로 한 번 로그인)<br>- 참여 현황에서 학생과 선생님을 나눠 보고, 숫자도 따로 세요"]]},
   {h:"교사 회의록 새 글 알림", bd:"신규",cls:"bdN", v:"V47", d:"2026/10/21",
@@ -4597,13 +4597,13 @@ nav{grid-template-columns:repeat(4,1fr)!important}
 @keyframes ptrSpin{to{transform:rotate(360deg)}}
 </style>
 <script>
-/* enh_v65 화면 맨 위에서 아래로 당기면 강제 새로고침 + 새 배포가 있으면 열 때 자동 새로고침 + 마지막 새로고침 후 24시간이 지나 열면 강제 새로고침 (11/23).
+/* enh_v65 화면 맨 위에서 아래로 당기면 강제 새로고침 + 새 배포가 있으면 열 때 자동 새로고침 + 마지막 새로고침한 날짜가 오늘이 아니면 열 때 강제 새로고침 (11/23, 날짜는 휴대폰 시계 = 한국 시간).
    새로고침은 모두 하단 새로고침 버튼(#refreshBtn)을 누른 것과 같다(화면 파일만 새로 받음 — 로그인·기록 등 폰에 저장된 값은 그대로).
    글을 쓰는 중(입력칸에 커서, 쓰던 긴 글)에는 자동 새로고침을 미룬다.
    새 배포 확인 = GitHub Pages index.html의 ETag("수정시각-크기"). 같은 배포로는 한 번만 자동 새로고침(배포 직후 서버마다 반영이 늦어도 반복 안 됨). */
 (function(){
   var btn=document.getElementById('refreshBtn'); if(!btn) return;
-  var KEY='sgyt_hard_t', GUARD='sgyt_upd_guard', SC='.panel,.screen,#plan50,#mtg54', DAY=864e5;
+  var KEY='sgyt_hard_t', GUARD='sgyt_upd_guard', SC='.panel,.screen,#plan50,#mtg54';
   function now(){ return Date.now(); }
   function lsG(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
   function lsS(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
@@ -4617,8 +4617,9 @@ nav{grid-template-columns:repeat(4,1fr)!important}
   }
   function hard(){ if(!btn.disabled) btn.click(); }
 
-  /* ── 24시간 ── */
-  function dayCheck(){ var t=+lsG(KEY)||0; if(now()-t>DAY&&!typing()){ hard(); return true; } return false; }
+  /* ── 날짜가 바뀌면 ── 마지막 새로고침 날짜(휴대폰 시계 기준)가 오늘이 아니면 */
+  function ymd(t){ var d=new Date(t); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  function dayCheck(){ var t=+lsG(KEY)||0; if(ymd(t)!==ymd(now())&&!typing()){ hard(); return true; } return false; }
 
   /* ── 새 배포 확인 ── */
   var base=location.pathname.replace(/[^\/]*$/,''), loadTag=null, lastChk=0;
